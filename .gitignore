@@ -1,0 +1,13 @@
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+**.DS_Store
+src/bin/
+src/bin-int/
+.vs/
+.vscode
+.idea/
+thirdParty/bin/
+thirdParty/bin-int/
+thirdParty/spdlog
