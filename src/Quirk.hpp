@@ -13,12 +13,27 @@ public:
 	Quirk();
 	~Quirk();
 
+	/// <summary>
+	/// Main loop of the application
+	/// </summary>
 	void run();
 
 private:
+	/// <summary>
+	/// Initializes the system (vulkan, glfw, etc)
+	/// </summary>
 	void init();
+	/// <summary>
+	/// Creates the window handle and inits glfw
+	/// </summary>
 	void initWindow();
+	/// <summary>
+	/// Creates all neccessary vulkan objects and initializes them
+	/// </summary>
 	void initVulkan();
+	/// <summary>
+	/// Cleans up all vulkan objects and glfw objects
+	/// </summary>
 	void clean();
 
 private:
