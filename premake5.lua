@@ -29,7 +29,8 @@ project "QuirkEditor"
     includedirs 
     {
 	vulkanInclude,
-        "thirdParty/glfw/include/"
+        "thirdParty/glfw/include/",
+	"thirdParty/logging/include/",
     }
     
     files 

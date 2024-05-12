@@ -2,12 +2,19 @@
 
 Quirk::Quirk()
 {
-	init();
+	initWindow();
+	initVulkan();
 }
 
 Quirk::~Quirk()
 {
-	clean();
+	//NOTE - things are destroyed in reverse order of creation
+	if (m_enableValidationLayers)
+		DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+
+	vkDestroyInstance(m_instance, nullptr);
+	glfwDestroyWindow(m_window);
+	glfwTerminate();
 }
 
 void Quirk::run()
@@ -16,19 +23,6 @@ void Quirk::run()
 	{
 		glfwPollEvents();
 	}
-}
-
-void Quirk::init()
-{
-	initWindow();
-	initVulkan();
-}
-
-void Quirk::clean()
-{
-	vkDestroyInstance(m_instance, nullptr);
-	glfwDestroyWindow(m_window);
-	glfwTerminate();
 }
 
 void Quirk::initWindow()
@@ -52,6 +46,30 @@ void Quirk::initVulkan()
 	/*/
 	Create a Vulkan instance
 	*/
+	createInstance();
+
+	/*
+	Setup debugging
+	*/
+	if (m_enableValidationLayers)
+		createDebugMessenger();
+}
+
+void Quirk::createDebugMessenger()
+{
+	VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+	populateDebugMessengerCreateInfo(createInfo);
+
+	if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
+		exit(EXIT_FAILURE);
+}
+
+void Quirk::createInstance()
+{
+	// first check for validation layer support
+	if (m_enableValidationLayers && !checkValidationLayerSupport())
+		exit(EXIT_FAILURE);
+
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pApplicationName = m_appName;
@@ -65,15 +83,128 @@ void Quirk::initVulkan()
 	createInfo.pApplicationInfo = &appInfo;
 
 	// we need an extension to interface with the window system
-	uint32_t glfwExtensions{ 0 };
-	const char** glfwExtensionNames{ glfwGetRequiredInstanceExtensions(&glfwExtensions) };
-	createInfo.enabledExtensionCount = glfwExtensions;
-	createInfo.ppEnabledExtensionNames = glfwExtensionNames;
+	const auto extensions{ getExtensions() };
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	createInfo.ppEnabledExtensionNames = extensions.data();
 
-	// validation layers will be added later
-	createInfo.enabledLayerCount = 0;
+	// add our validation layers if we are in debug mode
+	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+	if (m_enableValidationLayers)
+	{
+		createInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
+		createInfo.ppEnabledLayerNames = m_validationLayers.data();
 
-	VkResult result{ vkCreateInstance(&createInfo, nullptr, &m_instance) };
-	if (result != VK_SUCCESS)
+		populateDebugMessengerCreateInfo(debugCreateInfo);
+		createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
+	}
+	else
+		createInfo.enabledLayerCount = 0;
+
+	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
 		exit(EXIT_FAILURE);
+}
+
+bool Quirk::checkValidationLayerSupport()
+{
+	uint32_t count{};
+	vkEnumerateInstanceLayerProperties(&count, nullptr);
+
+	std::vector<VkLayerProperties> availableLayers(count);
+	vkEnumerateInstanceLayerProperties(&count, availableLayers.data());
+
+	const uint32_t max{ 2048 };
+	for (const auto layerName : m_validationLayers)
+	{
+		bool layerFound{ false };
+
+		for (const auto& layerProperties : availableLayers)
+		{
+			if (strncmp(layerName, layerProperties.layerName, max) == 0)
+			{
+				layerFound = true;
+				break;
+			}
+		}
+
+		if (!layerFound)
+			return false;
+	}
+
+	return true;
+}
+
+std::vector<const char*> Quirk::getExtensions() const
+{
+	uint32_t count{};
+	const char** extensions{ glfwGetRequiredInstanceExtensions(&count) };
+
+	std::vector<const char*> extensionNames(extensions, extensions + count);
+
+	if (m_enableValidationLayers) 
+		extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+	return extensionNames;
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL Quirk::debugCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+	VkDebugUtilsMessageTypeFlagsEXT messageType,
+	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+	void* pUserData) 
+{
+	switch (messageSeverity)
+	{
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+		spdlog::trace("validation layer: {}", pCallbackData->pMessage);
+		break;
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+		spdlog::info("validation layer: {}", pCallbackData->pMessage);
+		break;
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+		spdlog::warn("validation layer: {}", pCallbackData->pMessage);
+		break;
+	case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+		spdlog::error("validation layer: {}", pCallbackData->pMessage);
+		break;
+	}
+	return VK_FALSE;
+}
+
+VkResult Quirk::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+	const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) 
+{
+	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	return func != nullptr ? 
+		func(instance, pCreateInfo, pAllocator, pDebugMessenger) :
+		VK_ERROR_EXTENSION_NOT_PRESENT;
+}
+
+void Quirk::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) 
+{
+	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+	if (func != nullptr) 
+		func(instance, debugMessenger, pAllocator);
+}
+
+void Quirk::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debugCreateInfo)
+{
+	/*
+	Setup debugging
+	*/
+	debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+
+	// these are the types of messages we want to receive / log 
+	debugCreateInfo.messageSeverity =
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+
+	// we want all message types to be logged
+	debugCreateInfo.messageType =
+		VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+	debugCreateInfo.pfnUserCallback = debugCallback;
+	debugCreateInfo.pUserData = nullptr;
 }
