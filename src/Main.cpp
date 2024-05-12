@@ -1,6 +1,12 @@
 #include <iostream>
 
+#include "Quirk.hpp"
+
 int main()
 {
-    std::cout << "Hello World!\n";
+	Quirk app;
+	app.run();
+	
+	return 0;
 }
+

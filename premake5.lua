@@ -28,7 +28,8 @@ project "QuirkEditor"
 
     includedirs 
     {
-	vulkanInclude
+	vulkanInclude,
+        "thirdParty/glfw/include/"
     }
     
     files 
@@ -39,7 +40,8 @@ project "QuirkEditor"
 
     links 
     { 
-	vulkanLib
+	vulkanLib,
+        "Glfw",
     }
 
     filter "system:windows"
@@ -51,3 +53,5 @@ project "QuirkEditor"
         {
  	     "OpengL32"
         }
+
+include "thirdParty/glfw.lua"
