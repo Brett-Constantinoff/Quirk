@@ -63,6 +63,10 @@ private:
 	/// </summary>
 	void pickPhysicalDevice();
 	/// <summary>
+	/// Creates a logical device to interface with the physical device
+	/// </summary>
+	void createLogicalDevice();
+	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
 	/// </summary>
@@ -123,6 +127,9 @@ private:
 	// Vulkan Objects
 	VkInstance m_instance{};
 	VkDebugUtilsMessengerEXT m_debugMessenger{};
+	VkPhysicalDevice m_physDevice{};
+	VkDevice m_device{};
+	VkQueue m_graphicsQueue{};
 
 	// Constants
 	const uint32_t m_width{ 800 };

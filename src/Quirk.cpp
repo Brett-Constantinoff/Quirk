@@ -8,6 +8,8 @@ Quirk::Quirk()
 
 Quirk::~Quirk()
 {
+	vkDestroyDevice(m_device, nullptr);
+
 	//NOTE - things are destroyed in reverse order of creation
 	if (m_enableValidationLayers)
 		DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
@@ -58,6 +60,11 @@ void Quirk::initVulkan()
 	Pick a physical device
 	*/
 	pickPhysicalDevice();
+
+	/*
+	Creates our logical device
+	*/
+	createLogicalDevice();
 }
 
 void Quirk::createDebugMessenger()
@@ -71,7 +78,7 @@ void Quirk::createDebugMessenger()
 
 void Quirk::pickPhysicalDevice()
 {
-	VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
+	m_physDevice = VK_NULL_HANDLE;
 
 	uint32_t deviceCount{};
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
@@ -90,16 +97,52 @@ void Quirk::pickPhysicalDevice()
 	{
 		if (isDeviceSuitable(device))
 		{
-			physicalDevice = device;
+			m_physDevice = device;
 			break;
 		}
 	}
 
-	if (physicalDevice == VK_NULL_HANDLE)
+	if (m_physDevice == VK_NULL_HANDLE)
 	{
 		spdlog::error("failed to find a suitable GPU!");
 		exit(EXIT_FAILURE);
 	}
+}
+
+void Quirk::createLogicalDevice()
+{
+	const auto indices{ findQueueFamilies(m_physDevice) };
+
+	VkDeviceQueueCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	createInfo.queueFamilyIndex = indices.graphicsFamily.value();
+	createInfo.queueCount = 1;
+
+	const float queuePriority{ 1.0f };
+	createInfo.pQueuePriorities = &queuePriority;
+
+	// will come back to this 
+	VkPhysicalDeviceFeatures features{};
+
+	VkDeviceCreateInfo info{};
+	info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	info.pQueueCreateInfos = &createInfo;
+	info.queueCreateInfoCount = 1;
+	info.pEnabledFeatures = &features;
+
+	info.enabledExtensionCount = 0;
+	if (m_enableValidationLayers) 
+	{
+		info.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
+		info.ppEnabledLayerNames = m_validationLayers.data();
+	}
+	else 
+		info.enabledLayerCount = 0;
+
+	if (vkCreateDevice(m_physDevice, &info, nullptr, &m_device) != VK_SUCCESS)
+		exit(EXIT_FAILURE);
+
+	vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
 }
 
 void Quirk::createInstance()
