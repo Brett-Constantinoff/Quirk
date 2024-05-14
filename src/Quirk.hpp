@@ -11,6 +11,7 @@
 #include "spdlog/spdlog.h"
 
 struct QueueFamilyIndices {
+public:
 	std::optional<uint32_t> graphicsFamily;
 
 	bool isComplete() {
@@ -108,12 +109,12 @@ private:
 	/// Currently checks if the device can process the commands we want to use by queue.
 	/// For future refactoring refer to this: https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=Instead%20of%20just,that%20as%20follows%3A 
 	/// </summary>
-	bool isDeviceSuitable(VkPhysicalDevice device);
+	bool isDeviceSuitable(const VkPhysicalDevice& device);
 	/// <summary>
 	/// Currently searches for a queue that supports graphics commands
 	/// For future refactoring refer to this https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=to%20check%20for.-,Queue%20families,-It%20has%20been
 	/// </summary>
-	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+	QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice& device);
 
 private:
 	// Windowing

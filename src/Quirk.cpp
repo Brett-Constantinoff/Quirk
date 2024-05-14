@@ -73,13 +73,11 @@ void Quirk::pickPhysicalDevice()
 {
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
-	uint32_t deviceCount = 0;
+	uint32_t deviceCount{};
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
 	if (deviceCount == 0)
-	{
 		throw std::runtime_error("failed to find GPUs with Vulkan support!");
-	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
@@ -95,7 +93,8 @@ void Quirk::pickPhysicalDevice()
 
 	if (physicalDevice == VK_NULL_HANDLE)
 	{
-		throw std::runtime_error("failed to find a suitable GPU!");
+		spdlog::error("failed to find a suitable GPU!");
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -244,31 +243,31 @@ void Quirk::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&
 	debugCreateInfo.pUserData = nullptr;
 }
 
-bool Quirk::isDeviceSuitable(VkPhysicalDevice device)
+bool Quirk::isDeviceSuitable(const VkPhysicalDevice &device)
 {
 	QueueFamilyIndices indices = findQueueFamilies(device);
 	return indices.isComplete();
 }
 
-QueueFamilyIndices Quirk::findQueueFamilies(VkPhysicalDevice device)
+QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
 {
-	QueueFamilyIndices indices;
+	QueueFamilyIndices indices {};
 
-	uint32_t queueFamilyCount = 0;
+	uint32_t queueFamilyCount {};
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
 	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-	int i = 0;
+	int32_t i {};
 	for (const auto& queueFamily : queueFamilies) {
 		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 			indices.graphicsFamily = i;
 		}
 
-		if (indices.isComplete()) {
+		if (indices.isComplete())
 			break;
-		}
+		
 
 		i++;
 	}
