@@ -71,13 +71,17 @@ void Quirk::createDebugMessenger()
 
 void Quirk::pickPhysicalDevice()
 {
-	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+	VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
 
 	uint32_t deviceCount{};
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
 	if (deviceCount == 0)
-		throw std::runtime_error("failed to find GPUs with Vulkan support!");
+	{
+		spdlog::error("failed to find GPUs with Vulkan support!");
+		exit(EXIT_FAILURE);
+	}
+
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
