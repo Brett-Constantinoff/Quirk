@@ -10,6 +10,14 @@
 
 #include "spdlog/spdlog.h"
 
+struct QueueFamilyIndices {
+	std::optional<uint32_t> graphicsFamily;
+
+	bool isComplete() {
+		return graphicsFamily.has_value();
+	}
+};
+
 class Quirk
 {
 public:
@@ -49,6 +57,10 @@ private:
 	/// If in debug mode, creates a debug messenger
 	/// </summary>
 	void createDebugMessenger();
+	/// <summary>
+	/// Picks a physical device to use for the application
+	/// </summary>
+	void pickPhysicalDevice();
 	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
@@ -92,6 +104,16 @@ private:
 	/// </summary>
 	/// <param name="createInfo"></param>
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+	/// <summary>
+	/// Currently checks if the device can process the commands we want to use by queue.
+	/// For future refactoring refer to this: https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=Instead%20of%20just,that%20as%20follows%3A 
+	/// </summary>
+	bool isDeviceSuitable(VkPhysicalDevice device);
+	/// <summary>
+	/// Currently searches for a queue that supports graphics commands
+	/// For future refactoring refer to this https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=to%20check%20for.-,Queue%20families,-It%20has%20been
+	/// </summary>
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 private:
 	// Windowing
