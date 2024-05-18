@@ -14,6 +14,7 @@ Quirk::~Quirk()
 	if (m_enableValidationLayers)
 		DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
 
+	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 	vkDestroyInstance(m_instance, nullptr);
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
@@ -55,6 +56,11 @@ void Quirk::initVulkan()
 	*/
 	if (m_enableValidationLayers)
 		createDebugMessenger();
+
+	/*
+	Create our window surface
+	*/
+	createSurface();
 
 	/*
 	Pick a physical device
@@ -113,36 +119,44 @@ void Quirk::createLogicalDevice()
 {
 	const auto indices{ findQueueFamilies(m_physDevice) };
 
-	VkDeviceQueueCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	createInfo.queueFamilyIndex = indices.graphicsFamily.value();
-	createInfo.queueCount = 1;
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
+	std::set<uint32_t> uniqueQueueFamilies{ indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
 
 	const float queuePriority{ 1.0f };
-	createInfo.pQueuePriorities = &queuePriority;
+	for (const auto queueFamily : uniqueQueueFamilies)
+	{
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = queueFamily;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfos.push_back(queueCreateInfo);
+	}
 
-	// will come back to this 
-	VkPhysicalDeviceFeatures features{};
+	VkPhysicalDeviceFeatures deviceFeatures{};
 
-	VkDeviceCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	info.pQueueCreateInfos = &createInfo;
-	info.queueCreateInfoCount = 1;
-	info.pEnabledFeatures = &features;
+	VkDeviceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-	info.enabledExtensionCount = 0;
+	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+	createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
+	createInfo.pEnabledFeatures = &deviceFeatures;
+	createInfo.enabledExtensionCount = 0;
+
 	if (m_enableValidationLayers) 
 	{
-		info.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
-		info.ppEnabledLayerNames = m_validationLayers.data();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
+		createInfo.ppEnabledLayerNames = m_validationLayers.data();
 	}
 	else 
-		info.enabledLayerCount = 0;
+		createInfo.enabledLayerCount = 0;
 
-	if (vkCreateDevice(m_physDevice, &info, nullptr, &m_device) != VK_SUCCESS)
+	if (vkCreateDevice(m_physDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
 		exit(EXIT_FAILURE);
 
-	vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_device, indices.m_graphicsFamily.value(), 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_device, indices.m_presentFamily.value(), 0, &m_presentQueue);
 }
 
 void Quirk::createInstance()
@@ -182,6 +196,12 @@ void Quirk::createInstance()
 		createInfo.enabledLayerCount = 0;
 
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
+		exit(EXIT_FAILURE);
+}
+
+void Quirk::createSurface()
+{
+	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS)
 		exit(EXIT_FAILURE);
 }
 
@@ -307,14 +327,20 @@ QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
 	int32_t i {};
-	for (const auto& queueFamily : queueFamilies) {
-		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-			indices.graphicsFamily = i;
-		}
+	for (const auto& queueFamily : queueFamilies) 
+	{
+		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			indices.m_graphicsFamily = i;
+
+		// our device needs to be able to present to our window surface
+		VkBool32 presentSupport{ false };
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
 
 		if (indices.isComplete())
 			break;
 		
+		if (presentSupport)
+			indices.m_presentFamily = i;
 
 		i++;
 	}

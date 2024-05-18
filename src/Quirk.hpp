@@ -4,18 +4,25 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <set>
 
+#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 
 #include "spdlog/spdlog.h"
 
 struct QueueFamilyIndices {
 public:
-	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> m_graphicsFamily;
+	std::optional<uint32_t> m_presentFamily;
 
-	bool isComplete() {
-		return graphicsFamily.has_value();
+public:
+	bool isComplete() const
+	{
+		return m_graphicsFamily.has_value() && m_presentFamily.has_value();
 	}
 };
 
@@ -66,6 +73,10 @@ private:
 	/// Creates a logical device to interface with the physical device
 	/// </summary>
 	void createLogicalDevice();
+	/// <summary>
+	/// Creates a window surface for the application
+	/// </summary>
+	void createSurface();
 	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
@@ -130,6 +141,8 @@ private:
 	VkPhysicalDevice m_physDevice{};
 	VkDevice m_device{};
 	VkQueue m_graphicsQueue{};
+	VkQueue m_presentQueue{};
+	VkSurfaceKHR m_surface{};
 
 	// Constants
 	const uint32_t m_width{ 800 };
