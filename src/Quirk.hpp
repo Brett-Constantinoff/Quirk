@@ -89,6 +89,10 @@ private:
 	/// </summary>
 	void createSwapChain();
 	/// <summary>
+	/// Create image views for the swap chain images
+	/// </summary>
+	void createImageViews();
+	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
 	/// </summary>
@@ -188,6 +192,7 @@ private:
 	std::vector<VkImage> m_swapChainImages{};
 	VkFormat m_swapChainImageFormat{};
 	VkExtent2D m_swapChainExtent{};
+	std::vector<VkImageView> m_swapChainImageViews{};
 
 	// Constants
 	const uint32_t m_width{ 800 };
