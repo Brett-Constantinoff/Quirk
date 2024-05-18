@@ -8,12 +8,19 @@ Quirk::Quirk()
 
 Quirk::~Quirk()
 {
+	//NOTE - things are destroyed in reverse order of creation
+
+	for (const auto imageView : m_swapChainImageViews) 
+		vkDestroyImageView(m_device, imageView, nullptr);
+	
+	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+
 	vkDestroyDevice(m_device, nullptr);
 
-	//NOTE - things are destroyed in reverse order of creation
 	if (m_enableValidationLayers)
 		DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
 
+	vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 	vkDestroyInstance(m_instance, nullptr);
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
@@ -31,7 +38,7 @@ void Quirk::initWindow()
 {
 	// need to init glfw library before we can use it
 	if (glfwInit() != GLFW_TRUE)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to init glfw");
 
 	// tell glfw not to create an opengl context
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -57,6 +64,11 @@ void Quirk::initVulkan()
 		createDebugMessenger();
 
 	/*
+	Create our window surface
+	*/
+	createSurface();
+
+	/*
 	Pick a physical device
 	*/
 	pickPhysicalDevice();
@@ -65,6 +77,21 @@ void Quirk::initVulkan()
 	Creates our logical device
 	*/
 	createLogicalDevice();
+
+	/*
+	* Create our swapchain
+	*/
+	createSwapChain();
+
+	/*
+	Create our image views
+	*/
+	createImageViews();
+
+	/*
+	Create our graphics pipeline
+	*/
+	createGraphicsPipeline();
 }
 
 void Quirk::createDebugMessenger()
@@ -73,7 +100,7 @@ void Quirk::createDebugMessenger()
 	populateDebugMessengerCreateInfo(createInfo);
 
 	if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("Failed to create debug messenger");
 }
 
 void Quirk::pickPhysicalDevice()
@@ -84,11 +111,7 @@ void Quirk::pickPhysicalDevice()
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
 	if (deviceCount == 0)
-	{
-		spdlog::error("failed to find GPUs with Vulkan support!");
-		exit(EXIT_FAILURE);
-	}
-
+		quirkExit("failed to find GPUs with Vulkan support");
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
@@ -103,53 +126,59 @@ void Quirk::pickPhysicalDevice()
 	}
 
 	if (m_physDevice == VK_NULL_HANDLE)
-	{
-		spdlog::error("failed to find a suitable GPU!");
-		exit(EXIT_FAILURE);
-	}
+		quirkExit("failed to find a suitable GPU");
 }
 
 void Quirk::createLogicalDevice()
 {
 	const auto indices{ findQueueFamilies(m_physDevice) };
 
-	VkDeviceQueueCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	createInfo.queueFamilyIndex = indices.graphicsFamily.value();
-	createInfo.queueCount = 1;
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
+	std::set<uint32_t> uniqueQueueFamilies{ indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
 
 	const float queuePriority{ 1.0f };
-	createInfo.pQueuePriorities = &queuePriority;
+	for (const auto queueFamily : uniqueQueueFamilies)
+	{
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = queueFamily;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfos.push_back(queueCreateInfo);
+	}
 
-	// will come back to this 
-	VkPhysicalDeviceFeatures features{};
+	VkPhysicalDeviceFeatures deviceFeatures{};
 
-	VkDeviceCreateInfo info{};
-	info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	info.pQueueCreateInfos = &createInfo;
-	info.queueCreateInfoCount = 1;
-	info.pEnabledFeatures = &features;
+	VkDeviceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-	info.enabledExtensionCount = 0;
+	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+	createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
+	createInfo.pEnabledFeatures = &deviceFeatures;
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(m_deviceExtentions.size());
+	createInfo.ppEnabledExtensionNames = m_deviceExtentions.data();
+
 	if (m_enableValidationLayers) 
 	{
-		info.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
-		info.ppEnabledLayerNames = m_validationLayers.data();
+		createInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
+		createInfo.ppEnabledLayerNames = m_validationLayers.data();
 	}
 	else 
-		info.enabledLayerCount = 0;
+		createInfo.enabledLayerCount = 0;
 
-	if (vkCreateDevice(m_physDevice, &info, nullptr, &m_device) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+	if (vkCreateDevice(m_physDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
+		quirkExit("failed to create logical device");
 
-	vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_device, indices.m_graphicsFamily.value(), 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_device, indices.m_presentFamily.value(), 0, &m_presentQueue);
 }
 
 void Quirk::createInstance()
 {
 	// first check for validation layer support
 	if (m_enableValidationLayers && !checkValidationLayerSupport())
-		exit(EXIT_FAILURE);
+		quirkExit("validation layers requested, but not available!");
 
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -182,7 +211,147 @@ void Quirk::createInstance()
 		createInfo.enabledLayerCount = 0;
 
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create instance");
+}
+
+void Quirk::createSurface()
+{
+	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS)
+		quirkExit("failed to create window surface");
+}
+
+void Quirk::createSwapChain()
+{
+	const SwapChainDetails swapChainSupport{ querySwapChainSupport(m_physDevice) };
+
+	const VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapChainSupport.m_formats) };
+	const VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapChainSupport.m_presentModes) };
+	const VkExtent2D extent{ chooseSwapExtent(swapChainSupport.m_capabilities) };
+
+	// should request 1 more than the minimum (just a standard)
+	uint32_t imageCount{ swapChainSupport.m_capabilities.minImageCount + 1 };
+
+	if (swapChainSupport.m_capabilities.maxImageCount > 0 && imageCount > swapChainSupport.m_capabilities.maxImageCount) 
+		imageCount = swapChainSupport.m_capabilities.maxImageCount;
+	
+	VkSwapchainCreateInfoKHR createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	createInfo.surface = m_surface;
+	createInfo.minImageCount = imageCount;
+	createInfo.imageFormat = surfaceFormat.format;
+	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageExtent = extent;
+	createInfo.imageArrayLayers = 1;
+
+	// were saying we want to render directly to the image
+	// TODO - this is a temporary solution, in the future we could use this for post processing
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+	QueueFamilyIndices indices = findQueueFamilies(m_physDevice);
+	uint32_t queueFamilyIndices[] = { indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
+
+	if (indices.m_graphicsFamily != indices.m_presentFamily) 
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		createInfo.queueFamilyIndexCount = 2;
+		createInfo.pQueueFamilyIndices = queueFamilyIndices;
+	}
+	else 
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		createInfo.queueFamilyIndexCount = 0;
+		createInfo.pQueueFamilyIndices = nullptr;
+	}
+
+	createInfo.preTransform = swapChainSupport.m_capabilities.currentTransform;
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.presentMode = presentMode;
+	createInfo.clipped = VK_TRUE;
+	
+	// TODO - This will need to change if we want to resize the window
+	createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+	if (vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain) != VK_SUCCESS)
+		quirkExit("failed to create swap chain");
+
+	vkGetSwapchainImagesKHR(m_device, m_swapChain, &imageCount, nullptr);
+
+	m_swapChainImages.resize(imageCount);
+
+	vkGetSwapchainImagesKHR(m_device, m_swapChain, &imageCount, m_swapChainImages.data());
+
+	m_swapChainImageFormat = surfaceFormat.format;
+	m_swapChainExtent = extent;
+}
+
+void Quirk::createImageViews()
+{
+	m_swapChainImageViews.resize(m_swapChainImages.size());
+
+	for (size_t i{}; i < m_swapChainImages.size(); i++)
+	{
+		VkImageViewCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		createInfo.image = m_swapChainImages[i];
+		createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		createInfo.format = m_swapChainImageFormat;
+
+		createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+		createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+		createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		createInfo.subresourceRange.baseMipLevel = 0;
+		createInfo.subresourceRange.levelCount = 1;
+		createInfo.subresourceRange.baseArrayLayer = 0;
+		createInfo.subresourceRange.layerCount = 1;
+
+		if (vkCreateImageView(m_device, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS)
+			quirkExit("failed to create image view");
+	}
+}
+
+void Quirk::createGraphicsPipeline()
+{
+	// load our shaders
+	const auto vertShaderCode{ loadShader("shaders/shader.vert", "shaders/vert.spv")};
+	const auto fragShaderCode{ loadShader("shaders/shader.frag", "shaders/frag.spv")};
+
+	// create the shader modules
+	const auto vertShaderModule{ createShaderModule(vertShaderCode) };
+	const auto fragShaderModule{ createShaderModule(fragShaderCode) };
+
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = vertShaderModule;
+	vertShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = fragShaderModule;
+	fragShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	vkDestroyShaderModule(m_device, fragShaderModule, nullptr);
+	vkDestroyShaderModule(m_device, vertShaderModule, nullptr);
+}
+
+VkShaderModule Quirk::createShaderModule(const std::vector<char>& code)
+{
+	VkShaderModuleCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = code.size();
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+	VkShaderModule shaderModule;
+	if (vkCreateShaderModule(m_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		quirkExit("failed to create shader module");
+	
+	return shaderModule;
 }
 
 bool Quirk::checkValidationLayerSupport()
@@ -293,7 +462,16 @@ void Quirk::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&
 bool Quirk::isDeviceSuitable(const VkPhysicalDevice &device)
 {
 	QueueFamilyIndices indices = findQueueFamilies(device);
-	return indices.isComplete();
+	bool extensionsSupported = checkDeviceExtensionSupport(device);
+
+	bool swapChainAdequate{ false };
+	if (extensionsSupported) 
+	{
+		SwapChainDetails swapChainSupport{ querySwapChainSupport(device) };
+		swapChainAdequate = !swapChainSupport.m_formats.empty() && !swapChainSupport.m_presentModes.empty();
+	}
+
+	return indices.isComplete() && extensionsSupported && swapChainAdequate;
 }
 
 QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
@@ -307,17 +485,160 @@ QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
 	int32_t i {};
-	for (const auto& queueFamily : queueFamilies) {
-		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-			indices.graphicsFamily = i;
-		}
+	for (const auto& queueFamily : queueFamilies) 
+	{
+		if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			indices.m_graphicsFamily = i;
+
+		// our device needs to be able to present to our window surface
+		VkBool32 presentSupport{ false };
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
 
 		if (indices.isComplete())
 			break;
 		
+		if (presentSupport)
+			indices.m_presentFamily = i;
 
 		i++;
 	}
 	
 	return indices;
+}
+
+bool Quirk::checkDeviceExtensionSupport(const VkPhysicalDevice& device)
+{
+	uint32_t count{};
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr);
+
+	std::vector<VkExtensionProperties> availableExtensions(count);
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &count, availableExtensions.data());
+
+	std::set<std::string> requiredExtensions(m_deviceExtentions.begin(), m_deviceExtentions.end());
+
+	for (const auto& extension : availableExtensions)
+		requiredExtensions.erase(extension.extensionName);
+
+	return requiredExtensions.empty();
+}
+
+SwapChainDetails Quirk::querySwapChainSupport(const VkPhysicalDevice& device)
+{
+	SwapChainDetails details{};
+
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.m_capabilities);
+
+	uint32_t formatCount{};
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
+
+	if (formatCount != 0)
+	{
+		details.m_formats.resize(formatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.m_formats.data());
+	}
+
+	uint32_t presentModeCount{};
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
+
+	if (presentModeCount != 0)
+	{
+		details.m_presentModes.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, details.m_presentModes.data());
+	}
+
+	return details;
+}
+
+VkSurfaceFormatKHR Quirk::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+{
+	for (const auto& availableFormat : availableFormats)
+	{
+		const bool isSrgb{ availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB };
+		const bool isLinear{ availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+
+		// TODO - this is a temporary solution, in the future we could rank the formats based on how well they match our requirements
+		// this will be fine for now though
+		if (isSrgb && isLinear)
+			return availableFormat;
+	}
+
+	// if we can't find a format that matches our requirements, just return the first one
+	return availableFormats[0];
+}
+
+VkPresentModeKHR Quirk::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+{
+	for (const auto& availablePresentMode : availablePresentModes)
+	{
+		// sweet sweet triple buffering
+		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			return availablePresentMode;
+	}
+
+	// This is our fallback mode, it's guaranteed to be supported
+	return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D Quirk::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+{
+	if (capabilities.currentExtent.width != UINT32_MAX)
+		return capabilities.currentExtent;
+
+	int32_t width{};
+	int32_t height{};
+
+	glfwGetFramebufferSize(m_window, &width, &height);
+
+	VkExtent2D actualExtent{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+
+	// need to set the width and height to be within the min and max extents
+	actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+	actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+	return actualExtent;
+}
+
+std::vector<char> Quirk::loadShader(const std::string& filename, const std::string &res)
+{
+	// this will create a temp file in the project directory called "res"
+	// which will get cleaned up at a later point
+	compileShader(filename, res);
+
+	std::ifstream file { res, std::ios::ate | std::ios::binary };
+	if (!file.is_open())
+		quirkExit("failed to open file");
+
+	// classic C style file reading
+	const size_t fileSize{ static_cast<size_t>(file.tellg()) };
+	std::vector<char> buffer(fileSize);
+
+	file.seekg(0);
+	file.read(buffer.data(), fileSize);
+
+	file.close();
+
+	// now that weve read the data, we can delete the file
+	if (std::remove(res.c_str()) != 0)
+		quirkExit("failed to delete file");
+
+	return buffer;
+}
+
+void Quirk::compileShader(const std::string& filename, const std::string& res)
+{
+	const char* env{ "VULKAN_SDK" };
+	const char* path{ std::getenv(env) };
+
+	// wont get this far if they dont have the vulkan sdk installed but its
+	// always good to check
+	if (path == nullptr)
+		quirkExit("VULKAN_SDK environment variable not set");
+
+	// compile our shaders
+	// TODO - this command is platform dependent
+	const std::string command{ std::string(path) + "/Bin/glslc.exe " + filename + " -o " + res };
+	int32_t commandRes{ std::system(command.c_str()) };
+
+	if (commandRes != 0)
+		quirkExit("failed to compile shader");
 }

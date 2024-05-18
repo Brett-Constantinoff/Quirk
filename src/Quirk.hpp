@@ -4,19 +4,39 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <set>
+#include <cstdlib>
+#include <fstream>
 
+#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 
 #include "spdlog/spdlog.h"
 
+// do / while ensures that the macro can be used as a single statement
+#define quirkExit(msg) do { spdlog::error(msg); exit(EXIT_FAILURE); } while (0)
+
+
 struct QueueFamilyIndices {
 public:
-	std::optional<uint32_t> graphicsFamily;
+	std::optional<uint32_t> m_graphicsFamily{};
+	std::optional<uint32_t> m_presentFamily{};
 
-	bool isComplete() {
-		return graphicsFamily.has_value();
+public:
+	bool isComplete() const
+	{
+		return m_graphicsFamily.has_value() && m_presentFamily.has_value();
 	}
+};
+
+struct SwapChainDetails 
+{
+	VkSurfaceCapabilitiesKHR m_capabilities{};
+	std::vector<VkSurfaceFormatKHR> m_formats{};
+	std::vector<VkPresentModeKHR> m_presentModes{};
 };
 
 class Quirk
@@ -66,6 +86,28 @@ private:
 	/// Creates a logical device to interface with the physical device
 	/// </summary>
 	void createLogicalDevice();
+	/// <summary>
+	/// Creates a window surface for the application
+	/// </summary>
+	void createSurface();
+	/// <summary>
+	/// Creates our swap chain for the application
+	/// </summary>
+	void createSwapChain();
+	/// <summary>
+	/// Create image views for the swap chain images
+	/// </summary>
+	void createImageViews();
+	/// <summary>
+	/// Creates the graphics pipeline for the application
+	/// </summary>
+	void createGraphicsPipeline();
+	/// <summary>
+	/// Creates a shader module from data
+	/// </summary>
+	/// <param name="code"></param>
+	/// <returns></returns>
+	VkShaderModule createShaderModule(const std::vector<char>& code);
 	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
@@ -119,6 +161,48 @@ private:
 	/// For future refactoring refer to this https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=to%20check%20for.-,Queue%20families,-It%20has%20been
 	/// </summary>
 	QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice& device);
+	/// <summary>
+	/// Checks if all required extensions needed for the device are supported
+	/// </summary>
+	/// <param name="device"></param>
+	/// <returns></returns>
+	bool checkDeviceExtensionSupport(const VkPhysicalDevice& device);
+	/// <summary>
+	/// Populates the swap chain details struct with the capabilities, formats, and present modes
+	/// </summary>
+	/// <param name="device"></param>
+	/// <returns></returns>
+	SwapChainDetails querySwapChainSupport(const VkPhysicalDevice& device);
+	/// <summary>
+	/// Chooses the best surface format for the swap chain (color depth
+	/// </summary>
+	/// <param name="availableFormats"></param>
+	/// <returns></returns>
+	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	/// <summary>
+	/// Choose how images are presented to the screen 
+	/// </summary>
+	/// <param name="availablePresentModes"></param>
+	/// <returns></returns>
+	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+	/// <summary>
+	/// Choose the resolution of the swap chain
+	/// </summary>
+	/// <param name="capabilities"></param>
+	/// <returns></returns>
+	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+	/// <summary>
+	/// Loads a shader into memory from a file
+	/// </summary>
+	/// <param name="filename"></param>
+	/// <returns></returns>
+	std::vector<char> loadShader(const std::string& filename, const std::string& res);
+	/// <summary>
+	/// Compiles a shader from a file
+	/// </summary>
+	/// <param name="filename"></param>
+	/// <param name="res"></param>
+	void compileShader(const std::string& filename, const std::string& res);
 
 private:
 	// Windowing
@@ -130,12 +214,20 @@ private:
 	VkPhysicalDevice m_physDevice{};
 	VkDevice m_device{};
 	VkQueue m_graphicsQueue{};
+	VkQueue m_presentQueue{};
+	VkSurfaceKHR m_surface{};
+	VkSwapchainKHR m_swapChain{};
+	std::vector<VkImage> m_swapChainImages{};
+	VkFormat m_swapChainImageFormat{};
+	VkExtent2D m_swapChainExtent{};
+	std::vector<VkImageView> m_swapChainImageViews{};
 
 	// Constants
 	const uint32_t m_width{ 800 };
 	const uint32_t m_height{ 600 };
 	const char* m_appName{ "Quirk" };
 	const std::vector<const char*> m_validationLayers{ "VK_LAYER_KHRONOS_validation" };
+	const std::vector<const char*> m_deviceExtentions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 #ifdef DEBUG
 	const bool m_enableValidationLayers{ true };
