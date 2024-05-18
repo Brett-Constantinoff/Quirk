@@ -87,6 +87,11 @@ void Quirk::initVulkan()
 	Create our image views
 	*/
 	createImageViews();
+
+	/*
+	Create our graphics pipeline
+	*/
+	createGraphicsPipeline();
 }
 
 void Quirk::createDebugMessenger()
@@ -312,6 +317,48 @@ void Quirk::createImageViews()
 		if (vkCreateImageView(m_device, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS)
 			exit(EXIT_FAILURE);
 	}
+}
+
+void Quirk::createGraphicsPipeline()
+{
+	// load our shaders
+	const auto vertShaderCode{ loadShader("shaders/shader.vert", "shaders/vert.spv")};
+	const auto fragShaderCode{ loadShader("shaders/shader.frag", "shaders/frag.spv")};
+
+	// create the shader modules
+	const auto vertShaderModule{ createShaderModule(vertShaderCode) };
+	const auto fragShaderModule{ createShaderModule(fragShaderCode) };
+
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = vertShaderModule;
+	vertShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = fragShaderModule;
+	fragShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	vkDestroyShaderModule(m_device, fragShaderModule, nullptr);
+	vkDestroyShaderModule(m_device, vertShaderModule, nullptr);
+}
+
+VkShaderModule Quirk::createShaderModule(const std::vector<char>& code)
+{
+	VkShaderModuleCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = code.size();
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+	VkShaderModule shaderModule;
+	if (vkCreateShaderModule(m_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		exit(EXIT_FAILURE);
+	
+	return shaderModule;
 }
 
 bool Quirk::checkValidationLayerSupport()
@@ -556,4 +603,49 @@ VkExtent2D Quirk::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
 	actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 	return actualExtent;
+}
+
+std::vector<char> Quirk::loadShader(const std::string& filename, const std::string &res)
+{
+	// this will create a temp file in the project directory called "res"
+	// which will get cleaned up at a later point
+	compileShader(filename, res);
+
+	std::ifstream file { res, std::ios::ate | std::ios::binary };
+	if (!file.is_open())
+		exit(EXIT_FAILURE);
+
+	// classic C style file reading
+	const size_t fileSize{ static_cast<size_t>(file.tellg()) };
+	std::vector<char> buffer(fileSize);
+
+	file.seekg(0);
+	file.read(buffer.data(), fileSize);
+
+	file.close();
+
+	// now that weve read the data, we can delete the file
+	if (std::remove(res.c_str()) != 0)
+		exit(EXIT_FAILURE);
+
+	return buffer;
+}
+
+void Quirk::compileShader(const std::string& filename, const std::string& res)
+{
+	const char* env{ "VULKAN_SDK" };
+	const char* path{ std::getenv(env) };
+
+	// wont get this far if they dont have the vulkan sdk installed but its
+	// always good to check
+	if (path == nullptr)
+		exit(EXIT_FAILURE);
+
+	// compile our shaders
+	// TODO - this command is platform dependent
+	const std::string command{ std::string(path) + "/Bin/glslc.exe " + filename + " -o " + res };
+	int32_t commandRes{ std::system(command.c_str()) };
+
+	if (commandRes != 0)
+		exit(EXIT_FAILURE);
 }

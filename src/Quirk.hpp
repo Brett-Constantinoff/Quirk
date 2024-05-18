@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <vector>
 #include <set>
+#include <cstdlib>
+#include <fstream>
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
@@ -93,6 +95,16 @@ private:
 	/// </summary>
 	void createImageViews();
 	/// <summary>
+	/// Creates the graphics pipeline for the application
+	/// </summary>
+	void createGraphicsPipeline();
+	/// <summary>
+	/// Creates a shader module from data
+	/// </summary>
+	/// <param name="code"></param>
+	/// <returns></returns>
+	VkShaderModule createShaderModule(const std::vector<char>& code);
+	/// <summary>
 	/// Checks to see if all requested layers are available in our
 	/// validation layer vector
 	/// </summary>
@@ -175,6 +187,18 @@ private:
 	/// <param name="capabilities"></param>
 	/// <returns></returns>
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+	/// <summary>
+	/// Loads a shader into memory from a file
+	/// </summary>
+	/// <param name="filename"></param>
+	/// <returns></returns>
+	std::vector<char> loadShader(const std::string& filename, const std::string& res);
+	/// <summary>
+	/// Compiles a shader from a file
+	/// </summary>
+	/// <param name="filename"></param>
+	/// <param name="res"></param>
+	void compileShader(const std::string& filename, const std::string& res);
 
 private:
 	// Windowing
