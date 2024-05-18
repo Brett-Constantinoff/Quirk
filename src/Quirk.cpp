@@ -38,7 +38,7 @@ void Quirk::initWindow()
 {
 	// need to init glfw library before we can use it
 	if (glfwInit() != GLFW_TRUE)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to init glfw");
 
 	// tell glfw not to create an opengl context
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -100,7 +100,7 @@ void Quirk::createDebugMessenger()
 	populateDebugMessengerCreateInfo(createInfo);
 
 	if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("Failed to create debug messenger");
 }
 
 void Quirk::pickPhysicalDevice()
@@ -111,11 +111,7 @@ void Quirk::pickPhysicalDevice()
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
 	if (deviceCount == 0)
-	{
-		spdlog::error("failed to find GPUs with Vulkan support!");
-		exit(EXIT_FAILURE);
-	}
-
+		quirkExit("failed to find GPUs with Vulkan support");
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
@@ -130,10 +126,7 @@ void Quirk::pickPhysicalDevice()
 	}
 
 	if (m_physDevice == VK_NULL_HANDLE)
-	{
-		spdlog::error("failed to find a suitable GPU!");
-		exit(EXIT_FAILURE);
-	}
+		quirkExit("failed to find a suitable GPU");
 }
 
 void Quirk::createLogicalDevice()
@@ -175,7 +168,7 @@ void Quirk::createLogicalDevice()
 		createInfo.enabledLayerCount = 0;
 
 	if (vkCreateDevice(m_physDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create logical device");
 
 	vkGetDeviceQueue(m_device, indices.m_graphicsFamily.value(), 0, &m_graphicsQueue);
 	vkGetDeviceQueue(m_device, indices.m_presentFamily.value(), 0, &m_presentQueue);
@@ -185,7 +178,7 @@ void Quirk::createInstance()
 {
 	// first check for validation layer support
 	if (m_enableValidationLayers && !checkValidationLayerSupport())
-		exit(EXIT_FAILURE);
+		quirkExit("validation layers requested, but not available!");
 
 	VkApplicationInfo appInfo{};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -218,13 +211,13 @@ void Quirk::createInstance()
 		createInfo.enabledLayerCount = 0;
 
 	if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create instance");
 }
 
 void Quirk::createSurface()
 {
 	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create window surface");
 }
 
 void Quirk::createSwapChain()
@@ -279,7 +272,7 @@ void Quirk::createSwapChain()
 	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 	if (vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create swap chain");
 
 	vkGetSwapchainImagesKHR(m_device, m_swapChain, &imageCount, nullptr);
 
@@ -315,7 +308,7 @@ void Quirk::createImageViews()
 		createInfo.subresourceRange.layerCount = 1;
 
 		if (vkCreateImageView(m_device, &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS)
-			exit(EXIT_FAILURE);
+			quirkExit("failed to create image view");
 	}
 }
 
@@ -356,7 +349,7 @@ VkShaderModule Quirk::createShaderModule(const std::vector<char>& code)
 
 	VkShaderModule shaderModule;
 	if (vkCreateShaderModule(m_device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to create shader module");
 	
 	return shaderModule;
 }
@@ -613,7 +606,7 @@ std::vector<char> Quirk::loadShader(const std::string& filename, const std::stri
 
 	std::ifstream file { res, std::ios::ate | std::ios::binary };
 	if (!file.is_open())
-		exit(EXIT_FAILURE);
+		quirkExit("failed to open file");
 
 	// classic C style file reading
 	const size_t fileSize{ static_cast<size_t>(file.tellg()) };
@@ -626,7 +619,7 @@ std::vector<char> Quirk::loadShader(const std::string& filename, const std::stri
 
 	// now that weve read the data, we can delete the file
 	if (std::remove(res.c_str()) != 0)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to delete file");
 
 	return buffer;
 }
@@ -639,7 +632,7 @@ void Quirk::compileShader(const std::string& filename, const std::string& res)
 	// wont get this far if they dont have the vulkan sdk installed but its
 	// always good to check
 	if (path == nullptr)
-		exit(EXIT_FAILURE);
+		quirkExit("VULKAN_SDK environment variable not set");
 
 	// compile our shaders
 	// TODO - this command is platform dependent
@@ -647,5 +640,5 @@ void Quirk::compileShader(const std::string& filename, const std::string& res)
 	int32_t commandRes{ std::system(command.c_str()) };
 
 	if (commandRes != 0)
-		exit(EXIT_FAILURE);
+		quirkExit("failed to compile shader");
 }

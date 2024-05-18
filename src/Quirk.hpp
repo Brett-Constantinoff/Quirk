@@ -16,6 +16,10 @@
 
 #include "spdlog/spdlog.h"
 
+// do / while ensures that the macro can be used as a single statement
+#define quirkExit(msg) do { spdlog::error(msg); exit(EXIT_FAILURE); } while (0)
+
+
 struct QueueFamilyIndices {
 public:
 	std::optional<uint32_t> m_graphicsFamily{};
