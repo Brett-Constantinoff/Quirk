@@ -8,9 +8,12 @@ Quirk::Quirk()
 
 Quirk::~Quirk()
 {
+	//NOTE - things are destroyed in reverse order of creation
+
+	vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+
 	vkDestroyDevice(m_device, nullptr);
 
-	//NOTE - things are destroyed in reverse order of creation
 	if (m_enableValidationLayers)
 		DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
 
@@ -71,6 +74,11 @@ void Quirk::initVulkan()
 	Creates our logical device
 	*/
 	createLogicalDevice();
+
+	/*
+	* Create our swapchain
+	*/
+	createSwapChain();
 }
 
 void Quirk::createDebugMessenger()
@@ -142,7 +150,8 @@ void Quirk::createLogicalDevice()
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
 	createInfo.pEnabledFeatures = &deviceFeatures;
-	createInfo.enabledExtensionCount = 0;
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(m_deviceExtentions.size());
+	createInfo.ppEnabledExtensionNames = m_deviceExtentions.data();
 
 	if (m_enableValidationLayers) 
 	{
@@ -203,6 +212,70 @@ void Quirk::createSurface()
 {
 	if (glfwCreateWindowSurface(m_instance, m_window, nullptr, &m_surface) != VK_SUCCESS)
 		exit(EXIT_FAILURE);
+}
+
+void Quirk::createSwapChain()
+{
+	const SwapChainDetails swapChainSupport{ querySwapChainSupport(m_physDevice) };
+
+	const VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapChainSupport.m_formats) };
+	const VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapChainSupport.m_presentModes) };
+	const VkExtent2D extent{ chooseSwapExtent(swapChainSupport.m_capabilities) };
+
+	// should request 1 more than the minimum (just a standard)
+	uint32_t imageCount{ swapChainSupport.m_capabilities.minImageCount + 1 };
+
+	if (swapChainSupport.m_capabilities.maxImageCount > 0 && imageCount > swapChainSupport.m_capabilities.maxImageCount) 
+		imageCount = swapChainSupport.m_capabilities.maxImageCount;
+	
+	VkSwapchainCreateInfoKHR createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	createInfo.surface = m_surface;
+	createInfo.minImageCount = imageCount;
+	createInfo.imageFormat = surfaceFormat.format;
+	createInfo.imageColorSpace = surfaceFormat.colorSpace;
+	createInfo.imageExtent = extent;
+	createInfo.imageArrayLayers = 1;
+
+	// were saying we want to render directly to the image
+	// TODO - this is a temporary solution, in the future we could use this for post processing
+	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+	QueueFamilyIndices indices = findQueueFamilies(m_physDevice);
+	uint32_t queueFamilyIndices[] = { indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
+
+	if (indices.m_graphicsFamily != indices.m_presentFamily) 
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		createInfo.queueFamilyIndexCount = 2;
+		createInfo.pQueueFamilyIndices = queueFamilyIndices;
+	}
+	else 
+	{
+		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		createInfo.queueFamilyIndexCount = 0;
+		createInfo.pQueueFamilyIndices = nullptr;
+	}
+
+	createInfo.preTransform = swapChainSupport.m_capabilities.currentTransform;
+	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	createInfo.presentMode = presentMode;
+	createInfo.clipped = VK_TRUE;
+	
+	// TODO - This will need to change if we want to resize the window
+	createInfo.oldSwapchain = VK_NULL_HANDLE;
+
+	if (vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain) != VK_SUCCESS)
+		exit(EXIT_FAILURE);
+
+	vkGetSwapchainImagesKHR(m_device, m_swapChain, &imageCount, nullptr);
+
+	m_swapChainImages.resize(imageCount);
+
+	vkGetSwapchainImagesKHR(m_device, m_swapChain, &imageCount, m_swapChainImages.data());
+
+	m_swapChainImageFormat = surfaceFormat.format;
+	m_swapChainExtent = extent;
 }
 
 bool Quirk::checkValidationLayerSupport()
@@ -313,7 +386,16 @@ void Quirk::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&
 bool Quirk::isDeviceSuitable(const VkPhysicalDevice &device)
 {
 	QueueFamilyIndices indices = findQueueFamilies(device);
-	return indices.isComplete();
+	bool extensionsSupported = checkDeviceExtensionSupport(device);
+
+	bool swapChainAdequate{ false };
+	if (extensionsSupported) 
+	{
+		SwapChainDetails swapChainSupport{ querySwapChainSupport(device) };
+		swapChainAdequate = !swapChainSupport.m_formats.empty() && !swapChainSupport.m_presentModes.empty();
+	}
+
+	return indices.isComplete() && extensionsSupported && swapChainAdequate;
 }
 
 QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
@@ -346,4 +428,96 @@ QueueFamilyIndices Quirk::findQueueFamilies(const VkPhysicalDevice &device)
 	}
 	
 	return indices;
+}
+
+bool Quirk::checkDeviceExtensionSupport(const VkPhysicalDevice& device)
+{
+	uint32_t count{};
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr);
+
+	std::vector<VkExtensionProperties> availableExtensions(count);
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &count, availableExtensions.data());
+
+	std::set<std::string> requiredExtensions(m_deviceExtentions.begin(), m_deviceExtentions.end());
+
+	for (const auto& extension : availableExtensions)
+		requiredExtensions.erase(extension.extensionName);
+
+	return requiredExtensions.empty();
+}
+
+SwapChainDetails Quirk::querySwapChainSupport(const VkPhysicalDevice& device)
+{
+	SwapChainDetails details{};
+
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.m_capabilities);
+
+	uint32_t formatCount{};
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
+
+	if (formatCount != 0)
+	{
+		details.m_formats.resize(formatCount);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.m_formats.data());
+	}
+
+	uint32_t presentModeCount{};
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
+
+	if (presentModeCount != 0)
+	{
+		details.m_presentModes.resize(presentModeCount);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, details.m_presentModes.data());
+	}
+
+	return details;
+}
+
+VkSurfaceFormatKHR Quirk::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+{
+	for (const auto& availableFormat : availableFormats)
+	{
+		const bool isSrgb{ availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB };
+		const bool isLinear{ availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+
+		// TODO - this is a temporary solution, in the future we could rank the formats based on how well they match our requirements
+		// this will be fine for now though
+		if (isSrgb && isLinear)
+			return availableFormat;
+	}
+
+	// if we can't find a format that matches our requirements, just return the first one
+	return availableFormats[0];
+}
+
+VkPresentModeKHR Quirk::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes)
+{
+	for (const auto& availablePresentMode : availablePresentModes)
+	{
+		// sweet sweet triple buffering
+		if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			return availablePresentMode;
+	}
+
+	// This is our fallback mode, it's guaranteed to be supported
+	return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D Quirk::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
+{
+	if (capabilities.currentExtent.width != UINT32_MAX)
+		return capabilities.currentExtent;
+
+	int32_t width{};
+	int32_t height{};
+
+	glfwGetFramebufferSize(m_window, &width, &height);
+
+	VkExtent2D actualExtent{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
+
+	// need to set the width and height to be within the min and max extents
+	actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+	actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+	return actualExtent;
 }
