@@ -1,10 +1,6 @@
-local vulkanSdk = os.getenv("VULKAN_SDK")
-local vulkanInclude = vulkanSdk.."/include"
-local vulkanLib = vulkanSdk.."/lib/vulkan-1.lib"
-
 workspace "Quirk"
     configurations { "Debug", "Release" }
-    startproject "QuirkEditor"
+    startproject "Editor"
     flags { "MultiProcessorCompile" }
 
     filter "configurations:Debug"
@@ -16,43 +12,7 @@ workspace "Quirk"
         optimize "Speed"
         flags { "LinkTimeOptimization" }
 
-project "QuirkEditor"
-    location "src"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++20"
-	architecture "x64"
 
-    targetdir "src/bin/%{cfg.buildcfg}"
-    objdir "src/bin-int/%{cfg.buildcfg}"
-
-    includedirs 
-    {
-	vulkanInclude,
-        "thirdParty/glfw/include/",
-	"thirdParty/logging/include/",
-    }
-    
-    files 
-    { 
-	"src/**.cpp",
-        "src/**.hpp",
-    }
-
-    links 
-    { 
-	vulkanLib,
-        "Glfw",
-    }
-
-    filter "system:windows"
-        defines 
-        { 
-            "_WINDOWS" 
-        }
-        links
-        {
- 	     "OpengL32"
-        }
-
+include "engine/engine.lua"
+include "editor/editor.lua"
 include "thirdParty/glfw.lua"

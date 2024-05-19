@@ -352,8 +352,8 @@ void Quirk::createRenderPass()
 void Quirk::createGraphicsPipeline()
 {
 	// load our shaders
-	const auto vertShaderCode{ loadShader("shaders/shader.vert", "shaders/vert.spv")};
-	const auto fragShaderCode{ loadShader("shaders/shader.frag", "shaders/frag.spv")};
+	const auto vertShaderCode{ loadShader("../engine/resources/shaders/shader.vert", "../engine/resources/shaders/vert.spv")};
+	const auto fragShaderCode{ loadShader("../engine/resources/shaders/shader.frag", "../engine/resources/shaders/frag.spv")};
 
 	// create the shader modules
 	const auto vertShaderModule{ createShaderModule(vertShaderCode) };
@@ -852,7 +852,7 @@ void Quirk::recordCommandBuffer(VkCommandBuffer& commandBuffer, uint32_t index)
 	renderPassInfo.renderArea.offset = { 0, 0 };
 	renderPassInfo.renderArea.extent = m_swapChainExtent;
 
-	VkClearValue clearColor = { {{0.55f, 0.35f, 1.0f, 1.0f}} };
+	VkClearValue clearColor = { {{0.1f, 0.35f, 1.0f, 1.0f}} };
 	renderPassInfo.clearValueCount = 1;
 	renderPassInfo.pClearValues = &clearColor;
 

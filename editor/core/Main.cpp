@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Quirk.hpp"
+#include "rhi/Quirk.hpp"
 
 int main()
 {
