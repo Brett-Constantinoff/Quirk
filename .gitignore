@@ -3,8 +3,8 @@
 **.vcxproj.filters
 **.vcxproj.user
 **.DS_Store
-src/bin/
-src/bin-int/
+bin/
+bin-int/
 .vs/
 .vscode
 .idea/
