@@ -99,9 +99,29 @@ private:
 	/// </summary>
 	void createImageViews();
 	/// <summary>
+	/// Create our render pass
+	/// </summary>
+	void createRenderPass();
+	/// <summary>
 	/// Creates the graphics pipeline for the application
 	/// </summary>
 	void createGraphicsPipeline();
+	/// <summary>
+	/// Creates a frambuffer for our image views
+	/// </summary>
+	void createFrameBuffers();
+	/// <summary>
+	/// Creates a command bool for rendering
+	/// </summary>
+	void createCommandPool();
+	/// <summary>
+	/// Creates a buffer for the command pool
+	/// </summary>
+	void createCommandBuffer();
+	/// <summary>
+	/// Creates semaphores for synchronization
+	/// </summary>
+	void createSyncObjects();
 	/// <summary>
 	/// Creates a shader module from data
 	/// </summary>
@@ -203,6 +223,16 @@ private:
 	/// <param name="filename"></param>
 	/// <param name="res"></param>
 	void compileShader(const std::string& filename, const std::string& res);
+	/// <summary>
+	/// Writes commands into the command buffer
+	/// </summary>
+	/// <param name="commandBuffer"></param>
+	/// <param name="index"></param>
+	void recordCommandBuffer(VkCommandBuffer& commandBuffer, uint32_t index);
+	/// <summary>
+	/// Draws the frame
+	/// </summary>
+	void draw();
 
 private:
 	// Windowing
@@ -221,6 +251,15 @@ private:
 	VkFormat m_swapChainImageFormat{};
 	VkExtent2D m_swapChainExtent{};
 	std::vector<VkImageView> m_swapChainImageViews{};
+	VkPipelineLayout m_pipelineLayout{};
+	VkRenderPass m_renderPass{};
+	VkPipeline m_graphicsPipeline{};
+	std::vector<VkFramebuffer> m_swapChainFramebuffers{};
+	VkCommandPool m_commandPool{};
+	VkCommandBuffer m_commandBuffer{};
+	VkSemaphore m_imageAvailableSemaphore{};
+	VkSemaphore m_renderFinishedSemaphore{};
+	VkFence m_inFlightFence{};
 
 	// Constants
 	const uint32_t m_width{ 800 };
