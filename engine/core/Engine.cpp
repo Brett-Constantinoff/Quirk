@@ -4,7 +4,7 @@ namespace Quirk::Engine::Core
 {
 	Engine::Engine()
 	{
-		initWindow();
+		m_window.init(800,600, "Clown engine 🤡");
 		initVulkan();
 	}
 
@@ -33,17 +33,16 @@ namespace Quirk::Engine::Core
 
 		vkDestroyDevice(m_device, nullptr);
 
-		vkDestroySurfaceKHR(m_instance.get(), m_surface, nullptr);
+		m_surface.cleanup(m_instance.get());
 
 		m_instance.cleanup();
 
-		glfwDestroyWindow(m_window);
-		glfwTerminate();
+		m_window.cleanup();
 	}
 
 	void Engine::run()
 	{
-		while (!glfwWindowShouldClose(m_window))
+		while (!m_window.shouldClose())
 		{
 			glfwPollEvents();
 			draw();
@@ -52,27 +51,10 @@ namespace Quirk::Engine::Core
 		vkDeviceWaitIdle(m_device);
 	}
 
-	void Engine::initWindow()
-	{
-		// need to init glfw library before we can use it
-		if (glfwInit() != GLFW_TRUE)
-			Core::Utils::Exit("validation layers requested, but not available!");
-
-		// tell glfw not to create an opengl context
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-		// vulkan handles window rezising itself
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-		// creates our window handle
-		m_window = glfwCreateWindow(m_width, m_height, m_appName, nullptr, nullptr);
-	}
-
 	void Engine::initVulkan()
 	{
-		m_instance.init();
-
-		createSurface();
+		m_instance.init(m_window);
+		m_surface.init(m_instance.get(), m_window);
 		pickPhysicalDevice();
 		createLogicalDevice();
 		createSwapChain();
@@ -157,13 +139,6 @@ namespace Quirk::Engine::Core
 		vkGetDeviceQueue(m_device, indices.m_presentFamily.value(), 0, &m_presentQueue);
 	}
 
-
-	void Engine::createSurface()
-	{
-		if (glfwCreateWindowSurface(m_instance.get(), m_window, nullptr, &m_surface) != VK_SUCCESS)
-			Core::Utils::Exit("validation layers requested, but not available!");
-	}
-
 	void Engine::createSwapChain()
 	{
 		const SwapChainDetails swapChainSupport{ querySwapChainSupport(m_physDevice) };
@@ -180,7 +155,7 @@ namespace Quirk::Engine::Core
 
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = m_surface;
+		createInfo.surface = m_surface.get();
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
 		createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -529,7 +504,7 @@ namespace Quirk::Engine::Core
 
 			// our device needs to be able to present to our window surface
 			VkBool32 presentSupport{ false };
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface.get(), &presentSupport);
 
 			if (indices.isComplete())
 				break;
@@ -563,24 +538,24 @@ namespace Quirk::Engine::Core
 	{
 		SwapChainDetails details{};
 
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.m_capabilities);
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface.get(), &details.m_capabilities);
 
 		uint32_t formatCount{};
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface.get(), &formatCount, nullptr);
 
 		if (formatCount != 0)
 		{
 			details.m_formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.m_formats.data());
+			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface.get(), &formatCount, details.m_formats.data());
 		}
 
 		uint32_t presentModeCount{};
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
+		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface.get(), &presentModeCount, nullptr);
 
 		if (presentModeCount != 0)
 		{
 			details.m_presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, details.m_presentModes.data());
+			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface.get(), &presentModeCount, details.m_presentModes.data());
 		}
 
 		return details;
@@ -624,7 +599,7 @@ namespace Quirk::Engine::Core
 		int32_t width{};
 		int32_t height{};
 
-		glfwGetFramebufferSize(m_window, &width, &height);
+		glfwGetFramebufferSize(m_window.get(), &width, &height);
 
 		VkExtent2D actualExtent{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 
