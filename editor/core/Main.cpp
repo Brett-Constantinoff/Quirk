@@ -1,13 +1,14 @@
 #include <iostream>
 
-// TODO - this will need to be abstracted away a bit more
-#include "rhi/Quirk.hpp"
+#include "core/Engine.hpp"
+
+using namespace Quirk::Engine::Core;
 
 int main()
 {
-	Quirk app;
-	app.run();
-	
+	Engine engine;
+	engine.run();
+
 	return 0;
 }
 
