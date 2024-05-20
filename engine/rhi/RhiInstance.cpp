@@ -1,4 +1,5 @@
 #include "RhiInstance.hpp"
+#include "../core/Utils.hpp"
 
 namespace Quirk::Engine::Rhi
 {
@@ -13,7 +14,7 @@ namespace Quirk::Engine::Rhi
 	{
 	}
 
-	void RhiInstance::init()
+	void RhiInstance::init(const Display::DisplayWindow& window)
 	{
 		// first check for validation layer support
 		if (m_validation.enableValidationLayers() && !m_validation.checkValidationLayerSupport())
@@ -32,7 +33,7 @@ namespace Quirk::Engine::Rhi
 		createInfo.pApplicationInfo = &appInfo;
 
 		// we need an extension to interface with the window system
-		const auto extensions{ getExtensions() };
+		const auto extensions{ window.getExtensions() };
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 		createInfo.ppEnabledExtensionNames = extensions.data();
 
@@ -58,19 +59,5 @@ namespace Quirk::Engine::Rhi
 
 		if (m_validation.CreateDebugUtilsMessengerEXT(m_instance, &debugCreateInfo, nullptr, &m_validation.getDebugMessenger()) != VK_SUCCESS)
 			Core::Utils::Exit("failed to create debug messenger");
-	}
-
-	// TODO - this shouldnt be here instead it should probably be with the windowing system
-	std::vector<const char*> RhiInstance::getExtensions()
-	{
-		uint32_t count{};
-		const char** extensions{ glfwGetRequiredInstanceExtensions(&count) };
-
-		std::vector<const char*> extensionNames(extensions, extensions + count);
-
-		if (m_validation.enableValidationLayers())
-			extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-
-		return extensionNames;
 	}
 }

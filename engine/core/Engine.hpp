@@ -18,6 +18,7 @@
 #include "Utils.hpp"
 #include "../rhi/RhiInstance.hpp"
 #include "../rhi/RhiValidation.hpp"
+#include "../rhi/RhiSurface.hpp"
 
 namespace Quirk::Engine::Core
 {
@@ -59,10 +60,6 @@ namespace Quirk::Engine::Core
 
 	private:
 		/// <summary>
-		/// Creates the window handle and inits glfw
-		/// </summary>
-		void initWindow();
-		/// <summary>
 		/// Creates all neccessary vulkan objects and initializes them
 		/// </summary>
 		void initVulkan();
@@ -79,10 +76,6 @@ namespace Quirk::Engine::Core
 		/// Creates a logical device to interface with the physical device
 		/// </summary>
 		void createLogicalDevice();
-		/// <summary>
-		/// Creates a window surface for the application
-		/// </summary>
-		void createSurface();
 		/// <summary>
 		/// Creates our swap chain for the application
 		/// </summary>
@@ -185,12 +178,15 @@ namespace Quirk::Engine::Core
 		void draw();
 
 	private:
-		// Windowing
-		GLFWwindow* m_window{};
 
+
+		//Display objects
+		Display::DisplayWindow m_window{};
+		
 		// Rhi objects
 		Rhi::RhiInstance m_instance{};
 		Rhi::RhiValidation m_validation{};
+		Rhi::RhiSurface m_surface{};
 
 		// Vulkan objects 
 		// TODO - abstract these into a vulkan class
@@ -198,7 +194,6 @@ namespace Quirk::Engine::Core
 		VkDevice m_device{};
 		VkQueue m_graphicsQueue{};
 		VkQueue m_presentQueue{};
-		VkSurfaceKHR m_surface{};
 		VkSwapchainKHR m_swapChain{};
 		std::vector<VkImage> m_swapChainImages{};
 		VkFormat m_swapChainImageFormat{};
@@ -215,9 +210,6 @@ namespace Quirk::Engine::Core
 		VkFence m_inFlightFence{};
 
 		// Constants
-		const uint32_t m_width{ 800 };
-		const uint32_t m_height{ 600 };
-		const char* m_appName{ "Quirk" };
 		const std::vector<const char*> m_deviceExtentions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	};
 }

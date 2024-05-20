@@ -1,15 +1,9 @@
 #pragma once
 #include <vulkan/vulkan.h>
-
-// TODO - This will go in the windowing system
-#define VK_USE_PLATFORM_WIN32_KHR
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
-
 #include "RhiValidation.hpp"
-#include "../core/Utils.hpp"
+#include "../Display/DisplayWindow.hpp"
+
+
 
 namespace Quirk::Engine::Rhi
 {
@@ -39,7 +33,7 @@ namespace Quirk::Engine::Rhi
 		/// <summary>
 		/// Initializes and creates the Vulkan instance
 		/// </summary>
-		void init();
+		void init(const Display::DisplayWindow& window);
 
 		/// <summary>
 		/// Destroys the Vulkan instance
@@ -56,9 +50,6 @@ namespace Quirk::Engine::Rhi
 		{ 
 			return m_instance; 
 		}
-
-		// TODO - Move this into the windowing system
-		std::vector<const char*> getExtensions();
 
 	private:
 		VkInstance m_instance;
