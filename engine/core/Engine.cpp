@@ -55,7 +55,8 @@ namespace Quirk::Engine::Core
 	{
 		m_instance.init(m_window);
 		m_surface.init(m_instance.get(), m_window);
-		pickPhysicalDevice();
+		m_gpu.init(m_instance.get(), m_surface.get());
+
 		createLogicalDevice();
 		createSwapChain();
 		createImageViews();
@@ -67,35 +68,9 @@ namespace Quirk::Engine::Core
 		createSyncObjects();
 	}
 
-	void Engine::pickPhysicalDevice()
-	{
-		m_physDevice = VK_NULL_HANDLE;
-
-		uint32_t deviceCount{};
-		vkEnumeratePhysicalDevices(m_instance.get(), &deviceCount, nullptr);
-
-		if (deviceCount == 0)
-			Core::Utils::Exit("validation layers requested, but not available!");
-
-		std::vector<VkPhysicalDevice> devices(deviceCount);
-		vkEnumeratePhysicalDevices(m_instance.get(), &deviceCount, devices.data());
-
-		for (const auto& device : devices)
-		{
-			if (isDeviceSuitable(device))
-			{
-				m_physDevice = device;
-				break;
-			}
-		}
-
-		if (m_physDevice == VK_NULL_HANDLE)
-			Core::Utils::Exit("validation layers requested, but not available!");
-	}
-
 	void Engine::createLogicalDevice()
 	{
-		const auto indices{ findQueueFamilies(m_physDevice) };
+		auto& indices{Rhi::RhiQueueFamilies::get().findQueueFamilies(m_gpu.get(), m_surface.get())};
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
 		std::set<uint32_t> uniqueQueueFamilies{ indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
@@ -120,8 +95,8 @@ namespace Quirk::Engine::Core
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
 		createInfo.pEnabledFeatures = &deviceFeatures;
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_deviceExtentions.size());
-		createInfo.ppEnabledExtensionNames = m_deviceExtentions.data();
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(m_gpu.getExtensions().size());
+		createInfo.ppEnabledExtensionNames = m_gpu.getExtensions().data();
 
 		const auto validationLayers{ m_validation.getValidationLayers() };
 		if (m_validation.enableValidationLayers())
@@ -132,7 +107,7 @@ namespace Quirk::Engine::Core
 		else
 			createInfo.enabledLayerCount = 0;
 
-		if (vkCreateDevice(m_physDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
+		if (vkCreateDevice(m_gpu.get(), &createInfo, nullptr, &m_device) != VK_SUCCESS)
 			Core::Utils::Exit("validation layers requested, but not available!");
 
 		vkGetDeviceQueue(m_device, indices.m_graphicsFamily.value(), 0, &m_graphicsQueue);
@@ -141,7 +116,7 @@ namespace Quirk::Engine::Core
 
 	void Engine::createSwapChain()
 	{
-		const SwapChainDetails swapChainSupport{ querySwapChainSupport(m_physDevice) };
+		Rhi::SwapChainDetails swapChainSupport{ Rhi::RhiSwapChainDetails::get().querySwapChainSupport(m_gpu.get(), m_surface.get()) };
 
 		const VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapChainSupport.m_formats) };
 		const VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapChainSupport.m_presentModes) };
@@ -166,7 +141,7 @@ namespace Quirk::Engine::Core
 		// TODO - this is a temporary solution, in the future we could use this for post processing
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = findQueueFamilies(m_physDevice);
+		const auto& indices{ Rhi::RhiQueueFamilies::get().findQueueFamilies(m_gpu.get(), m_surface.get()) };
 		uint32_t queueFamilyIndices[] = { indices.m_graphicsFamily.value(), indices.m_presentFamily.value() };
 
 		if (indices.m_graphicsFamily != indices.m_presentFamily)
@@ -418,12 +393,12 @@ namespace Quirk::Engine::Core
 
 	void Engine::createCommandPool()
 	{
-		QueueFamilyIndices queueFamilyIndices = findQueueFamilies(m_physDevice);
+		const auto& indices{Rhi::RhiQueueFamilies::get().findQueueFamilies(m_gpu.get(), m_surface.get())};
 
 		VkCommandPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		poolInfo.queueFamilyIndex = queueFamilyIndices.m_graphicsFamily.value();
+		poolInfo.queueFamilyIndex = indices.m_graphicsFamily.value();
 
 		if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
 			Core::Utils::Exit("validation layers requested, but not available!");
@@ -469,96 +444,6 @@ namespace Quirk::Engine::Core
 			Core::Utils::Exit("validation layers requested, but not available!");
 
 		return shaderModule;
-	}
-
-	bool Engine::isDeviceSuitable(const VkPhysicalDevice& device)
-	{
-		QueueFamilyIndices indices = findQueueFamilies(device);
-		bool extensionsSupported = checkDeviceExtensionSupport(device);
-
-		bool swapChainAdequate{ false };
-		if (extensionsSupported)
-		{
-			SwapChainDetails swapChainSupport{ querySwapChainSupport(device) };
-			swapChainAdequate = !swapChainSupport.m_formats.empty() && !swapChainSupport.m_presentModes.empty();
-		}
-
-		return indices.isComplete() && extensionsSupported && swapChainAdequate;
-	}
-
-	QueueFamilyIndices Engine::findQueueFamilies(const VkPhysicalDevice& device)
-	{
-		QueueFamilyIndices indices{};
-
-		uint32_t queueFamilyCount{};
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-		int32_t i{};
-		for (const auto& queueFamily : queueFamilies)
-		{
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
-				indices.m_graphicsFamily = i;
-
-			// our device needs to be able to present to our window surface
-			VkBool32 presentSupport{ false };
-			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface.get(), &presentSupport);
-
-			if (indices.isComplete())
-				break;
-
-			if (presentSupport)
-				indices.m_presentFamily = i;
-
-			i++;
-		}
-
-		return indices;
-	}
-
-	bool Engine::checkDeviceExtensionSupport(const VkPhysicalDevice& device)
-	{
-		uint32_t count{};
-		vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr);
-
-		std::vector<VkExtensionProperties> availableExtensions(count);
-		vkEnumerateDeviceExtensionProperties(device, nullptr, &count, availableExtensions.data());
-
-		std::set<std::string> requiredExtensions(m_deviceExtentions.begin(), m_deviceExtentions.end());
-
-		for (const auto& extension : availableExtensions)
-			requiredExtensions.erase(extension.extensionName);
-
-		return requiredExtensions.empty();
-	}
-
-	SwapChainDetails Engine::querySwapChainSupport(const VkPhysicalDevice& device)
-	{
-		SwapChainDetails details{};
-
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface.get(), &details.m_capabilities);
-
-		uint32_t formatCount{};
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface.get(), &formatCount, nullptr);
-
-		if (formatCount != 0)
-		{
-			details.m_formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface.get(), &formatCount, details.m_formats.data());
-		}
-
-		uint32_t presentModeCount{};
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface.get(), &presentModeCount, nullptr);
-
-		if (presentModeCount != 0)
-		{
-			details.m_presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface.get(), &presentModeCount, details.m_presentModes.data());
-		}
-
-		return details;
 	}
 
 	VkSurfaceFormatKHR Engine::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)

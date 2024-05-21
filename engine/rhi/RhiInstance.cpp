@@ -3,17 +3,6 @@
 
 namespace Quirk::Engine::Rhi
 {
-	RhiInstance::RhiInstance() :
-		m_instance{ VK_NULL_HANDLE },
-		m_validation{},
-		m_appName{"Quirk"}
-	{
-	}
-
-	RhiInstance::~RhiInstance()
-	{
-	}
-
 	void RhiInstance::init(const Display::DisplayWindow& window)
 	{
 		// first check for validation layer support

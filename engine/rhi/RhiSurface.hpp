@@ -9,15 +9,31 @@ namespace Quirk::Engine::Rhi
     class RhiSurface
     {
     public:
-        RhiSurface();
+        RhiSurface() :
+            m_surface{ VK_NULL_HANDLE }
+        {
+        }
+
         ~RhiSurface() = default;
 
-        void init(const VkInstance& instance, const Display::DisplayWindow& window);
-        void cleanup(const VkInstance& instance) const;
+        inline void init(const VkInstance& instance, const Display::DisplayWindow& window)
+        {
+            if (glfwCreateWindowSurface(instance, window.get(), nullptr, &m_surface) != VK_SUCCESS)
+            {
+                Core::Utils::Exit("Failed to create window surface");
+            }
+        }
 
-        VkSurfaceKHR& get();
+        inline void cleanup(const VkInstance& instance) const
+        {
+            vkDestroySurfaceKHR(instance, m_surface, nullptr);
+        }
 
-        static std::vector<const char*> getExtensions(const RhiValidation& validation);
+
+        inline VkSurfaceKHR& get()
+        {
+            return m_surface;
+        }
 
     private:
         VkSurfaceKHR m_surface;
