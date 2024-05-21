@@ -25,8 +25,6 @@ namespace Quirk::Engine::Display
             return glfwWindowShouldClose(m_window);
         }
 
-        
-
     private:
         GLFWwindow* m_window;
 

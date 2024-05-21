@@ -13,22 +13,16 @@ namespace Quirk::Engine::Rhi
 	class RhiInstance
 	{
 	public:
-		RhiInstance();
+		RhiInstance() :
+			m_instance{ VK_NULL_HANDLE },
+			m_validation{},
+			m_appName{ "Quirk" }
+		{
+		}
 
-		~RhiInstance();
-
-		/// <summary>
-		/// Deletes the copy constructor
-		/// </summary>
-		/// <param name=""></param>
-		RhiInstance(const RhiInstance&) = delete;
-
-		/// <summary>
-		/// Deletes the assignment operator
-		/// </summary>
-		/// <param name=""></param>
-		/// <returns></returns>
-		RhiInstance& operator=(const RhiInstance&) = delete;
+		~RhiInstance()
+		{
+		}
 
 		/// <summary>
 		/// Initializes and creates the Vulkan instance

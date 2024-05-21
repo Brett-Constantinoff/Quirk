@@ -16,31 +16,10 @@
 #include "spdlog/spdlog.h"
 
 #include "Utils.hpp"
-#include "../rhi/RhiInstance.hpp"
-#include "../rhi/RhiValidation.hpp"
-#include "../rhi/RhiSurface.hpp"
+#include "../rhi/Rhi.hpp"
 
 namespace Quirk::Engine::Core
 {
-	struct QueueFamilyIndices {
-	public:
-		std::optional<uint32_t> m_graphicsFamily{};
-		std::optional<uint32_t> m_presentFamily{};
-
-	public:
-		bool isComplete() const
-		{
-			return m_graphicsFamily.has_value() && m_presentFamily.has_value();
-		}
-	};
-
-	struct SwapChainDetails
-	{
-		VkSurfaceCapabilitiesKHR m_capabilities{};
-		std::vector<VkSurfaceFormatKHR> m_formats{};
-		std::vector<VkPresentModeKHR> m_presentModes{};
-	};
-
 	class Engine
 	{
 	public:
@@ -68,10 +47,6 @@ namespace Quirk::Engine::Core
 		/// Vulkan helpers
 		/// </summary>
 	private:
-		/// <summary>
-		/// Picks a physical device to use for the application
-		/// </summary>
-		void pickPhysicalDevice();
 		/// <summary>
 		/// Creates a logical device to interface with the physical device
 		/// </summary>
@@ -115,28 +90,6 @@ namespace Quirk::Engine::Core
 		/// <returns></returns>
 		VkShaderModule createShaderModule(const std::vector<char>& code);
 		/// <summary>
-		/// Currently checks if the device can process the commands we want to use by queue.
-		/// For future refactoring refer to this: https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=Instead%20of%20just,that%20as%20follows%3A 
-		/// </summary>
-		bool isDeviceSuitable(const VkPhysicalDevice& device);
-		/// <summary>
-		/// Currently searches for a queue that supports graphics commands
-		/// For future refactoring refer to this https://vulkan-tutorial.com/en/Drawing_a_triangle/Setup/Physical_devices_and_queue_families#:~:text=to%20check%20for.-,Queue%20families,-It%20has%20been
-		/// </summary>
-		QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice& device);
-		/// <summary>
-		/// Checks if all required extensions needed for the device are supported
-		/// </summary>
-		/// <param name="device"></param>
-		/// <returns></returns>
-		bool checkDeviceExtensionSupport(const VkPhysicalDevice& device);
-		/// <summary>
-		/// Populates the swap chain details struct with the capabilities, formats, and present modes
-		/// </summary>
-		/// <param name="device"></param>
-		/// <returns></returns>
-		SwapChainDetails querySwapChainSupport(const VkPhysicalDevice& device);
-		/// <summary>
 		/// Chooses the best surface format for the swap chain (color depth
 		/// </summary>
 		/// <param name="availableFormats"></param>
@@ -178,8 +131,6 @@ namespace Quirk::Engine::Core
 		void draw();
 
 	private:
-
-
 		//Display objects
 		Display::DisplayWindow m_window{};
 		
@@ -187,10 +138,10 @@ namespace Quirk::Engine::Core
 		Rhi::RhiInstance m_instance{};
 		Rhi::RhiValidation m_validation{};
 		Rhi::RhiSurface m_surface{};
+		Rhi::RhiGpu m_gpu{};
 
 		// Vulkan objects 
 		// TODO - abstract these into a vulkan class
-		VkPhysicalDevice m_physDevice{};
 		VkDevice m_device{};
 		VkQueue m_graphicsQueue{};
 		VkQueue m_presentQueue{};
@@ -208,8 +159,5 @@ namespace Quirk::Engine::Core
 		VkSemaphore m_imageAvailableSemaphore{};
 		VkSemaphore m_renderFinishedSemaphore{};
 		VkFence m_inFlightFence{};
-
-		// Constants
-		const std::vector<const char*> m_deviceExtentions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	};
 }
