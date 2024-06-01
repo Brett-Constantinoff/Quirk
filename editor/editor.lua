@@ -12,7 +12,7 @@ project "Editor"
         "../thirdParty/logging/include/",
         "../thirdParty/Glfw/include/",
         "../thirdParty/glad/include/",
-        "../thirdParty/imgui/",
+        "../thirdParty/gui/",
         "../engine/"
     }
 

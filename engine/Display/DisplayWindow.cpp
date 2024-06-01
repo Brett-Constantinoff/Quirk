@@ -4,7 +4,7 @@
 namespace Quirk::Engine::Display
 {
     DisplayWindow::DisplayWindow(uint32_t width, uint32_t height, const char* title) :
-        handle(nullptr)
+        handle{ nullptr }
     {
         handle = glfwCreateWindow(width, height, title, nullptr, nullptr);
         if (!handle)

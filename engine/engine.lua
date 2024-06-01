@@ -12,7 +12,7 @@ project "Engine"
         "../thirdParty/Glfw/include/",
         "../thirdParty/logging/include/",
         "../thirdParty/glad/include/",
-        "../thirdParty/imgui/",
+        "../thirdParty/gui/",
     }
 
     files 

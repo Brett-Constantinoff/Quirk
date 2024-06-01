@@ -1,13 +1,11 @@
-#include <iostream>
+#include "Editor.hpp"
 
-#include "core/Engine.hpp"
-
-using namespace Quirk::Engine::Core;
+using namespace Quirk::Editor;
 
 int main()
 {
-	Engine engine;
-	engine.tick();
+	Editor editor;
+	editor.tick();
 
 	return 0;
 }

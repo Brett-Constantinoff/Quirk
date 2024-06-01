@@ -10,7 +10,14 @@ namespace Quirk::Engine::Display
     struct DisplayWindow
     {
     public:
+        /// <summary>
+        /// Creates a display window with the given width, height, and title.
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="title"></param>
         DisplayWindow(uint32_t width, uint32_t height, const char* title);
+
         ~DisplayWindow() = default;
 
     public:
