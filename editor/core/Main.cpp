@@ -7,7 +7,7 @@ using namespace Quirk::Engine::Core;
 int main()
 {
 	Engine engine;
-	engine.run();
+	engine.tick();
 
 	return 0;
 }

@@ -4,3 +4,6 @@
 [submodule "thirdParty/Glfw"]
 	path = thirdParty/Glfw
 	url = git@github.com:glfw/glfw.git
+[submodule "thirdParty/gui"]
+	path = thirdParty/gui
+	url = git@github.com:ocornut/imgui.git

@@ -1,7 +1,3 @@
-local vulkanSdk = os.getenv("VULKAN_SDK")
-local vulkanInclude = vulkanSdk.."/include"
-local vulkanLib = vulkanSdk.."/lib/vulkan-1.lib"
-
 project "Editor"
     kind "ConsoleApp"
     language "C++"
@@ -13,9 +9,10 @@ project "Editor"
 
     includedirs 
     {
-        vulkanInclude,
-        "../thirdParty/glfw/include/",
         "../thirdParty/logging/include/",
+        "../thirdParty/Glfw/include/",
+        "../thirdParty/glad/include/",
+        "../thirdParty/imgui/",
         "../engine/"
     }
 
@@ -27,13 +24,12 @@ project "Editor"
 
     links 
     { 
-        vulkanLib,
         "Glfw",
-        "Engine"
+        "Glad",
+        "Imgui",
+        "OpengL32",
+        "Engine",
     }
 
     filter "system:windows"
-        defines 
-        { 
-            "_WINDOWS" 
-        }
+        systemversion "latest"
