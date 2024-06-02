@@ -2,10 +2,6 @@
 
 namespace Quirk::Editor::Components::MenuBar
 {
-	MenuBar::MenuBar()
-	{
-	}
-
 	MenuBar::~MenuBar()
 	{
 	}

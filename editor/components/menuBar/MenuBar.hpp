@@ -7,10 +7,10 @@ namespace Quirk::Editor::Components::MenuBar
 	class MenuBar : public Component
 	{
 	public:
-		MenuBar();
-		~MenuBar();
+		MenuBar() = default;
+		~MenuBar() override;
 
-		virtual void render();
+		void render() override;
 
 	private:
 		void renderFileMenu();
