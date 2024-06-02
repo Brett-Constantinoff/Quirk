@@ -2,9 +2,6 @@
 
 namespace Quirk::Engine::Display
 {
-	std::unordered_map<DisplayTypes, std::shared_ptr<DisplayWindow>> 
-		DisplayManager::m_windows{};
-
 	DisplayManager::~DisplayManager()
 	{
 		glfwTerminate();
