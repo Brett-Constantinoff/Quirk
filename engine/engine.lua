@@ -1,7 +1,3 @@
-local vulkanSdk = os.getenv("VULKAN_SDK")
-local vulkanInclude = vulkanSdk.."/include"
-local vulkanLib = vulkanSdk.."/lib/vulkan-1.lib"
-
 project "Engine"
     kind "StaticLib"
     language "C++"
@@ -13,9 +9,11 @@ project "Engine"
 
     includedirs 
     {
-        vulkanInclude,
-        "../thirdParty/glfw/include/",
+        "../thirdParty/Glfw/include/",
         "../thirdParty/logging/include/",
+        "../thirdParty/glad/include/",
+        "../thirdParty/gui/",
+        "../thirdParty/glm/",
     }
 
     files 
@@ -26,12 +24,12 @@ project "Engine"
 
     links 
     { 
-        vulkanLib,
+        "Glm",
         "Glfw",
+        "Glad",
+        "Imgui",
+        "OpengL32",
     }
-
+    			
     filter "system:windows"
-        defines 
-        { 
-            "_WINDOWS" 
-        }
+        systemversion "latest"

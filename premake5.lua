@@ -15,4 +15,8 @@ workspace "Quirk"
 
 include "engine/engine.lua"
 include "editor/editor.lua"
+
 include "thirdParty/glfw.lua"
+include "thirdParty/glad.lua"
+include "thirdParty/imgui.lua"
+include "thirdParty/glm.lua"
