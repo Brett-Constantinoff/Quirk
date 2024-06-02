@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #include "spdlog/spdlog.h"
 
@@ -21,6 +23,11 @@ namespace Quirk::Engine::Core
 		{
 			spdlog::error(msg);
 			exit(status);
+		}
+
+		static double GetTime()
+		{
+			return glfwGetTime();
 		}
 	};
 }

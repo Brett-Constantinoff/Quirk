@@ -1,3 +1,5 @@
+#include <core/Utils.hpp>
+
 #include "Editor.hpp"
 
 using namespace Quirk::Engine::Core;
@@ -8,12 +10,18 @@ namespace Quirk::Editor
 	{
 		setup();
 
+		double lastFrame{ Utils::GetTime() };
+
 		const auto& display{m_displayManager->getWindow(DisplayTypes::Default)};
 		while (!m_displayManager->windowsShouldClose())
 		{
-			m_renderer->tick();
+			const double currFrame{ Utils::GetTime() };
+			const double tickSpeed{ currFrame - lastFrame };
+			lastFrame = currFrame;
+
+			m_renderer->tick(tickSpeed, display);
 			renderEditor();
-			m_displayManager->tick(DisplayTypes::Default);
+			m_displayManager->tick(DisplayTypes::Default, tickSpeed);
 		}
 	}
 
@@ -30,6 +38,10 @@ namespace Quirk::Editor
 		{
 			m_displayManager->init();
 			m_renderer->init();
+
+			// this comes after we init the renderer so we can get the appropriate 
+			// opengl version for setting up windows
+			m_displayManager->initWindows();
 		}
 
 		// setup our gui

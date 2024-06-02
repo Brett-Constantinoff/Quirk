@@ -25,8 +25,9 @@ namespace Quirk::Engine::Display
         ~DisplayManager();
 
         void init();
+        void initWindows();
         DisplayWindow getWindow(DisplayTypes type) { return *m_windows[type]; }
-        void tick(DisplayTypes type);
+        void tick(DisplayTypes type, double tickSpeed);
         void setCurrentContext(DisplayTypes type) { return glfwMakeContextCurrent(m_windows[type]->handle); }
         bool windowsShouldClose();
 

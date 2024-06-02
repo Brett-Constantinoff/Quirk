@@ -5,8 +5,11 @@
 
 #include "../../../core/Utils.hpp"
 #include "../../utils/Utils.hpp"
+#include "../../core/ApplicationSettings.hpp"
+
 
 using namespace Quirk::Engine::Renderer::Utils;
+using namespace Quirk::Engine::Core;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -37,8 +40,31 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::init()
 	{
+		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 			Core::Utils::Exit("Failed to initialize Glad");
+
+		if (settings.is3d)
+			glEnable(GL_DEPTH_TEST);
+
+		const GLubyte* renderer{ glGetString(GL_RENDERER) };
+		const GLubyte* vendor{ glGetString(GL_VENDOR) };
+		const GLubyte* version{ glGetString(GL_VERSION) };
+		const GLubyte* glslVersion{ glGetString(GL_SHADING_LANGUAGE_VERSION) };
+
+		qInt32 majorVersion{ 0 };
+		qInt32 minorVersion{ 0 };
+
+		glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+		glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+		spdlog::info("GPU: {}", reinterpret_cast<const char*>(renderer));
+		spdlog::info("Vendor: {}", reinterpret_cast<const char*>(vendor));
+		spdlog::info("Version: {}", reinterpret_cast<const char*>(version));
+		spdlog::info("GLSL Version: {}", reinterpret_cast<const char*>(glslVersion));
+		spdlog::info("OpenGL Version: {}.{}", majorVersion, minorVersion);
+
+		Core::ApplicationSettings::getInstance().setOpenglVersion(majorVersion, minorVersion);
 	}
 
 	void Opengl::clearColor(float r, float g, float b, float a)
@@ -61,7 +87,23 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 			glClear(mask);
 	}
 
-	void Opengl::submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize)
+	void Opengl::submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride)
+	{
+		const auto& vao{ createVertexArray() };
+		const auto& vbo{ createVertexBuffer() };
+
+		vao->bind();
+
+		vbo->bind();
+		vbo->setData(vertexData.data(), vertexData.size() * sizeof(float));
+
+		vao->setData(vertexDataSize, stride);
+
+		vbo->unbind();
+		vao->unbind();
+	}
+
+	void Opengl::submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride)
 	{
 		const auto& vao{ createVertexArray() };
 		const auto& vbo{ createVertexBuffer() };
@@ -75,7 +117,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		ebo->bind();
 		ebo->setData(indexData.data(), vertexData.size() * sizeof(qUint32));
 
-		vao->setData(vertexDataSize, vertexDataSize * sizeof(float));
+		vao->setData(vertexDataSize, stride);
 
 		vbo->unbind();
 		vao->unbind();
@@ -87,6 +129,15 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		m_resources.vertexArrays.back()->bind();
 
 		glDrawElements(Utils::Utils::mapPrimitiveToGl(primitiveType), indexCount, GL_UNSIGNED_INT, 0);
+
+		m_resources.vertexArrays.back()->unbind();
+	}
+
+	void Opengl::drawArrays(Utils::QuirkPrimitives primitiveType, qUint32 vertexCount)
+	{
+		m_resources.vertexArrays.back()->bind();
+
+		glDrawArrays(Utils::Utils::mapPrimitiveToGl(primitiveType), 0, vertexCount);
 
 		m_resources.vertexArrays.back()->unbind();
 	}

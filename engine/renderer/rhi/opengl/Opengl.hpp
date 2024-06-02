@@ -29,7 +29,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;
-		void submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize) override;
+		void submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride) override;
+		void submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride) override;
+		void drawArrays(Utils::QuirkPrimitives primitiveType, qUint32 vertexCount) override;
 		void drawElements(Utils::QuirkPrimitives primitiveType, qUint32 indexCount) override;
 
 	private:

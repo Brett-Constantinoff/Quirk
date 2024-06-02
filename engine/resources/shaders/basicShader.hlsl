@@ -1,24 +1,31 @@
-#shader vertexShader
+##shader vertexShader
 #version 460 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
 
-layout(location = 0) in vec3 a_pos;
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 
-out vec4 o_color;
+out vec3 oFragPosition;
+out vec3 oColor;
 
 void main()
 {
-    gl_Position = vec4(a_pos, 1.0);
-	o_color = vec4(a_pos, 1.0);
+   gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
+   oFragPosition = (uModel * vec4(aPos, 1.0)).xyz;
+   oColor = aColor;
 }
 
 #shader fragmentShader
 #version 460 core
 
-in vec4 o_color;
+in vec3 oFragPosition;
+in vec3 oColor;
 
 out vec4 fragColor;
 
 void main()
 {
-	fragColor = o_color;
+   fragColor = vec4(oColor, 1.0);
 }

@@ -22,12 +22,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		return m_id;
 	}
 
-	void VertexArray::setData(qInt32 size, float stride, GLenum type, GLboolean normalized)
+	void VertexArray::setData(qUint32 size, qUint32 stride, GLenum type, GLboolean normalized)
 	{
-		const auto strideBytes{ size * m_index };
+		glVertexAttribPointer(0, size, type, normalized, stride * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(m_index, size, type, normalized, stride, (void*)strideBytes);
-		glEnableVertexAttribArray(m_index);
-		m_index += 1;
+		glVertexAttribPointer(1, size, type, normalized, stride * sizeof(float), (void*)(size * sizeof(float)));
+		glEnableVertexAttribArray(1);
 	}
 }

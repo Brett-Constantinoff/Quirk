@@ -18,11 +18,10 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void unbind() const;
 		qUint32& getId();
 
-		void setData(qInt32 size, float stride,
+		void setData(qUint32 size, qUint32 stride,
 			GLenum type = GL_FLOAT, GLboolean normalized = false);
 
 	private:
 		qUint32 m_id{};
-		qUint32 m_index{};
 	};
 }

@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
 
+#include "../../core/Utils.hpp"
 #include "../../core/Defines.hpp"
 #include "../../core/ApplicationSettings.hpp"
 
@@ -33,30 +34,79 @@ namespace Quirk::Engine::Renderer::Rendering
 		// TODO - This is just here to make sure we can render something
 		{
 			m_shader = new Shader("../engine/resources/shaders/basicShader.hlsl");
+			m_camera = new Camera();
 			std::vector<float> vertices =
 			{
-				 0.5f,  0.5f, 0.0f,
-				 0.5f, -0.5f, 0.0f,
-				-0.5f, -0.5f, 0.0f,
-				-0.5f,  0.5f, 0.0f
-			};
-			std::vector<qUint32> indices =
-			{
-				0, 1, 3,
-				1, 2, 3
-			};
+				-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+				 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
 
-			m_rhi->submitDrawData(vertices, indices, 3);
+				-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
+
+				-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+				-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+
+				 0.5f,  0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
+				 0.5f,  0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
+				 0.5f, -0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
+				 0.5f, -0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
+				 0.5f, -0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
+				 0.5f,  0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
+
+				-0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
+				 0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
+				 0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
+				 0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
+				-0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
+				-0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
+
+				-0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
+				 0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
+				 0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
+				 0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
+				-0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
+				-0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
+			};
+			m_rhi->submitDrawData(vertices, 3, 6);
 		}
 	}
 
-	void Renderer::tick()
+	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
 	{
 		m_rhi->clearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 		m_rhi->clearBuffers(m_clearColorBuffer, m_clearDepthBuffer, m_clearStencilBuffer);
 
+		constexpr double rotationAngle{ glm::radians(45.0f) };
+		constexpr double damper{ 0.5f };
+		const double rotationSpeed{ rotationAngle * damper * (float)Core::Utils::GetTime() };
+		glm::mat4 model = glm::mat4(1.0f);
+		const glm::mat4 view{ m_camera->getView() };
+		const glm::mat4 projection{ display.projectionMatrix };
+
+		constexpr glm::vec3 rotationVec{ 0.0f, 1.0f, 0.5f };
+
+		model = glm::rotate(model, static_cast<float>(rotationSpeed), rotationVec );
+
 		m_shader->use();
-		m_rhi->drawElements(QuirkPrimitives::Triangles, 6);
+
+		m_shader->setMat4("uModel", model);
+		m_shader->setMat4("uView", view);
+		m_shader->setMat4("uProjection", projection);
+
+
+		m_rhi->drawArrays(QuirkPrimitives::Triangles, 36);
 		m_shader->disuse();
 	}
 }

@@ -18,7 +18,15 @@ namespace Quirk::Engine::Display
 		createDefaultWindow(settings);
 	}
 
-	void DisplayManager::tick(DisplayTypes type)
+	void DisplayManager::initWindows()
+	{
+		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.majorVersion);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.minorVersion);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	}
+
+	void DisplayManager::tick(DisplayTypes type, double tickSpeed)
 	{
 		const auto& window = m_windows[type];
 
@@ -40,10 +48,6 @@ namespace Quirk::Engine::Display
 	{
 		if (glfwInit() != GLFW_TRUE)
 			Utils::Exit("Failed to initialize GLFW");
-
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.majorVersion);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.minorVersion);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}
 
 	void DisplayManager::createDefaultWindow(const SettingsObject& settings)

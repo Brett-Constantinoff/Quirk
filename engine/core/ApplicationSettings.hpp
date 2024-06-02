@@ -20,6 +20,7 @@ namespace Quirk::Engine::Core
 		bool clearColorBuffer{};
 		bool clearDepthBuffer{};
 		bool clearStencilBuffer{};
+		bool is3d{};
 
 		// opengl settings
 		qUint32 majorVersion{};
@@ -56,17 +57,20 @@ namespace Quirk::Engine::Core
 			m_settings.renderApi = RenderApi::OpenGL;
 			m_settings.clearColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
 			m_settings.clearColorBuffer = true;
-			m_settings.clearDepthBuffer = false;
+			m_settings.clearDepthBuffer = true;
 			m_settings.clearStencilBuffer = false;
+			m_settings.is3d = true;
 			
-			// opengl settings
-			m_settings.majorVersion = 4;
-			m_settings.minorVersion = 6;
-
 			// display settings
 			m_settings.windowWidth = 1200;
 			m_settings.windowHeight = 1000;
 			m_settings.windowTitle = "Quirk Engine";
+		}
+
+		void setOpenglVersion(qUint32 major, qUint32 minor)
+		{
+			m_settings.majorVersion = major;
+			m_settings.minorVersion = minor;
 		}
 
 	private:
