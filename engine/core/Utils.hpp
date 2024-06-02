@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "spdlog/spdlog.h"
 
 namespace Quirk::Engine::Core
@@ -14,7 +16,8 @@ namespace Quirk::Engine::Core
 		/// Exit the application with a message
 		/// </summary>
 		/// <param name="msg"></param>
-		inline static void Exit(const char* msg, int32_t status = EXIT_FAILURE)
+		template <typename T>
+		static void Exit(const T& msg, int32_t status = EXIT_FAILURE)
 		{
 			spdlog::error(msg);
 			exit(status);

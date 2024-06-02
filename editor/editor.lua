@@ -13,6 +13,7 @@ project "Editor"
         "../thirdParty/Glfw/include/",
         "../thirdParty/glad/include/",
         "../thirdParty/gui/",
+        "../thirdParty/glm/",
         "../engine/"
     }
 
@@ -24,6 +25,7 @@ project "Editor"
 
     links 
     { 
+        "Glm",
         "Glfw",
         "Glad",
         "Imgui",

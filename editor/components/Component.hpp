@@ -7,8 +7,13 @@ namespace Quirk::Editor::Components
 	class Component
 	{
 	public:
-		Component() {}
-		virtual ~Component() {}
-		virtual void render() {};
+		/// <summary>
+		/// Overridable destructor
+		/// </summary>
+		virtual ~Component() = 0;
+		/// <summary>
+		/// Overridable render function
+		/// </summary>
+		virtual void render() = 0;
 	};
 }

@@ -13,6 +13,7 @@ project "Engine"
         "../thirdParty/logging/include/",
         "../thirdParty/glad/include/",
         "../thirdParty/gui/",
+        "../thirdParty/glm/",
     }
 
     files 
@@ -23,6 +24,7 @@ project "Engine"
 
     links 
     { 
+        "Glm",
         "Glfw",
         "Glad",
         "Imgui",

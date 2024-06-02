@@ -4,13 +4,6 @@ using namespace Quirk::Engine::Core;
 
 namespace Quirk::Engine::Display
 {
-	DisplayManager::DisplayManager()
-	{
-		initGlfw();
-		createDefaultWindow();
-		initGlad();
-	}
-
 	DisplayManager::~DisplayManager()
 	{
 		glfwTerminate();
@@ -18,16 +11,19 @@ namespace Quirk::Engine::Display
 			glfwDestroyWindow(window.second->handle);
 	}
 
-	void DisplayManager::windowTick(DisplayTypes type)
+	void DisplayManager::init()
+	{
+		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		initGlfw(settings);
+		createDefaultWindow(settings);
+	}
+
+	void DisplayManager::tick(DisplayTypes type)
 	{
 		const auto& window = m_windows[type];
 
-		glfwPollEvents();
 		glfwSwapBuffers(window->handle);
-
-		// TODO - This could be moved to the renderer
-		glClearColor(0.2f, 0.3f, 0.7f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glfwPollEvents();
 	}
 
 	bool DisplayManager::windowsShouldClose()
@@ -40,27 +36,20 @@ namespace Quirk::Engine::Display
 		return true;
 	}
 
-	void DisplayManager::initGlfw()
+	void DisplayManager::initGlfw(const SettingsObject& settings)
 	{
 		if (glfwInit() != GLFW_TRUE)
 			Utils::Exit("Failed to initialize GLFW");
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.majorVersion);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.minorVersion);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}
 
-	void DisplayManager::initGlad()
+	void DisplayManager::createDefaultWindow(const SettingsObject& settings)
 	{
-		// TODO - This could be moved to a different class in the future
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-			Utils::Exit("Failed to initialize Glad");
-	}
-
-	void DisplayManager::createDefaultWindow()
-	{
-		// TODO - this data could me read from a config file
-		auto defaultWindow = std::make_shared<DisplayWindow>(1200, 800, "Quirk Engine");
+		auto defaultWindow = std::make_shared<DisplayWindow>(settings.windowWidth, settings.windowHeight,
+			settings.windowTitle);
 		m_windows.insert({ DisplayTypes::Default, defaultWindow });
 		setCurrentContext(DisplayTypes::Default);
 	}

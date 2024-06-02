@@ -1,32 +1,39 @@
 #include "Editor.hpp"
 
+using namespace Quirk::Engine::Core;
+
 namespace Quirk::Editor
 {
-	Editor::Editor() : 
-		 m_displayManager{},
-		 m_components{}
-	{
-	}
-
-	Editor::~Editor()
-	{
-	}
-
 	void Editor::tick()
 	{
 		setup();
 
-		const auto& display{m_displayManager.getWindow(DisplayTypes::Default)};
-		while (!m_displayManager.windowsShouldClose())
+		const auto& display{m_displayManager->getWindow(DisplayTypes::Default)};
+		while (!m_displayManager->windowsShouldClose())
 		{
+			m_renderer->tick();
 			renderEditor();
-			m_displayManager.windowTick(DisplayTypes::Default);
+			m_displayManager->tick(DisplayTypes::Default);
 		}
 	}
 
 	void Editor::setup()
 	{
-		Imgui_Impl::getInstance().setup(m_displayManager.getWindow(DisplayTypes::Default).handle);
+		// load initial settings
+		ApplicationSettings::getInstance().loadDefaults();
+
+		// setup our subsystems
+		m_displayManager = std::make_unique<DisplayManager>();
+		m_renderer = std::make_unique<Renderer>();
+
+		// TODO - It would be cool to time this to see how long it takes
+		{
+			m_displayManager->init();
+			m_renderer->init();
+		}
+
+		// setup our gui
+		Imgui_Impl::getInstance().setup(m_displayManager->getWindow(DisplayTypes::Default).handle);
 		m_components.push_back(std::make_unique<MenuBar::MenuBar>());
 	}
 

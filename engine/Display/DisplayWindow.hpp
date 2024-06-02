@@ -1,26 +1,24 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <vector>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+
+#include "../core/Defines.hpp"
+
+using namespace Quirk::Engine::Core;
 
 namespace Quirk::Engine::Display
 {
     struct DisplayWindow
     {
     public:
-        /// <summary>
-        /// Creates a display window with the given width, height, and title.
-        /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="title"></param>
-        DisplayWindow(uint32_t width, uint32_t height, const char* title);
-
+        DisplayWindow(qUint32 width, qUint32 height, const std::string_view& title);
         ~DisplayWindow() = default;
 
     public:
-        GLFWwindow* handle;
+        GLFWwindow* handle{ nullptr };
     };
 }

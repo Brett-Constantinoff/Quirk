@@ -6,6 +6,8 @@
 
 namespace Quirk::Engine::Gui
 {
+    // This is just a wrapper around our own Imgui implementation
+    // so any custom designs will go here
     class Imgui_Impl
     {
     public:
