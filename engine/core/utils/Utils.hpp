@@ -6,7 +6,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace Quirk::Engine::Core
+namespace Quirk::Engine::Core::Utils
 {
 	/// <summary>
 	/// These are utilities that are used throughout the engine

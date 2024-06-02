@@ -6,6 +6,7 @@
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
+
 #include "shaders/Shader.hpp"
 #include "Camera.hpp"
 
@@ -20,26 +21,19 @@ namespace Quirk::Engine::Renderer::Rendering
 	class Renderer
 	{
 	public:
-		Renderer() = default;
 		~Renderer();
 
-		void init();
-		void tick(double tickSpeed, const DisplayWindow& display);
+		static void init();
+		static void tick(double tickSpeed, const DisplayWindow& display);
 
 	private:
 		// depending on what backend we are using
 		// we can add more here
-		Rhi::Opengl::Opengl m_opengl{};
-		std::unique_ptr<Rhi::Rhi> m_rhi{nullptr};
+		 inline static Rhi::Opengl::Opengl m_opengl{};
+		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{};
 
 		 // TODO - Remove these
-		 Shader* m_shader{ nullptr };
-		 Camera* m_camera{ nullptr };
-
-		 qUint32 m_renderApi{};
-		 glm::vec4 m_clearColor{};
-		 bool m_clearColorBuffer{};
-		 bool m_clearDepthBuffer{};
-		 bool m_clearStencilBuffer{};
+		 inline static Shader* m_shader{};
+		 inline static Camera* m_camera{};
 	};
 }

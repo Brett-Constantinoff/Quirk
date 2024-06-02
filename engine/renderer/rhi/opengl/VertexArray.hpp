@@ -2,9 +2,9 @@
 
 #include <glad/glad.h>
 
-#include "../../core/Defines.hpp"
+#include "../../core/utils/Defines.hpp"
 
-using namespace Quirk::Engine::Core;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {

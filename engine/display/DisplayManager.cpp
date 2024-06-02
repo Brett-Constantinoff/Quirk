@@ -1,9 +1,10 @@
 #include "DisplayManager.hpp"
 
-using namespace Quirk::Engine::Core;
-
 namespace Quirk::Engine::Display
 {
+	std::unordered_map<DisplayTypes, std::shared_ptr<DisplayWindow>> 
+		DisplayManager::m_windows{};
+
 	DisplayManager::~DisplayManager()
 	{
 		glfwTerminate();
@@ -13,14 +14,14 @@ namespace Quirk::Engine::Display
 
 	void DisplayManager::init()
 	{
-		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		const auto& settings{ AppSettings::getSettings() };
 		initGlfw(settings);
 		createDefaultWindow(settings);
 	}
 
 	void DisplayManager::initWindows()
 	{
-		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		const auto& settings{ AppSettings::getSettings() };
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.majorVersion);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.minorVersion);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -36,12 +37,9 @@ namespace Quirk::Engine::Display
 
 	bool DisplayManager::windowsShouldClose()
 	{
-		// TODO - this is just checking ALL windows, so if the
-		// user closes one, all will close (if we have more than one
-		for (const auto& window : m_windows)
-			if (!glfwWindowShouldClose(window.second->handle))
-				return false;
-		return true;
+		// this is just checking for the default window for now
+		// we will need an event system to handle multiple windows
+		return !glfwWindowShouldClose(m_windows[DisplayTypes::Default]->handle);
 	}
 
 	void DisplayManager::initGlfw(const SettingsObject& settings)

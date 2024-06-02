@@ -3,13 +3,15 @@
 #include <glad/glad.h>
 #include "Opengl.hpp"
 
-#include "../../../core/Utils.hpp"
+#include "../../../core/utils/Utils.hpp"
 #include "../../utils/Utils.hpp"
-#include "../../core/ApplicationSettings.hpp"
+#include "../../core/utils/ApplicationSettings.hpp"
 
 
 using namespace Quirk::Engine::Renderer::Utils;
-using namespace Quirk::Engine::Core;
+
+using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
+using CoreUtils = Quirk::Engine::Core::Utils::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -40,9 +42,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::init()
 	{
-		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		const auto& settings{ AppSettings::getSettings() };
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-			Core::Utils::Exit("Failed to initialize Glad");
+			CoreUtils::Exit("Failed to initialize Glad");
 
 		if (settings.is3d)
 			glEnable(GL_DEPTH_TEST);
@@ -64,7 +66,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		spdlog::info("GLSL Version: {}", reinterpret_cast<const char*>(glslVersion));
 		spdlog::info("OpenGL Version: {}.{}", majorVersion, minorVersion);
 
-		Core::ApplicationSettings::getInstance().setOpenglVersion(majorVersion, minorVersion);
+		AppSettings::setOpenglVersion(majorVersion, minorVersion);
 	}
 
 	void Opengl::clearColor(float r, float g, float b, float a)

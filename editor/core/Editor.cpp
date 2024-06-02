@@ -1,8 +1,7 @@
-#include <core/Utils.hpp>
+#include <core/utils/Utils.hpp>
+#include <renderer/gui/Imgui_Impl.hpp>
 
 #include "Editor.hpp"
-
-using namespace Quirk::Engine::Core;
 
 namespace Quirk::Editor
 {
@@ -10,52 +9,48 @@ namespace Quirk::Editor
 	{
 		setup();
 
-		double lastFrame{ Utils::GetTime() };
+		double lastFrame{ CoreUtils::GetTime() };
 
-		const auto& display{m_displayManager->getWindow(DisplayTypes::Default)};
-		while (!m_displayManager->windowsShouldClose())
+		const auto& display{DisplayManager::getWindow(DisplayTypes::Default)};
+		while (DisplayManager::windowsShouldClose())
 		{
-			const double currFrame{ Utils::GetTime() };
+			const double currFrame{ CoreUtils::GetTime() };
 			const double tickSpeed{ currFrame - lastFrame };
 			lastFrame = currFrame;
 
-			m_renderer->tick(tickSpeed, display);
+			Renderer::tick(tickSpeed, display);
 			renderEditor();
-			m_displayManager->tick(DisplayTypes::Default, tickSpeed);
+			DisplayManager::tick(DisplayTypes::Default, tickSpeed);
 		}
 	}
 
 	void Editor::setup()
 	{
 		// load initial settings
-		ApplicationSettings::getInstance().loadDefaults();
-
-		// setup our subsystems
-		m_displayManager = std::make_unique<DisplayManager>();
-		m_renderer = std::make_unique<Renderer>();
+		ApplicationSettings::loadDefaults();
 
 		// TODO - It would be cool to time this to see how long it takes
 		{
-			m_displayManager->init();
-			m_renderer->init();
+			DisplayManager::init();
+			Renderer::init();
 
 			// this comes after we init the renderer so we can get the appropriate 
 			// opengl version for setting up windows
-			m_displayManager->initWindows();
+			DisplayManager::initWindows();
 		}
 
 		// setup our gui
-		Imgui_Impl::getInstance().setup(m_displayManager->getWindow(DisplayTypes::Default).handle);
+		Gui::Imgui_Impl::setup(DisplayManager::getWindow(DisplayTypes::Default).handle);
 		m_components.push_back(std::make_unique<MenuBar::MenuBar>());
 	}
 
 	void Editor::renderEditor()
 	{
-		Imgui_Impl::getInstance().updateFrame();
+		Gui::Imgui_Impl::updateFrame();
 
 		for (auto& component : m_components)
 			component->render();
 
-		Imgui_Impl::getInstance().renderFrame();
+		Gui::Imgui_Impl::renderFrame();
 	}
 }

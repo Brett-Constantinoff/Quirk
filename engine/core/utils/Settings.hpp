@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Quirk::Engine::Core
+namespace Quirk::Engine::Core::Utils
 {
 	enum class RenderApi
 	{

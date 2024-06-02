@@ -6,7 +6,7 @@
 #include "Settings.hpp"
 #include "Defines.hpp"
 
-namespace Quirk::Engine::Core
+namespace Quirk::Engine::Core::Utils
 {
 	// as this grows it will become very expensive to copy
 	// so ALWAYS pass by reference
@@ -35,21 +35,17 @@ namespace Quirk::Engine::Core
 	class ApplicationSettings
 	{
 	public:
+		ApplicationSettings() = delete;
 		ApplicationSettings(const ApplicationSettings&) = delete;
 		ApplicationSettings(ApplicationSettings&&) = delete;
 		ApplicationSettings& operator=(const ApplicationSettings&) = delete;
 		ApplicationSettings& operator=(ApplicationSettings&&) = delete;
-
-		static ApplicationSettings& getInstance()
-		{
-			static ApplicationSettings instance;
-			return instance;
-		}
+		~ApplicationSettings() = delete;
 
 		// this allows us to just pass the settings object around
-		SettingsObject& getSettings() { return m_settings; }
+		static SettingsObject& getSettings() { return m_settings; }
 
-		void loadDefaults()
+		static void loadDefaults()
 		{
 			m_settings.isLoaded = true;
 
@@ -60,23 +56,20 @@ namespace Quirk::Engine::Core
 			m_settings.clearDepthBuffer = true;
 			m_settings.clearStencilBuffer = false;
 			m_settings.is3d = true;
-			
+
 			// display settings
 			m_settings.windowWidth = 1200;
 			m_settings.windowHeight = 1000;
 			m_settings.windowTitle = "Quirk Engine";
 		}
 
-		void setOpenglVersion(qUint32 major, qUint32 minor)
+		static void setOpenglVersion(qUint32 major, qUint32 minor)
 		{
 			m_settings.majorVersion = major;
 			m_settings.minorVersion = minor;
 		}
 
 	private:
-		ApplicationSettings() = default;
-		~ApplicationSettings() = default;
-
-		SettingsObject m_settings{};
+		inline static SettingsObject m_settings{};
 	};
 }

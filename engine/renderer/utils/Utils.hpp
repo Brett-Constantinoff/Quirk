@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../core/Defines.hpp"
+#include "../../core/utils/Defines.hpp"
 #include "Settings.hpp"
 
-using namespace Quirk::Engine::Core;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Utils
 {

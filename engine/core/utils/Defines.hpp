@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-namespace Quirk::Engine::Core
+namespace Quirk::Engine::Core::Utils
 {
 	// Type definitions
 	using qInt8 = int8_t;

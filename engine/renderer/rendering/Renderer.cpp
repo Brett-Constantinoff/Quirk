@@ -1,10 +1,16 @@
 #include "Renderer.hpp"
 
-#include "../../core/Utils.hpp"
-#include "../../core/Defines.hpp"
-#include "../../core/ApplicationSettings.hpp"
+#include "../../core/utils/Utils.hpp"
+#include "../../core/utils/Defines.hpp"
+#include "../../core/utils/ApplicationSettings.hpp"
+
+#include "../utils/Context.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
+
+using CoreUtils = Quirk::Engine::Core::Utils::Utils;
+using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
+using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -17,17 +23,18 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::init()
 	{
-		// load intial settings
-		const auto& settings{ Core::ApplicationSettings::getInstance().getSettings() };
+		// load intial settings into our context
+		const auto& settings{ AppSettings::getSettings() };
 
-		m_renderApi = static_cast<qUint32>(settings.renderApi);
-		if (m_renderApi == static_cast<qUint32>(Core::RenderApi::OpenGL))
+		Utils::Context::renderApi = static_cast<qUint32>(settings.renderApi);
+
+		if (Utils::Context::renderApi == static_cast<qUint32>(RenderApi::OpenGL))
 			m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
 
-		m_clearColor = settings.clearColor;
-		m_clearColorBuffer = settings.clearColorBuffer;
-		m_clearDepthBuffer = settings.clearDepthBuffer;
-		m_clearStencilBuffer = settings.clearStencilBuffer;
+		Utils::Context::clearColor = settings.clearColor;
+		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
+		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
+		Utils::Context::clearStencilBuffer = settings.clearStencilBuffer;
 
 		m_rhi->init();
 
@@ -85,12 +92,13 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
 	{
-		m_rhi->clearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
-		m_rhi->clearBuffers(m_clearColorBuffer, m_clearDepthBuffer, m_clearStencilBuffer);
+		const auto& clearColor{ Utils::Context::clearColor };
+		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 
 		constexpr double rotationAngle{ glm::radians(45.0f) };
 		constexpr double damper{ 0.5f };
-		const double rotationSpeed{ rotationAngle * damper * (float)Core::Utils::GetTime() };
+		const double rotationSpeed{ rotationAngle * damper * (float)CoreUtils::GetTime() };
 		glm::mat4 model = glm::mat4(1.0f);
 		const glm::mat4 view{ m_camera->getView() };
 		const glm::mat4 projection{ display.projectionMatrix };

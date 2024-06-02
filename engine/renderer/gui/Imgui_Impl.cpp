@@ -1,6 +1,6 @@
 #include "Imgui_Impl.hpp"
 
-namespace Quirk::Engine::Gui
+namespace Quirk::Engine::Renderer::Gui
 {
 	Imgui_Impl::~Imgui_Impl()
 	{

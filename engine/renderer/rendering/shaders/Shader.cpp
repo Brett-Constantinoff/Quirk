@@ -1,9 +1,9 @@
 #include <spdlog/spdlog.h>
 
 #include "Shader.hpp"
-#include "../../core/Utils.hpp"
+#include "../../core/utils/Utils.hpp"
 
-using namespace Quirk::Engine::Core;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Rendering::Shaders
 {

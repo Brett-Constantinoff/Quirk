@@ -5,10 +5,12 @@
 #include <memory>
 
 #include "DisplayWindow.hpp"
-#include "../core/Utils.hpp"
-#include "../core/ApplicationSettings.hpp"
+#include "../core/utils/Utils.hpp"
+#include "../core/utils/ApplicationSettings.hpp"
 
-using namespace Quirk::Engine::Core;
+using namespace Quirk::Engine::Core::Utils;
+
+using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
 
 namespace Quirk::Engine::Display
 {
@@ -21,21 +23,20 @@ namespace Quirk::Engine::Display
     class DisplayManager
     {
     public:
-        DisplayManager() = default;
         ~DisplayManager();
 
-        void init();
-        void initWindows();
-        DisplayWindow getWindow(DisplayTypes type) { return *m_windows[type]; }
-        void tick(DisplayTypes type, double tickSpeed);
-        void setCurrentContext(DisplayTypes type) { return glfwMakeContextCurrent(m_windows[type]->handle); }
-        bool windowsShouldClose();
+        static void init();
+        static void initWindows();
+        static DisplayWindow getWindow(DisplayTypes type) { return *m_windows[type]; }
+        static void tick(DisplayTypes type, double tickSpeed);
+        static void setCurrentContext(DisplayTypes type) { return glfwMakeContextCurrent(m_windows[type]->handle); }
+        static bool windowsShouldClose();
 
     private:
-        void initGlfw(const SettingsObject& settings);
-        void createDefaultWindow(const SettingsObject& settings);
+        static void initGlfw(const SettingsObject& settings);
+        static void createDefaultWindow(const SettingsObject& settings);
 
     private:
-        std::unordered_map<DisplayTypes, std::shared_ptr<DisplayWindow>> m_windows;
+        static std::unordered_map<DisplayTypes, std::shared_ptr<DisplayWindow>> m_windows;
     };
 }
