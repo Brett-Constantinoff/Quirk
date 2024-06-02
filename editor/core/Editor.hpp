@@ -23,9 +23,6 @@ namespace Quirk::Editor
 	class Editor
 	{
 	public:
-		Editor() = default;
-		~Editor() = default;
-
 		/// <summary>
 		/// Main application loop, all subsystems will 'tick' here.
 		/// </summary>

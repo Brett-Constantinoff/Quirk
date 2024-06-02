@@ -35,13 +35,6 @@ namespace Quirk::Engine::Core::Utils
 	class ApplicationSettings
 	{
 	public:
-		ApplicationSettings() = delete;
-		ApplicationSettings(const ApplicationSettings&) = delete;
-		ApplicationSettings(ApplicationSettings&&) = delete;
-		ApplicationSettings& operator=(const ApplicationSettings&) = delete;
-		ApplicationSettings& operator=(ApplicationSettings&&) = delete;
-		~ApplicationSettings() = delete;
-
 		// this allows us to just pass the settings object around
 		static SettingsObject& getSettings() { return m_settings; }
 

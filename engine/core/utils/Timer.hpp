@@ -8,7 +8,7 @@ namespace Quirk::Engine::Core::Utils
     {
     public:
         static void start();
-        static void stop();
+        static double stop();
 
     private:
         inline static std::chrono::high_resolution_clock::time_point m_start{};

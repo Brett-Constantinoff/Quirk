@@ -1,4 +1,5 @@
 #include <core/utils/Utils.hpp>
+#include <core/utils/Timer.hpp>
 #include <renderer/gui/Imgui_Impl.hpp>
 
 #include "Editor.hpp"
@@ -29,7 +30,7 @@ namespace Quirk::Editor
 		// load initial settings
 		ApplicationSettings::loadDefaults();
 
-		// TODO - It would be cool to time this to see how long it takes
+		Timer::start();
 		{
 			DisplayManager::init();
 			Renderer::init();
@@ -38,6 +39,7 @@ namespace Quirk::Editor
 			// opengl version for setting up windows
 			DisplayManager::initWindows();
 		}
+		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
 
 		// setup our gui
 		Gui::Imgui_Impl::setup(DisplayManager::getWindow(DisplayTypes::Default).handle);

@@ -19,6 +19,7 @@ namespace Quirk::Engine::Renderer::Rendering
 	Renderer::~Renderer()
 	{
 		delete m_shader;
+		delete m_camera;
 	}
 
 	void Renderer::init()
