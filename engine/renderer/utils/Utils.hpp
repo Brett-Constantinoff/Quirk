@@ -7,16 +7,12 @@ using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Utils
 {
-	struct Utils
+	static qUint32 mapPrimitiveToGl(QuirkPrimitives primitiveType)
 	{
-	public:
-		static qUint32 mapPrimitiveToGl(QuirkPrimitives primitiveType)
+		switch (primitiveType)
 		{
-			switch (primitiveType)
-			{
-			case QuirkPrimitives::Triangles:     return GL_TRIANGLES;
-			default:                             return -1;
-			}
+		case QuirkPrimitives::Triangles:     return GL_TRIANGLES;
+		default:                             return -1;
 		}
-	};
+	}
 }

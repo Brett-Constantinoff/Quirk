@@ -7,6 +7,8 @@
 #include "VertexArray.hpp"
 #include "ElementBuffer.hpp"
 
+using namespace Quirk::Engine::Renderer::Utils;
+
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
 	// TODO - More will be added such as texture buffers etc
@@ -28,8 +30,8 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void clearBuffers(bool color, bool detph, bool stencil) override;
 		void submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride) override;
 		void submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride) override;
-		void drawArrays(Utils::QuirkPrimitives primitiveType, qUint32 vertexCount) override;
-		void drawElements(Utils::QuirkPrimitives primitiveType, qUint32 indexCount) override;
+		void drawArrays(QuirkPrimitives primitiveType, qUint32 vertexCount) override;
+		void drawElements(QuirkPrimitives primitiveType, qUint32 indexCount) override;
 
 	private:
 		VertexArray* createVertexArray();

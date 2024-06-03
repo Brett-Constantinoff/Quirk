@@ -1,7 +1,8 @@
 #include <spdlog/spdlog.h>
 
 #include "Shader.hpp"
-#include "../../core/utils/Utils.hpp"
+
+#include "../../../core/utils/Utils.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
 
@@ -58,7 +59,7 @@ namespace Quirk::Engine::Renderer::Rendering::Shaders
         if (!success)
         {
             glGetShaderInfoLog(shadermID, 512, NULL, infoLog);
-            Utils::Exit(std::string{ "Cannot compile shader from: " + m_shaderFile + " " + infoLog });
+            quirkExit(std::string{ "Cannot compile shader from: " + m_shaderFile + " " + infoLog });
         }
         return shadermID;
     }
@@ -73,7 +74,7 @@ namespace Quirk::Engine::Renderer::Rendering::Shaders
         ShaderType type = ShaderType::NONE;
         std::ifstream stream(m_shaderFile);
         if (!stream)
-            Utils::Exit(std::string{ "Cannot find shader from: " + m_shaderFile});
+            quirkExit(std::string{ "Cannot find shader from: " + m_shaderFile});
 
         std::string line;
         std::stringstream ss[2];

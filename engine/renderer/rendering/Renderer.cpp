@@ -8,7 +8,6 @@
 
 using namespace Quirk::Engine::Renderer::Utils;
 
-using CoreUtils = Quirk::Engine::Core::Utils::Utils;
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
 using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
 
@@ -91,7 +90,7 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		constexpr double rotationAngle{ glm::radians(45.0f) };
 		constexpr double damper{ 0.5f };
-		const double rotationSpeed{ rotationAngle * damper * (float)CoreUtils::GetTime() };
+		const double rotationSpeed{ rotationAngle * damper * (float)getTime() };
 		glm::mat4 model = glm::mat4(1.0f);
 		const glm::mat4 view{ m_camera->getView() };
 		const glm::mat4 projection{ display.projectionMatrix };

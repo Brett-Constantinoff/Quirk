@@ -5,13 +5,12 @@
 
 #include "../../../core/utils/Utils.hpp"
 #include "../../utils/Utils.hpp"
-#include "../../core/utils/ApplicationSettings.hpp"
-
+#include "../../../core/utils/ApplicationSettings.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
+using namespace Quirk::Engine::Core::Utils;
 
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
-using CoreUtils = Quirk::Engine::Core::Utils::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -19,7 +18,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	{
 		const auto& settings{ AppSettings::getSettings() };
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-			CoreUtils::Exit("Failed to initialize Glad");
+			quirkExit("Failed to initialize Glad");
 
 		if (settings.is3d)
 			glEnable(GL_DEPTH_TEST);
@@ -122,21 +121,21 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao->unbind();
 	}
 
-	void Opengl::drawElements(Utils::QuirkPrimitives primitiveType, qUint32 indexCount)
+	void Opengl::drawElements(QuirkPrimitives primitiveType, qUint32 indexCount)
 	{
 		// TODO - since theres only one vao this is fine for now
 		m_resources.vertexArrays.back()->bind();
 
-		glDrawElements(Utils::Utils::mapPrimitiveToGl(primitiveType), indexCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(mapPrimitiveToGl(primitiveType), indexCount, GL_UNSIGNED_INT, 0);
 
 		m_resources.vertexArrays.back()->unbind();
 	}
 
-	void Opengl::drawArrays(Utils::QuirkPrimitives primitiveType, qUint32 vertexCount)
+	void Opengl::drawArrays(QuirkPrimitives primitiveType, qUint32 vertexCount)
 	{
 		m_resources.vertexArrays.back()->bind();
 
-		glDrawArrays(Utils::Utils::mapPrimitiveToGl(primitiveType), 0, vertexCount);
+		glDrawArrays(mapPrimitiveToGl(primitiveType), 0, vertexCount);
 
 		m_resources.vertexArrays.back()->unbind();
 	}

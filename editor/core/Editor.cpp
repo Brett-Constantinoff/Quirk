@@ -10,12 +10,12 @@ namespace Quirk::Editor
 	{
 		setup();
 
-		double lastFrame{ CoreUtils::GetTime() };
+		double lastFrame{ getTime() };
 
 		const auto& display{DisplayManager::getWindow(DisplayTypes::Default)};
 		while (DisplayManager::windowsShouldClose())
 		{
-			const double currFrame{ CoreUtils::GetTime() };
+			const double currFrame{ getTime() };
 			const double tickSpeed{ currFrame - lastFrame };
 			lastFrame = currFrame;
 
@@ -37,11 +37,11 @@ namespace Quirk::Editor
 
 	void Editor::setup()
 	{
-		// load initial settings
-		ApplicationSettings::loadDefaults();
-
 		Timer::start();
 		{
+			// load initial settings
+			ApplicationSettings::loadDefaults();
+
 			DisplayManager::init();
 			Renderer::init();
 
@@ -51,10 +51,9 @@ namespace Quirk::Editor
 
 			// setup our gui
 			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
+			m_components.emplace_back(new MenuBar::MenuBar);
 		}
 		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
-
-		m_components.emplace_back(new MenuBar::MenuBar);
 	}
 
 	void Editor::renderEditor()

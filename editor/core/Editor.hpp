@@ -15,8 +15,6 @@ using namespace Quirk::Engine::Display;
 using namespace Quirk::Engine::Renderer;
 using namespace Quirk::Engine::Renderer::Rendering;
 
-using CoreUtils = Quirk::Engine::Core::Utils::Utils;
-
 namespace Quirk::Editor
 {
 	class Editor

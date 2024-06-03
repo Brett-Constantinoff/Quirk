@@ -6,6 +6,7 @@
 #include "../../core/utils/Defines.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
+using namespace Quirk::Engine::Renderer::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi
 {
@@ -21,7 +22,7 @@ namespace Quirk::Engine::Renderer::Rhi
 
 		virtual void submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride) = 0;
 		virtual void submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride) = 0;
-		virtual void drawArrays(Utils::QuirkPrimitives primitiveType, qUint32 vertexCount) = 0;
-		virtual void drawElements(Utils::QuirkPrimitives primitiveType, qUint32 indexCount) = 0;
+		virtual void drawArrays(QuirkPrimitives primitiveType, qUint32 vertexCount) = 0;
+		virtual void drawElements(QuirkPrimitives primitiveType, qUint32 indexCount) = 0;
 	};
 }

@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../core/utils/Defines.hpp"
+#include "../core/utils/Utils.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
 

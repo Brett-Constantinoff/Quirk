@@ -10,7 +10,6 @@
 #include "shaders/Shader.hpp"
 #include "Camera.hpp"
 
-using namespace Quirk::Engine::Core;
 using namespace Quirk::Engine::Display;
 using namespace Quirk::Engine::Renderer::Rhi;
 using namespace Quirk::Engine::Renderer::Rhi::Opengl;

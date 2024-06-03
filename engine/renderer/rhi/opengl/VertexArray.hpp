@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "../../core/utils/Defines.hpp"
+#include "../../../core/utils/Defines.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
 

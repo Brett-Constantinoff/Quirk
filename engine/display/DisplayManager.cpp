@@ -42,7 +42,7 @@ namespace Quirk::Engine::Display
 	void DisplayManager::initGlfw(const SettingsObject& settings)
 	{
 		if (glfwInit() != GLFW_TRUE)
-			Utils::Exit("Failed to initialize GLFW");
+			quirkExit("Failed to initialize GLFW");
 	}
 
 	void DisplayManager::createDefaultWindow(const SettingsObject& settings)

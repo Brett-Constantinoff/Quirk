@@ -1,8 +1,8 @@
 #include "DisplayWindow.hpp"
 
-#include "../../core/utils/Utils.hpp"
+#include "../core/utils/Utils.hpp"
 
-using CoreUtils = Quirk::Engine::Core::Utils::Utils;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Display
 {
@@ -10,7 +10,7 @@ namespace Quirk::Engine::Display
     {
         handle = glfwCreateWindow(width, height, title.data(), nullptr, nullptr);
         if (!handle)
-            CoreUtils::Exit("Failed to create window");
+            quirkExit("Failed to create window");
 
         calculateProjectionMatrix(width, height);
     }
