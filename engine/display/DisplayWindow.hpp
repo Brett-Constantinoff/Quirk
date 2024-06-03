@@ -21,8 +21,6 @@ namespace Quirk::Engine::Display
     {
     public:
         DisplayWindow(qUint32 width, qUint32 height, const std::string_view& title);
-        ~DisplayWindow() = default;
-
         void calculateProjectionMatrix(float width, float height);
 
     public:

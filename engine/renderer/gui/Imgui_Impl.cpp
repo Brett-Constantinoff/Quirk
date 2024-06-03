@@ -2,14 +2,7 @@
 
 namespace Quirk::Engine::Renderer::Gui
 {
-	Imgui_Impl::~Imgui_Impl()
-	{
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
-	}
-
-	void Imgui_Impl::setup(GLFWwindow* currentContext)
+	void Imgui_Impl::init(GLFWwindow* currentContext)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -21,6 +14,13 @@ namespace Quirk::Engine::Renderer::Gui
 
 		ImGui_ImplGlfw_InitForOpenGL(currentContext, true);
 		ImGui_ImplOpenGL3_Init("#version 150");
+	}
+
+	void Imgui_Impl::shutdown()
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void Imgui_Impl::updateFrame()

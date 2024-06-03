@@ -2,18 +2,18 @@
 
 namespace Quirk::Engine::Display
 {
-	DisplayManager::~DisplayManager()
-	{
-		glfwTerminate();
-		for (const auto& window : m_windows)
-			glfwDestroyWindow(window.second->handle);
-	}
-
 	void DisplayManager::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
 		initGlfw(settings);
 		createDefaultWindow(settings);
+	}
+
+	void DisplayManager::shutDown()
+	{
+		glfwTerminate();
+		for (const auto& window : m_windows)
+			glfwDestroyWindow(window.second->handle);
 	}
 
 	void DisplayManager::initWindows()
@@ -47,7 +47,7 @@ namespace Quirk::Engine::Display
 
 	void DisplayManager::createDefaultWindow(const SettingsObject& settings)
 	{
-		auto defaultWindow = std::make_shared<DisplayWindow>(settings.windowWidth, settings.windowHeight,
+		auto defaultWindow = new DisplayWindow(settings.windowWidth, settings.windowHeight,
 			settings.windowTitle);
 		m_windows.insert({ DisplayTypes::Default, defaultWindow });
 		setCurrentContext(DisplayTypes::Default);

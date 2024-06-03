@@ -11,12 +11,8 @@ namespace Quirk::Engine::Renderer::Gui
     class Imgui_Impl
     {
     public:
-        Imgui_Impl() = delete;
-        Imgui_Impl(const Imgui_Impl&) = delete;
-        Imgui_Impl& operator=(const Imgui_Impl&) = delete;
-        ~Imgui_Impl();
-
-        static void setup(GLFWwindow* currentContext);
+        static void init(GLFWwindow* currentContext);
+        static void shutdown();
         static void updateFrame();
         static void renderFrame();
     };

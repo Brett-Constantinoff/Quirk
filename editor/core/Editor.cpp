@@ -25,6 +25,16 @@ namespace Quirk::Editor
 		}
 	}
 
+	void Editor::shutDown()
+	{
+		Gui::Imgui_Impl::shutdown();
+		DisplayManager::shutDown();
+		Renderer::shutDown();
+
+		for (auto& component : m_components)
+			delete component;
+	}
+
 	void Editor::setup()
 	{
 		// load initial settings
@@ -38,12 +48,13 @@ namespace Quirk::Editor
 			// this comes after we init the renderer so we can get the appropriate 
 			// opengl version for setting up windows
 			DisplayManager::initWindows();
+
+			// setup our gui
+			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
 		}
 		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
 
-		// setup our gui
-		Gui::Imgui_Impl::setup(DisplayManager::getWindow(DisplayTypes::Default).handle);
-		m_components.push_back(std::make_unique<MenuBar::MenuBar>());
+		m_components.emplace_back(new MenuBar::MenuBar);
 	}
 
 	void Editor::renderEditor()

@@ -15,31 +15,6 @@ using CoreUtils = Quirk::Engine::Core::Utils::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
-	Opengl::~Opengl()
-	{
-		for (auto& vao : m_resources.vertexArrays)
-		{
-			glDeleteVertexArrays(1, &(vao->getId()));
-			delete vao;
-		}
-		for (auto& vbo : m_resources.vertexBuffers)
-		{
-			glDeleteBuffers(1, &(vbo->getId()));
-			delete vbo;
-		}
-		for (auto& ebo : m_resources.indexBuffers)
-		{
-			glDeleteBuffers(1, &(ebo->getId()));
-			delete ebo;
-		}
-		m_resources.vertexBuffers.clear();
-		m_resources.vertexBuffers.shrink_to_fit();
-		m_resources.vertexArrays.clear();
-		m_resources.vertexArrays.shrink_to_fit();
-		m_resources.indexBuffers.clear();
-		m_resources.indexBuffers.shrink_to_fit();
-	}
-
 	void Opengl::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
@@ -67,6 +42,28 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		spdlog::info("OpenGL Version: {}.{}", majorVersion, minorVersion);
 
 		AppSettings::setOpenglVersion(majorVersion, minorVersion);
+	}
+
+	void Opengl::shutDown()
+	{
+		for (auto& vao : m_resources.vertexArrays)
+		{
+			glDeleteVertexArrays(1, &(vao->getId()));
+			delete vao;
+		}
+		for (auto& vbo : m_resources.vertexBuffers)
+		{
+			glDeleteBuffers(1, &(vbo->getId()));
+			delete vbo;
+		}
+		for (auto& ebo : m_resources.indexBuffers)
+		{
+			glDeleteBuffers(1, &(ebo->getId()));
+			delete ebo;
+		}
+		m_resources.vertexBuffers.clear();
+		m_resources.vertexArrays.clear();
+		m_resources.indexBuffers.clear();
 	}
 
 	void Opengl::clearColor(float r, float g, float b, float a)

@@ -14,14 +14,6 @@ using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
-	// TODO - Remove this in the future once 
-	// we have a shader manager class
-	Renderer::~Renderer()
-	{
-		delete m_shader;
-		delete m_camera;
-	}
-
 	void Renderer::init()
 	{
 		// load intial settings into our context
@@ -30,7 +22,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		Utils::Context::renderApi = static_cast<qUint32>(settings.renderApi);
 
 		if (Utils::Context::renderApi == static_cast<qUint32>(RenderApi::OpenGL))
-			m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
+			m_rhi = new Rhi::Opengl::Opengl;
 
 		Utils::Context::clearColor = settings.clearColor;
 		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
@@ -117,5 +109,13 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		m_rhi->drawArrays(QuirkPrimitives::Triangles, 36);
 		m_shader->disuse();
+	}
+
+	void Renderer::shutDown()
+	{
+		delete m_shader;
+		delete m_camera;
+
+		m_rhi->shutDown();
 	}
 }

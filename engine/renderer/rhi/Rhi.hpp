@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <vector>
 
 #include "../utils/Settings.hpp"
 #include "../../core/utils/Defines.hpp"
@@ -11,9 +12,10 @@ namespace Quirk::Engine::Renderer::Rhi
 	class Rhi
 	{
 	public:
-		virtual ~Rhi() = default;
+		virtual ~Rhi() {};
 
 		virtual void init() = 0;
+		virtual void shutDown() = 0;
 		virtual void clearColor(float r, float g, float b, float a) = 0;
 		virtual void clearBuffers(bool color, bool detph, bool stencil) = 0;
 

@@ -23,9 +23,8 @@ namespace Quirk::Engine::Display
     class DisplayManager
     {
     public:
-        ~DisplayManager();
-
         static void init();
+        static void shutDown();
         static void initWindows();
         static DisplayWindow getWindow(DisplayTypes type) { return *m_windows[type]; }
         static void tick(DisplayTypes type, double tickSpeed);
@@ -37,6 +36,6 @@ namespace Quirk::Engine::Display
         static void createDefaultWindow(const SettingsObject& settings);
 
     private:
-        inline static std::unordered_map<DisplayTypes, std::shared_ptr<DisplayWindow>> m_windows{};
+        inline static std::unordered_map<DisplayTypes, DisplayWindow*> m_windows{};
     };
 }

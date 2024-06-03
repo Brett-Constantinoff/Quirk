@@ -22,9 +22,8 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	class Opengl : public Rhi
 	{
 	public:
-		~Opengl() override;
-
 		void init() override;
+		void shutDown() override;
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;
 		void submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride) override;

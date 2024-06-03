@@ -21,19 +21,18 @@ namespace Quirk::Engine::Renderer::Rendering
 	class Renderer
 	{
 	public:
-		~Renderer();
-
 		static void init();
 		static void tick(double tickSpeed, const DisplayWindow& display);
+		static void shutDown();
 
 	private:
 		// depending on what backend we are using
 		// we can add more here
 		 inline static Rhi::Opengl::Opengl m_opengl{};
-		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{};
+		 inline static Rhi::Rhi* m_rhi{nullptr};
 
 		 // TODO - Remove these
-		 inline static Shader* m_shader{};
+		 inline static Shader* m_shader{ nullptr };
 		 inline static Camera* m_camera{};
 	};
 }
