@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "../Rhi.hpp"
+#include "Utils.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "ElementBuffer.hpp"
@@ -16,9 +18,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	// a solution would be to allocate a large chunk of memory and then use that memory to store the resources
 	struct Resources
 	{
-		std::vector<VertexArray*> vertexArrays{};
-		std::vector<VertexBuffer*> vertexBuffers{};
-		std::vector<ElementBuffer*> indexBuffers{};
+		std::vector<VertexArray> vertexArrays{};
+		std::vector<VertexBuffer> vertexBuffers{};
+		std::vector<ElementBuffer> indexBuffers{};
 	};
 
 	class Opengl : public Rhi
@@ -34,9 +36,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void drawElements(QuirkPrimitives primitiveType, qUint32 indexCount) override;
 
 	private:
-		VertexArray* createVertexArray();
-		VertexBuffer* createVertexBuffer();
-		ElementBuffer* createElementBuffer();
+		VertexArray createVertexArray();
+		VertexBuffer createVertexBuffer();
+		ElementBuffer createElementBuffer();
 
 	private:
 		Resources m_resources{};

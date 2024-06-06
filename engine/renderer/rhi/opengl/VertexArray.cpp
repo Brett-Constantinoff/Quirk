@@ -25,9 +25,11 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	void VertexArray::setData(qUint32 size, qUint32 stride, GLenum type, GLboolean normalized)
 	{
 		glVertexAttribPointer(0, size, type, normalized, stride * sizeof(float), (void*)0);
+
 		glEnableVertexAttribArray(0);
 
 		glVertexAttribPointer(1, size, type, normalized, stride * sizeof(float), (void*)(size * sizeof(float)));
+
 		glEnableVertexAttribArray(1);
 	}
 }

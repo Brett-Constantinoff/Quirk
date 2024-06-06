@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <display/DisplayManager.hpp>
 #include <core/utils/ApplicationSettings.hpp>
+#include <core/utils/Utils.hpp>
 #include <renderer/rendering/Renderer.hpp>
 
 #include "../components/Component.hpp"
@@ -31,6 +33,6 @@ namespace Quirk::Editor
 		void renderEditor();
 
 	private:
-		std::vector<Component*> m_components{};
+		std::vector<std::unique_ptr<Component>> m_components{};
 	};
 }

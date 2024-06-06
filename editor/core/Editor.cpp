@@ -30,9 +30,6 @@ namespace Quirk::Editor
 		Gui::Imgui_Impl::shutdown();
 		DisplayManager::shutDown();
 		Renderer::shutDown();
-
-		for (auto& component : m_components)
-			delete component;
 	}
 
 	void Editor::setup()

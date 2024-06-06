@@ -4,7 +4,6 @@
 #include "Opengl.hpp"
 
 #include "../../../core/utils/Utils.hpp"
-#include "../../utils/Utils.hpp"
 #include "../../../core/utils/ApplicationSettings.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
@@ -23,6 +22,11 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		if (settings.is3d)
 			glEnable(GL_DEPTH_TEST);
 
+		// currently we want debug info for DEBUG and RELEASE builds
+		// if we have a distribution build we can disable this
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(message_callback, nullptr);
+
 		const GLubyte* renderer{ glGetString(GL_RENDERER) };
 		const GLubyte* vendor{ glGetString(GL_VENDOR) };
 		const GLubyte* version{ glGetString(GL_VERSION) };
@@ -32,6 +36,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		qInt32 minorVersion{ 0 };
 
 		glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+
 		glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
 
 		spdlog::info("GPU: {}", reinterpret_cast<const char*>(renderer));
@@ -46,20 +51,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	void Opengl::shutDown()
 	{
 		for (auto& vao : m_resources.vertexArrays)
-		{
-			glDeleteVertexArrays(1, &(vao->getId()));
-			delete vao;
-		}
+			glDeleteVertexArrays(1, &(vao.getId()));
 		for (auto& vbo : m_resources.vertexBuffers)
-		{
-			glDeleteBuffers(1, &(vbo->getId()));
-			delete vbo;
-		}
+			glDeleteBuffers(1, &(vbo.getId()));
 		for (auto& ebo : m_resources.indexBuffers)
-		{
-			glDeleteBuffers(1, &(ebo->getId()));
-			delete ebo;
-		}
+			glDeleteBuffers(1, &(ebo.getId()));
+
 		m_resources.vertexBuffers.clear();
 		m_resources.vertexArrays.clear();
 		m_resources.indexBuffers.clear();
@@ -87,78 +84,78 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride)
 	{
-		const auto& vao{ createVertexArray() };
-		const auto& vbo{ createVertexBuffer() };
+		auto vao{ createVertexArray() };
+		const auto vbo{ createVertexBuffer() };
 
-		vao->bind();
+		vao.bind();
 
-		vbo->bind();
-		vbo->setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.bind();
+		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
 
-		vao->setData(vertexDataSize, stride);
+		vao.setData(vertexDataSize, stride);
 
-		vbo->unbind();
-		vao->unbind();
+		vbo.unbind();
+		vao.unbind();
 	}
 
 	void Opengl::submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride)
 	{
-		const auto& vao{ createVertexArray() };
-		const auto& vbo{ createVertexBuffer() };
-		const auto& ebo{ createElementBuffer() };
+		auto vao{ createVertexArray() };
+		const auto vbo{ createVertexBuffer() };
+		const auto ebo{ createElementBuffer() };
 
-		vao->bind();
+		vao.bind();
 
-		vbo->bind();
-		vbo->setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.bind();
+		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
 
-		ebo->bind();
-		ebo->setData(indexData.data(), vertexData.size() * sizeof(qUint32));
+		ebo.bind();
+		ebo.setData(indexData.data(), vertexData.size() * sizeof(qUint32));
 
-		vao->setData(vertexDataSize, stride);
+		vao.setData(vertexDataSize, stride);
 
-		vbo->unbind();
-		vao->unbind();
+		vbo.unbind();
+		vao.unbind();
 	}
 
 	void Opengl::drawElements(QuirkPrimitives primitiveType, qUint32 indexCount)
 	{
 		// TODO - since theres only one vao this is fine for now
-		m_resources.vertexArrays.back()->bind();
+		m_resources.vertexArrays.back().bind();
 
 		glDrawElements(mapPrimitiveToGl(primitiveType), indexCount, GL_UNSIGNED_INT, 0);
 
-		m_resources.vertexArrays.back()->unbind();
+		m_resources.vertexArrays.back().unbind();
 	}
 
 	void Opengl::drawArrays(QuirkPrimitives primitiveType, qUint32 vertexCount)
 	{
-		m_resources.vertexArrays.back()->bind();
+		m_resources.vertexArrays.back().bind();
 
 		glDrawArrays(mapPrimitiveToGl(primitiveType), 0, vertexCount);
 
-		m_resources.vertexArrays.back()->unbind();
+		m_resources.vertexArrays.back().unbind();
 	}
 
-	VertexArray* Opengl::createVertexArray()
+	VertexArray Opengl::createVertexArray()
 	{
-		auto* vao{new VertexArray() };
+		auto vao{ VertexArray() };
 		m_resources.vertexArrays.emplace_back(vao);
 
 		return vao;
 	}
 
-	VertexBuffer* Opengl::createVertexBuffer()
+	VertexBuffer Opengl::createVertexBuffer()
 	{
-		auto* vbo{new VertexBuffer() };
+		auto vbo{ VertexBuffer() };
 		m_resources.vertexBuffers.emplace_back(vbo);
 
 		return vbo;
 	}
 
-	ElementBuffer* Opengl::createElementBuffer()
+	ElementBuffer Opengl::createElementBuffer()
 	{
-		auto* ebo{ new ElementBuffer() };
+		auto ebo{ ElementBuffer() };
 		m_resources.indexBuffers.emplace_back(ebo);
 
 		return ebo;

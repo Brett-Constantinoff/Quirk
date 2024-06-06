@@ -47,9 +47,8 @@ namespace Quirk::Engine::Display
 
 	void DisplayManager::createDefaultWindow(const SettingsObject& settings)
 	{
-		auto defaultWindow = new DisplayWindow(settings.windowWidth, settings.windowHeight,
-			settings.windowTitle);
-		m_windows.insert({ DisplayTypes::Default, defaultWindow });
+		m_windows.insert({ DisplayTypes::Default, std::make_unique<DisplayWindow>(settings.windowWidth, settings.windowHeight,
+			settings.windowTitle) });
 		setCurrentContext(DisplayTypes::Default);
 	}
 }
