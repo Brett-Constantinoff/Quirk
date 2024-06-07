@@ -22,8 +22,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		if (settings.is3d)
 			glEnable(GL_DEPTH_TEST);
 
-		// currently we want debug info for DEBUG and RELEASE builds
-		// if we have a distribution build we can disable this
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(message_callback, nullptr);
 

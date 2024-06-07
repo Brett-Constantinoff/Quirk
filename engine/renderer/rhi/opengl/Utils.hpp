@@ -61,6 +61,7 @@ namespace Quirk::Engine::Renderer::Rhi
 			}
 		}();
 
+#ifdef DEBUG
 		switch (severity)
 		{
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
@@ -79,5 +80,19 @@ namespace Quirk::Engine::Renderer::Rhi
 			spdlog::debug("{}, {}, {}, {}: {}", srcStr, typeStr, severityStr, id, message);
 			break;
 		}
+#else
+		if (severity == GL_DEBUG_SEVERITY_MEDIUM || severity == GL_DEBUG_SEVERITY_HIGH)
+		{
+			switch (severity)
+			{
+			case GL_DEBUG_SEVERITY_MEDIUM:
+				spdlog::error("{}, {}, {}, {}: {}", srcStr, typeStr, severityStr, id, message);
+				break;
+			case GL_DEBUG_SEVERITY_HIGH:
+				spdlog::critical("{}, {}, {}, {}: {}", srcStr, typeStr, severityStr, id, message);
+				break;
+			}
+		}
+#endif
 	}
 }
