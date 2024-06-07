@@ -20,7 +20,7 @@ namespace Quirk::Engine::Renderer::Rhi
         }
     }
 
-	static void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
+	static void debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
 		GLchar const* message, void const* user_param)
 	{
 		auto const srcStr = [source]() 

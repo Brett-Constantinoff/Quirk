@@ -23,7 +23,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 			glEnable(GL_DEPTH_TEST);
 
 		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback(message_callback, nullptr);
+		glDebugMessageCallback(debugCallback, nullptr);
 
 		const GLubyte* renderer{ glGetString(GL_RENDERER) };
 		const GLubyte* vendor{ glGetString(GL_VENDOR) };
