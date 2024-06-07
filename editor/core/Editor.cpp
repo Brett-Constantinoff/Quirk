@@ -48,7 +48,9 @@ namespace Quirk::Editor
 
 			// setup our gui
 			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
+
 			m_components.emplace_back(new MenuBar::MenuBar);
+			m_components.emplace_back(new Metrics::Metrics);
 		}
 		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
 	}

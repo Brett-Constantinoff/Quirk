@@ -8,6 +8,7 @@
 
 #include "../components/Component.hpp"
 #include "../components/menuBar/MenuBar.hpp"
+#include "../components/metrics/Metrics.hpp"
 
 using namespace Quirk::Editor::Components;
 
