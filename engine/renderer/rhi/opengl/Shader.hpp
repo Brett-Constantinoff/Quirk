@@ -8,7 +8,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-namespace Quirk::Engine::Renderer::Rendering::Shaders
+namespace Quirk::Engine::Renderer::Rhi
 {
     struct ShaderSource
     {

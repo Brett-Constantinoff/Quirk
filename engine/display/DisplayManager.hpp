@@ -36,6 +36,6 @@ namespace Quirk::Engine::Display
         static void createDefaultWindow(const SettingsObject& settings);
 
     private:
-        inline static std::unordered_map<DisplayTypes, DisplayWindow*> m_windows{};
+        inline static std::unordered_map<DisplayTypes, std::unique_ptr<DisplayWindow>> m_windows{};
     };
 }

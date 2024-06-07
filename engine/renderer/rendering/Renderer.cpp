@@ -19,66 +19,26 @@ namespace Quirk::Engine::Renderer::Rendering
 		const auto& settings{ AppSettings::getSettings() };
 
 		Utils::Context::renderApi = static_cast<qUint32>(settings.renderApi);
-
-		if (Utils::Context::renderApi == static_cast<qUint32>(RenderApi::OpenGL))
-			m_rhi = new Rhi::Opengl::Opengl;
-
 		Utils::Context::clearColor = settings.clearColor;
 		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
 		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
 		Utils::Context::clearStencilBuffer = settings.clearStencilBuffer;
 
+		// for now just load opengl
+		m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
 		m_rhi->init();
 
 		// TODO - This is just here to make sure we can render something
 		{
-			m_shader = new Shader("../engine/resources/shaders/basicShader.hlsl");
-			m_camera = new Camera();
-			std::vector<float> vertices =
+			m_shader = std::make_unique<Shader>("../engine/resources/shaders/basicShader.hlsl");
+			m_camera = std::make_unique<Camera>();
+			m_data =
 			{
-				-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-				 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-				 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-				 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-				-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-				-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-
-				-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-				 0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-				-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-				-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,
-
-				-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-				-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-				-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-
-				 0.5f,  0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
-				 0.5f,  0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
-				 0.5f, -0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
-				 0.5f, -0.5f, -0.5f, 0.5f, 0.25f, 0.75f,
-				 0.5f, -0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
-				 0.5f,  0.5f,  0.5f, 0.5f, 0.25f, 0.75f,
-
-				-0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
-				 0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
-				 0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
-				 0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
-				-0.5f, -0.5f,  0.5f, 0.43f, 0.68f, 0.13f,
-				-0.5f, -0.5f, -0.5f, 0.43f, 0.68f, 0.13f,
-
-				-0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
-				 0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
-				 0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
-				 0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
-				-0.5f,  0.5f,  0.5f, 0.12f, 0.24f, 0.86f,
-				-0.5f,  0.5f, -0.5f, 0.12f, 0.24f, 0.86f,
+				-0.5f, -0.5f, 0.0f,
+				 0.5f, -0.5f, 0.0f,
+				 0.0f,  0.5f, 0.0f
 			};
-			m_rhi->submitDrawData(vertices, 3, 6);
+			m_rhi->submitDrawData(m_data, 3, 3);
 		}
 	}
 
@@ -88,33 +48,14 @@ namespace Quirk::Engine::Renderer::Rendering
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 
-		constexpr double rotationAngle{ glm::radians(45.0f) };
-		constexpr double damper{ 0.5f };
-		const double rotationSpeed{ rotationAngle * damper * (float)getTime() };
-		glm::mat4 model = glm::mat4(1.0f);
-		const glm::mat4 view{ m_camera->getView() };
-		const glm::mat4 projection{ display.projectionMatrix };
-
-		constexpr glm::vec3 rotationVec{ 0.0f, 1.0f, 0.5f };
-
-		model = glm::rotate(model, static_cast<float>(rotationSpeed), rotationVec );
-
 		m_shader->use();
 
-		m_shader->setMat4("uModel", model);
-		m_shader->setMat4("uView", view);
-		m_shader->setMat4("uProjection", projection);
-
-
-		m_rhi->drawArrays(QuirkPrimitives::Triangles, 36);
+		m_rhi->drawArrays(QuirkPrimitives::Triangles, 3);
 		m_shader->disuse();
 	}
 
 	void Renderer::shutDown()
 	{
-		delete m_shader;
-		delete m_camera;
-
 		m_rhi->shutDown();
 	}
 }

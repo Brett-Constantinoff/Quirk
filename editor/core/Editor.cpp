@@ -30,9 +30,6 @@ namespace Quirk::Editor
 		Gui::Imgui_Impl::shutdown();
 		DisplayManager::shutDown();
 		Renderer::shutDown();
-
-		for (auto& component : m_components)
-			delete component;
 	}
 
 	void Editor::setup()
@@ -51,7 +48,9 @@ namespace Quirk::Editor
 
 			// setup our gui
 			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
+
 			m_components.emplace_back(new MenuBar::MenuBar);
+			m_components.emplace_back(new Metrics::Metrics);
 		}
 		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
 	}

@@ -6,7 +6,7 @@
 
 using namespace Quirk::Engine::Core::Utils;
 
-namespace Quirk::Engine::Renderer::Rendering::Shaders
+namespace Quirk::Engine::Renderer::Rhi
 {
     Shader::Shader(const std::string& filepath) :
         m_shaderFile{ filepath }
@@ -50,9 +50,11 @@ namespace Quirk::Engine::Renderer::Rendering::Shaders
         const char* src = source.c_str();
 
         int32_t shadermID = glCreateShader(type);
-        glShaderSource(shadermID, 1, &src, nullptr);
-        glCompileShader(shadermID);
 
+        glShaderSource(shadermID, 1, &src, nullptr);
+
+        glCompileShader(shadermID);
+        
         int32_t success;
         GLchar infoLog[512];
         glGetShaderiv(shadermID, GL_COMPILE_STATUS, &success);
