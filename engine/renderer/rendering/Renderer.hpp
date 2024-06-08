@@ -5,7 +5,7 @@
 
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
-#include "../rhi/opengl/Shader.hpp"
+#include "../rhi/opengl/OpenglShader.hpp"
 #include "../rhi/Rhi.hpp"
 
 #include "Camera.hpp"
