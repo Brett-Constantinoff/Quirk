@@ -30,6 +30,8 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void createOpenglShader(const std::string& filePath);
 
 	private:
+		// leaving these as heap allocated since they need to be determined based on our 
+		// rhi
 		inline static std::unordered_map<MaterialType, std::unique_ptr<Shader>> m_shaders{};
 	};
 }

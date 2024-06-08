@@ -42,9 +42,6 @@ namespace Quirk::Editor
 
 			// setup our gui
 			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
-
-			m_components.emplace_back(new MenuBar::MenuBar);
-			m_components.emplace_back(new Metrics::Metrics);
 		}
 		spdlog::info("Quirk Setup took: {}ms", timer.stop());
 	}
@@ -52,10 +49,13 @@ namespace Quirk::Editor
 	void Editor::renderEditor()
 	{
 		Gui::ImguiImpl::updateFrame();
-
-		for (std::size_t i{}; i < m_components.size(); ++i)
-			m_components[i]->render();
-
+		renderComponents();
 		Gui::ImguiImpl::renderFrame();
+	}
+
+	void Editor::renderComponents()
+	{
+		m_menuBar.render();
+		m_metrics.render();
 	}
 }

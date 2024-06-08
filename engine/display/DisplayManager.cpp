@@ -29,12 +29,22 @@ namespace Quirk::Engine::Display
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}
 
+	DisplayWindow DisplayManager::getWindow(DisplayTypes type) 
+	{ 
+		return *m_windows[type]; 
+	}
+
 	void DisplayManager::tick(DisplayTypes type, double tickSpeed)
 	{
 		const auto& window = m_windows[type];
 
 		glfwSwapBuffers(window->handle);
 		glfwPollEvents();
+	}
+
+	void DisplayManager::setCurrentContext(DisplayTypes type) 
+	{ 
+		return glfwMakeContextCurrent(m_windows[type]->handle); 
 	}
 
 	bool DisplayManager::windowsShouldClose()
@@ -61,8 +71,9 @@ namespace Quirk::Engine::Display
 
 	void DisplayManager::createDefaultWindow(const SettingsObject& settings)
 	{
-		m_windows.insert({ DisplayTypes::Default, std::make_unique<DisplayWindow>(settings.windowWidth, settings.windowHeight,
-			settings.windowTitle) });
+		m_defaultWindow.init(settings.windowWidth, settings.windowHeight, settings.windowTitle);
+
+		m_windows.insert({ DisplayTypes::Default, &m_defaultWindow });
 		setCurrentContext(DisplayTypes::Default);
 
 		glfwSetFramebufferSizeCallback(m_windows[DisplayTypes::Default]->handle,

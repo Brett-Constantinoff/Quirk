@@ -30,8 +30,10 @@ namespace Quirk::Editor
 	private:
 		static void setup();
 		static void renderEditor();
+		static void renderComponents();
 
 	private:
-		inline static std::vector<std::unique_ptr<Component>> m_components{};
+		inline static MenuBar::MenuBar m_menuBar{};
+		inline static Metrics::Metrics m_metrics{};
 	};
 }

@@ -31,9 +31,9 @@ namespace Quirk::Engine::Display
 
         static void init();
         static void initWindows();
-        static DisplayWindow getWindow(DisplayTypes type) { return *m_windows[type]; }
+        static DisplayWindow getWindow(DisplayTypes type);
         static void tick(DisplayTypes type, double tickSpeed);
-        static void setCurrentContext(DisplayTypes type) { return glfwMakeContextCurrent(m_windows[type]->handle); }
+        static void setCurrentContext(DisplayTypes type);
         static bool windowsShouldClose();
         static void handleWindowInput(const KeyPressEvent& event);
 
@@ -42,6 +42,9 @@ namespace Quirk::Engine::Display
         static void createDefaultWindow(const SettingsObject& settings);
 
     private:
-        inline static std::unordered_map<DisplayTypes, std::unique_ptr<DisplayWindow>> m_windows{};
+        // just store the stack address of the window members
+        inline static std::unordered_map<DisplayTypes, DisplayWindow*> m_windows{};
+
+        inline static DisplayWindow m_defaultWindow{};
     };
 }

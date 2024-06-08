@@ -5,7 +5,7 @@
 
 namespace Quirk::Engine::Display
 {
-    DisplayWindow::DisplayWindow(uint32_t width, uint32_t height, const std::string_view& title) 
+    void DisplayWindow::init(uint32_t width, uint32_t height, const std::string_view& title) 
     {
         handle = glfwCreateWindow(width, height, title.data(), nullptr, nullptr);
         if (!handle)

@@ -26,9 +26,13 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void tick(double tickSpeed, const DisplayWindow& display);
 
 	private:
+		static void loadContext();
+		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
 
 	private:
-		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{ std::make_unique<Rhi::Opengl::Opengl>() };
+		 inline static Rhi::Rhi* m_rhi{ nullptr };
+
+		 inline static Rhi::Opengl::Opengl m_opengl{};
 	};
 }

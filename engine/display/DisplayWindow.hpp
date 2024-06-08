@@ -21,7 +21,10 @@ namespace Quirk::Engine::Display
     struct DisplayWindow
     {
     public:
-        DisplayWindow(uint32_t width, uint32_t height, const std::string_view& title);
+        DisplayWindow() = default;
+
+        // have an init so we dont doubly initialize the window in WindowManager.cpp
+        void init(uint32_t width, uint32_t height, const std::string_view& title);
         void calculateProjectionMatrix(const WindowResizeEvent& event);
 
     public:

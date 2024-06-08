@@ -15,16 +15,8 @@ namespace Quirk::Engine::Renderer::Rendering
 {
 	void Renderer::init()
 	{
-		// load intial settings into our context
-		const auto& settings{ AppSettings::getSettings() };
-
-		Utils::Context::renderApi = settings.renderApi;
-		Utils::Context::clearColor = settings.clearColor;
-		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
-		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
-		Utils::Context::clearStencilBuffer = settings.clearStencilBuffer;
-
-		m_rhi->init();
+		loadContext();
+		chooseAndInitRhi();
 
 		// subscribe for any events
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
@@ -57,6 +49,32 @@ namespace Quirk::Engine::Renderer::Rendering
 		m_rhi->drawArrays(QuirkPrimitives::Triangles, 3);
 
 		basicShader->disuse();
+	}
+
+	void Renderer::loadContext()
+	{
+		// load intial settings into our context
+		const auto& settings{ AppSettings::getSettings() };
+
+		Utils::Context::renderApi = settings.renderApi;
+		Utils::Context::clearColor = settings.clearColor;
+		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
+		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
+		Utils::Context::clearStencilBuffer = settings.clearStencilBuffer;
+	}
+
+	void Renderer::chooseAndInitRhi()
+	{
+		switch (Utils::Context::renderApi)
+		{
+		case RenderApi::OpenGL:
+			m_rhi = &m_opengl;
+			break;
+		default:
+			quirkExit("Unsupported render API");
+		}
+
+		m_rhi->init();
 	}
 
 	void Renderer::updateViewport(const WindowResizeEvent& event)
