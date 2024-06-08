@@ -1,4 +1,5 @@
 #pragma once
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -11,7 +12,7 @@ namespace Quirk::Engine::Renderer::Rendering
     {
     public:
         Camera();
-        ~Camera();
+        ~Camera() = default;
 
         void move(float dt);
         glm::mat4& getView();

@@ -5,7 +5,8 @@ namespace Quirk::Engine::Core::EventSystem::Events
 	enum class EventType
 	{
 		None, 
-		WindowResize
+		WindowResize,
+		KeyPress,
 	};
 
 	class Event

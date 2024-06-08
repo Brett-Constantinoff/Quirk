@@ -3,11 +3,12 @@
 #include <vector>
 #include <memory>
 
-#include "../Rhi.hpp"
 #include "Utils.hpp"
 #include "VertexBuffer.hpp"
 #include "VertexArray.hpp"
 #include "ElementBuffer.hpp"
+
+#include "../Rhi.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
 
@@ -26,8 +27,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	class Opengl : public Rhi
 	{
 	public:
+		~Opengl();
+
 		void init() override;
-		void shutDown() override;
 		void setViewport(qUint32 width, qUint32 height) override;
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;

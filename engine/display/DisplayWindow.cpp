@@ -1,8 +1,12 @@
 #include "DisplayWindow.hpp"
 
 #include "../core/utils/Utils.hpp"
+#include "../core/eventSystem/EventBus.hpp"
+#include "../core/eventSystem/events/KeyPressEvent.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
+using namespace Quirk::Engine::Core::EventSystem;
+using namespace Quirk::Engine::Core::EventSystem::Events;
 
 namespace Quirk::Engine::Display
 {
@@ -13,6 +17,14 @@ namespace Quirk::Engine::Display
             quirkExit("Failed to create window");
 
         calculateProjectionMatrix(width, height);
+
+        // we fire an event on the window, and have the display manager listen for the event
+        glfwSetKeyCallback(handle,
+            [](GLFWwindow* window, qInt32 key, qInt32 scancode, qInt32 action, qInt32 mods)
+            {
+                if (static_cast<KeyAction>(action) == KeyAction::KeyPress)
+                    EventBus::publish(KeyPressEvent(key, action));
+            });
     }
 
     void DisplayWindow::calculateProjectionMatrix(float width, float height)

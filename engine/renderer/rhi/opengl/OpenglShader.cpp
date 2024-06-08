@@ -1,8 +1,8 @@
 #include <spdlog/spdlog.h>
 
-#include "OpenglShader.hpp"
-
 #include "../../../core/utils/Utils.hpp"
+
+#include "OpenglShader.hpp"
 
 namespace Quirk::Engine::Renderer::Rhi
 {

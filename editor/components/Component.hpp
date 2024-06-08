@@ -1,6 +1,6 @@
 #pragma once
 
-#include <renderer/gui/Imgui_Impl.hpp>
+#include <renderer/gui/ImguiImpl.hpp>
 
 namespace Quirk::Editor::Components
 {

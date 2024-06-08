@@ -2,6 +2,7 @@
 #include "../../core/utils/Utils.hpp"
 #include "../../core/utils/Defines.hpp"
 #include "../../core/utils/ApplicationSettings.hpp"
+
 #include "../utils/Context.hpp"
 
 #include "Renderer.hpp"
@@ -60,11 +61,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		m_rhi->drawArrays(QuirkPrimitives::Triangles, 3);
 
 		basicShader->disuse();
-	}
-
-	void Renderer::shutDown()
-	{
-		m_rhi->shutDown();
 	}
 
 	void Renderer::updateViewport(const WindowResizeEvent& event)

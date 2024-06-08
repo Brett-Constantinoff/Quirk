@@ -24,7 +24,6 @@ namespace Quirk::Engine::Renderer::Rendering
 	public:
 		static void init();
 		static void tick(double tickSpeed, const DisplayWindow& display);
-		static void shutDown();
 
 	private:
 		static void updateViewport(const WindowResizeEvent& event);

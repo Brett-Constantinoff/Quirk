@@ -8,11 +8,12 @@ namespace Quirk::Engine::Renderer::Gui
 {
     // This is just a wrapper around our own Imgui implementation
     // so any custom designs will go here
-    class Imgui_Impl
+    class ImguiImpl
     {
     public:
+        ~ImguiImpl();
+
         static void init(GLFWwindow* currentContext);
-        static void shutdown();
         static void updateFrame();
         static void renderFrame();
     };

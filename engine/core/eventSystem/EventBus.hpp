@@ -4,9 +4,11 @@
 #include <memory>
 #include <typeindex>
 #include <map>
+
 #include <spdlog/spdlog.h>
 
 #include "../../core/utils/Utils.hpp"
+
 #include "EventHandler.hpp"
 
 using namespace Quirk::Engine::Core::Utils;

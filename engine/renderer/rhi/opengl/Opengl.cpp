@@ -1,10 +1,12 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include <glad/glad.h>
-#include "Opengl.hpp"
 
 #include "../../../core/utils/Utils.hpp"
 #include "../../../core/utils/ApplicationSettings.hpp"
+
+#include "Opengl.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
 using namespace Quirk::Engine::Core::Utils;
@@ -13,6 +15,20 @@ using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
+	Opengl::~Opengl()
+	{
+		for (std::size_t i{ 0 }; i < m_resources.vertexArrays.size(); ++i)
+			glDeleteVertexArrays(1, &(m_resources.vertexArrays[i].getId()));
+		for (std::size_t i{ 0 }; i < m_resources.vertexBuffers.size(); ++i)
+			glDeleteBuffers(1, &(m_resources.vertexBuffers[i].getId()));
+		for (std::size_t i{ 0 }; i < m_resources.indexBuffers.size(); ++i)
+			glDeleteBuffers(1, &(m_resources.indexBuffers[i].getId()));
+
+		m_resources.vertexBuffers.clear();
+		m_resources.vertexArrays.clear();
+		m_resources.indexBuffers.clear();
+	}
+
 	void Opengl::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
@@ -44,20 +60,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		spdlog::info("OpenGL Version: {}.{}", majorVersion, minorVersion);
 
 		AppSettings::setOpenglVersion(majorVersion, minorVersion);
-	}
-
-	void Opengl::shutDown()
-	{
-		for (auto& vao : m_resources.vertexArrays)
-			glDeleteVertexArrays(1, &(vao.getId()));
-		for (auto& vbo : m_resources.vertexBuffers)
-			glDeleteBuffers(1, &(vbo.getId()));
-		for (auto& ebo : m_resources.indexBuffers)
-			glDeleteBuffers(1, &(ebo.getId()));
-
-		m_resources.vertexBuffers.clear();
-		m_resources.vertexArrays.clear();
-		m_resources.indexBuffers.clear();
 	}
 
 	void Opengl::clearColor(float r, float g, float b, float a)

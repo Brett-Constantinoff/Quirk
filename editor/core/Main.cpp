@@ -17,10 +17,5 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 int main()
 {
 #endif
-    Editor editor;
-
-    editor.tick();
-    editor.shutDown();
-
-    return 0;
+    Editor::run();
 }

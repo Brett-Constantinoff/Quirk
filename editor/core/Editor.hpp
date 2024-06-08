@@ -1,6 +1,8 @@
 #pragma once
+
 #include <vector>
 #include <memory>
+
 #include <display/DisplayManager.hpp>
 #include <core/utils/ApplicationSettings.hpp>
 #include <core/utils/Utils.hpp>
@@ -23,17 +25,13 @@ namespace Quirk::Editor
 	class Editor
 	{
 	public:
-		/// <summary>
-		/// Main application loop, all subsystems will 'tick' here.
-		/// </summary>
-		void tick();
-		void shutDown();
+		static void run();
 
 	private:
-		void setup();
-		void renderEditor();
+		static void setup();
+		static void renderEditor();
 
 	private:
-		std::vector<std::unique_ptr<Component>> m_components{};
+		inline static std::vector<std::unique_ptr<Component>> m_components{};
 	};
 }

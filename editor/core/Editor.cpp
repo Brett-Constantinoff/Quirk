@@ -1,12 +1,12 @@
 #include <core/utils/Utils.hpp>
 #include <core/utils/Timer.hpp>
-#include <renderer/gui/Imgui_Impl.hpp>
+#include <renderer/gui/ImguiImpl.hpp>
 
 #include "Editor.hpp"
 
 namespace Quirk::Editor
 {
-	void Editor::tick()
+	void Editor::run()
 	{
 		setup();
 
@@ -25,13 +25,6 @@ namespace Quirk::Editor
 		}
 	}
 
-	void Editor::shutDown()
-	{
-		Gui::Imgui_Impl::shutdown();
-		DisplayManager::shutDown();
-		Renderer::shutDown();
-	}
-
 	void Editor::setup()
 	{
 		Timer::start();
@@ -47,7 +40,7 @@ namespace Quirk::Editor
 			DisplayManager::initWindows();
 
 			// setup our gui
-			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
+			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
 
 			m_components.emplace_back(new MenuBar::MenuBar);
 			m_components.emplace_back(new Metrics::Metrics);
@@ -57,11 +50,11 @@ namespace Quirk::Editor
 
 	void Editor::renderEditor()
 	{
-		Gui::Imgui_Impl::updateFrame();
+		Gui::ImguiImpl::updateFrame();
 
-		for (auto& component : m_components)
-			component->render();
+		for (std::size_t i{}; i < m_components.size(); ++i)
+			m_components[i]->render();
 
-		Gui::Imgui_Impl::renderFrame();
+		Gui::ImguiImpl::renderFrame();
 	}
 }

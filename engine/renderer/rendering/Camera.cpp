@@ -7,11 +7,6 @@ namespace Quirk::Engine::Renderer::Rendering
         updateVectors();
     };
 
-    Camera::~Camera()
-    {
-
-    }
-
     void Camera::move(float dt)
     {
     }

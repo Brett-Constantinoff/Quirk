@@ -2,25 +2,26 @@
 
 #include "../core/eventSystem/EventBus.hpp"
 #include "../core/eventSystem/events/WindowResizeEvent.hpp"
-#include "DisplayManager.hpp"
 
-using namespace Quirk::Engine::Core::EventSystem::Events;
-using namespace Quirk::Engine::Core::EventSystem;
+#include "DisplayManager.hpp"
 
 namespace Quirk::Engine::Display
 {
+	DisplayManager::~DisplayManager()
+	{
+		glfwTerminate();
+		for (const auto& window : m_windows)
+			glfwDestroyWindow(window.second->handle);
+	};
+
 	void DisplayManager::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
 		initGlfw(settings);
 		createDefaultWindow(settings);
-	}
 
-	void DisplayManager::shutDown()
-	{
-		glfwTerminate();
-		for (const auto& window : m_windows)
-			glfwDestroyWindow(window.second->handle);
+		// subscribe to any events
+		EventBus::subscribe<KeyPressEvent>(&DisplayManager::handleWindowInput);
 	}
 
 	void DisplayManager::initWindows()
@@ -44,6 +45,15 @@ namespace Quirk::Engine::Display
 		// this is just checking for the default window for now
 		// we will need an event system to handle multiple windows
 		return !glfwWindowShouldClose(m_windows[DisplayTypes::Default]->handle);
+	}
+
+	void DisplayManager::handleWindowInput(const KeyPressEvent& event)
+	{
+		if (event.getKey() == KeyType::Esc && event.getAction() == KeyAction::KeyPress)
+		{
+			glfwSetWindowShouldClose(m_windows[DisplayTypes::Default]->handle, GLFW_TRUE);
+			event.handled();
+		}
 	}
 
 	void DisplayManager::initGlfw(const SettingsObject& settings)

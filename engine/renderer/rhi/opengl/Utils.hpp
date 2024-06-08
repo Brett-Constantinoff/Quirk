@@ -1,4 +1,5 @@
 #include <glad/glad.h>
+
 #include <spdlog/spdlog.h>
 
 #include "../../../core/utils/Defines.hpp"

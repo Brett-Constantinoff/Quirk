@@ -1,7 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <string>
+
+#include <glm/glm.hpp>
 
 #include "Settings.hpp"
 #include "Defines.hpp"
