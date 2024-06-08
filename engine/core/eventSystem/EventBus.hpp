@@ -43,8 +43,8 @@ namespace Quirk::Engine::Core::EventSystem
                 spdlog::error("There was an unhandled event of type: {}", mapEventType(event.getType()));
         }
 
-        // the order the events are published is the order they are subscribed
-        // so if A subscribes before B, A will be called before B
+        // the order the events are published is the reverse order they are subscribed
+        // so if A subscribes before B, B will be called before A
         template<class T, class EventType>
         static void subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
         {
