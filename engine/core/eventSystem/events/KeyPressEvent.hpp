@@ -15,6 +15,7 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		{
 			m_key = static_cast<KeyType>(key);
 			m_action = static_cast<KeyAction>(action);
+			m_type = EventType::KeyPress;
 		}
 
 		KeyType getKey() const { return m_key; }
