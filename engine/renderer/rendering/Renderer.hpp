@@ -5,9 +5,9 @@
 
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
-#include "../rhi/opengl/OpenglShader.hpp"
 #include "../rhi/Rhi.hpp"
 
+#include "ShaderManger.hpp"
 #include "Camera.hpp"
 
 using namespace Quirk::Engine::Display;
@@ -27,8 +27,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{nullptr};
 
 		 // TODO - Remove these
-		 inline static std::unique_ptr<Shader> m_shader{ nullptr };
-		 inline static std::unique_ptr<Camera> m_camera{ nullptr };
+		 inline static Camera m_camera{};
 		 inline static std::vector<float> m_data{};
 	};
 }

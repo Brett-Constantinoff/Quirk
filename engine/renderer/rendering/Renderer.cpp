@@ -18,7 +18,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		// load intial settings into our context
 		const auto& settings{ AppSettings::getSettings() };
 
-		Utils::Context::renderApi = static_cast<qUint32>(settings.renderApi);
+		Utils::Context::renderApi = settings.renderApi;
 		Utils::Context::clearColor = settings.clearColor;
 		Utils::Context::clearColorBuffer = settings.clearColorBuffer;
 		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
@@ -28,10 +28,11 @@ namespace Quirk::Engine::Renderer::Rendering
 		m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
 		m_rhi->init();
 
+		// create our materials
+		ShaderManager::createMaterials();
+
 		// TODO - This is just here to make sure we can render something
 		{
-			m_shader = std::make_unique<Shader>("../engine/resources/shaders/basicShader.hlsl");
-			m_camera = std::make_unique<Camera>();
 			m_data =
 			{
 				-0.5f, -0.5f, 0.0f,
@@ -44,14 +45,17 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
 	{
+		const auto& basicShader{ShaderManager::getShader(MaterialType::Basic2D)};
+
 		const auto& clearColor{ Utils::Context::clearColor };
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 
-		m_shader->use();
+		basicShader->use();
 
 		m_rhi->drawArrays(QuirkPrimitives::Triangles, 3);
-		m_shader->disuse();
+
+		basicShader->disuse();
 	}
 
 	void Renderer::shutDown()
