@@ -68,8 +68,6 @@ namespace Quirk::Engine::Display
 			settings.windowTitle) });
 		setCurrentContext(DisplayTypes::Default);
 
-		auto& defaultWindow{ *m_windows[DisplayTypes::Default] };
-
 		glfwSetFramebufferSizeCallback(m_windows[DisplayTypes::Default]->handle,
 			[](GLFWwindow* window, int width, int height)
 		{
