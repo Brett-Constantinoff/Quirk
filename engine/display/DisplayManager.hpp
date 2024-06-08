@@ -4,16 +4,13 @@
 #include <string>
 #include <memory>
 
-#include "../core/utils/Utils.hpp"
 #include "../core/utils/ApplicationSettings.hpp"
-
 #include "../core/eventSystem/EventBus.hpp"
 #include "../core/eventSystem/events/KeyPressEvent.hpp"
 #include "../core/eventSystem/events/WindowResizeEvent.hpp"
 
 #include "DisplayWindow.hpp"
 
-using namespace Quirk::Engine::Core::Utils;
 using namespace Quirk::Engine::Core::EventSystem::Events;
 using namespace Quirk::Engine::Core::EventSystem;
 
@@ -39,8 +36,6 @@ namespace Quirk::Engine::Display
         static void setCurrentContext(DisplayTypes type) { return glfwMakeContextCurrent(m_windows[type]->handle); }
         static bool windowsShouldClose();
         static void handleWindowInput(const KeyPressEvent& event);
-
-
 
     private:
         static void initGlfw(const SettingsObject& settings);

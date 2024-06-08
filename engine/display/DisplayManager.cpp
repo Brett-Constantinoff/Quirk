@@ -1,8 +1,5 @@
 #include <glm/glm.hpp>
 
-#include "../core/eventSystem/EventBus.hpp"
-#include "../core/eventSystem/events/WindowResizeEvent.hpp"
-
 #include "DisplayManager.hpp"
 
 namespace Quirk::Engine::Display

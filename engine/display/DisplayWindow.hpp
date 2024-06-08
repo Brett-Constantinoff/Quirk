@@ -11,11 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../core/utils/Defines.hpp"
-#include "../core/utils/Utils.hpp"
 #include "../core/eventSystem/events/WindowResizeEvent.hpp"
 
-using namespace Quirk::Engine::Core::Utils;
 using namespace Quirk::Engine::Core::EventSystem;
 using namespace Quirk::Engine::Core::EventSystem::Events;
 
@@ -24,7 +21,7 @@ namespace Quirk::Engine::Display
     struct DisplayWindow
     {
     public:
-        DisplayWindow(qUint32 width, qUint32 height, const std::string_view& title);
+        DisplayWindow(uint32_t width, uint32_t height, const std::string_view& title);
         void calculateProjectionMatrix(const WindowResizeEvent& event);
 
     public:

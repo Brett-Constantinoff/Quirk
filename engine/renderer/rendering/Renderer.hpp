@@ -29,10 +29,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void updateViewport(const WindowResizeEvent& event);
 
 	private:
-		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{nullptr};
-
-		 // TODO - Remove these
-		 inline static Camera m_camera{};
-		 inline static std::vector<float> m_data{};
+		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{ std::make_unique<Rhi::Opengl::Opengl>() };
 	};
 }

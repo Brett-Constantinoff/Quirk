@@ -17,12 +17,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glBindVertexArray(0);
 	}
 
-	qUint32& VertexArray::getId()
+	uint32_t& VertexArray::getId()
 	{
 		return m_id;
 	}
 
-	void VertexArray::setData(qUint32 size, qUint32 stride, GLenum type, GLboolean normalized)
+	void VertexArray::setData(uint32_t size, uint32_t stride, GLenum type, GLboolean normalized)
 	{
 		glVertexAttribPointer(0, size, type, normalized, stride * sizeof(float), (void*)0);
 

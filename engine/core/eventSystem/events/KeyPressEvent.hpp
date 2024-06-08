@@ -11,10 +11,10 @@ namespace Quirk::Engine::Core::EventSystem::Events
 	class KeyPressEvent : public Event
 	{
 	public:
-		KeyPressEvent(int key, int action)
+		KeyPressEvent(int32_t key, int32_t action) :
+			m_key{ static_cast<KeyType>(key) },
+			m_action{ static_cast<KeyAction>(action) }
 		{
-			m_key = static_cast<KeyType>(key);
-			m_action = static_cast<KeyAction>(action);
 			m_type = EventType::KeyPress;
 		}
 
@@ -22,7 +22,7 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		KeyAction getAction() const { return m_action; }
 
 	private:
-		KeyType m_key{};
-		KeyAction m_action{};
+		KeyType m_key;
+		KeyAction m_action;
 	};
 }

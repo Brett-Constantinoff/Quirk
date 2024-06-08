@@ -38,6 +38,6 @@ namespace Quirk::Engine::Renderer::Rendering
         float m_sensitivity{};
         float m_near{0.1f};
         float m_far{100.0f};
-        glm::mat4 m_view;
+        glm::mat4 m_view{};
     };
 }

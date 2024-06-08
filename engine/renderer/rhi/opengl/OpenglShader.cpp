@@ -13,8 +13,8 @@ namespace Quirk::Engine::Renderer::Rhi
         m_id = glCreateProgram();
 
         parseShader(filepath, source);
-        qUint32 vShader = compileShader(filepath, source.vertexSource, GL_VERTEX_SHADER);
-        qUint32 fShader = compileShader(filepath, source.fragmentSource, GL_FRAGMENT_SHADER);
+        uint32_t vShader = compileShader(filepath, source.vertexSource, GL_VERTEX_SHADER);
+        uint32_t fShader = compileShader(filepath, source.fragmentSource, GL_FRAGMENT_SHADER);
 
         glAttachShader(m_id, vShader);
         glAttachShader(m_id, fShader);
@@ -41,22 +41,22 @@ namespace Quirk::Engine::Renderer::Rhi
 		glUseProgram(0);
 	}
 
-    qInt32 OpenglShader::getId(void) const
+    int32_t OpenglShader::getId(void) const
     {
         return m_id;
     }
 
-    qInt32 OpenglShader::compileShader(const std::string& filepath, const std::string& source, qInt32 type)
+    int32_t OpenglShader::compileShader(const std::string& filepath, const std::string& source, int32_t type)
     {
         const char* src{ source.c_str() };
 
-        qInt32 shadermID{ static_cast<qInt32>(glCreateShader(type)) };
+        int32_t shadermID{ static_cast<int32_t>(glCreateShader(type)) };
 
         glShaderSource(shadermID, 1, &src, nullptr);
 
         glCompileShader(shadermID);
         
-        qInt32 success{};
+        int32_t success{};
         GLchar infoLog[512];
         glGetShaderiv(shadermID, GL_COMPILE_STATUS, &success);
         if (!success)

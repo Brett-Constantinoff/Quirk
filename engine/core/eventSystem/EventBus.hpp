@@ -21,12 +21,12 @@ namespace Quirk::Engine::Core::EventSystem
         template<typename EventType>
         static void publish(const EventType& event)
         {
-            auto it = eventSubscribers.find(typeid(EventType));
+            auto it{ eventSubscribers.find(typeid(EventType)) };
 
             if (it == eventSubscribers.end() || !it->second)
                 return;
 
-            std::list<EventHandlerBase*>& handlers = *(it->second);
+            std::list<EventHandlerBase*>& handlers{ *(it->second) };
 
             for (const auto& handler : handlers)
             {
@@ -48,7 +48,7 @@ namespace Quirk::Engine::Core::EventSystem
         template<class T, class EventType>
         static void subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
         {
-            auto& handlers = eventSubscribers[typeid(EventType)];
+            auto& handlers{ eventSubscribers[typeid(EventType)] };
 
             if (!handlers)
                 handlers = std::make_unique<std::list<EventHandlerBase*>>();
@@ -59,7 +59,7 @@ namespace Quirk::Engine::Core::EventSystem
         template<typename EventType>
         static void subscribe(void (*StaticFunction)(const EventType&))
         {
-            auto& handlers = eventSubscribers[typeid(EventType)];
+            auto& handlers{ eventSubscribers[typeid(EventType)] };
 
             if (!handlers)
                 handlers = std::make_unique<std::list<EventHandlerBase*>>();

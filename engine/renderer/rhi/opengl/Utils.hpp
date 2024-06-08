@@ -2,22 +2,20 @@
 
 #include <spdlog/spdlog.h>
 
-#include "../../../core/utils/Defines.hpp"
 #include "../../utils/Settings.hpp"
 
-using namespace Quirk::Engine::Core::Utils;
 using namespace Quirk::Engine::Renderer::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi
 {
-    static qUint32 mapPrimitiveToGl(QuirkPrimitives primitiveType)
+    static uint32_t mapPrimitiveToGl(QuirkPrimitives primitiveType)
     {
         switch (primitiveType)
         {
         case QuirkPrimitives::Triangles:
             return GL_TRIANGLES;
         default:
-            return static_cast<qUint32>(-1);
+            return static_cast<uint32_t>(-1);
         }
     }
 

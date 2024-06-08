@@ -8,12 +8,15 @@ namespace Quirk::Engine::Core::Utils
     class Timer
     {
     public:
-        static void start();
-        static double stop();
+        Timer() = default;
+        ~Timer() = default;
+
+        void start();
+        double stop();
 
     private:
-        inline static std::chrono::high_resolution_clock::time_point m_start{};
-        inline static std::chrono::high_resolution_clock::time_point m_stop{};
-        inline static std::chrono::duration<double> m_time{};
+        std::chrono::high_resolution_clock::time_point m_start{};
+        std::chrono::high_resolution_clock::time_point m_stop{};
+        std::chrono::duration<double> m_time{};
     };
 }

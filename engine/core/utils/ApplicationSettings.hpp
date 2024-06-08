@@ -4,11 +4,16 @@
 
 #include <glm/glm.hpp>
 
-#include "Settings.hpp"
 #include "Defines.hpp"
 
 namespace Quirk::Engine::Core::Utils
 {
+	enum class RenderApi
+	{
+		OpenGL,
+		//Vulkan, // LOL yeah right
+	};
+
 	// as this grows it will become very expensive to copy
 	// so ALWAYS pass by reference
 	struct SettingsObject
@@ -24,12 +29,12 @@ namespace Quirk::Engine::Core::Utils
 		bool is3d{};
 
 		// opengl settings
-		qUint32 majorVersion{};
-		qUint32 minorVersion{};
+		uint32_t majorVersion{};
+		uint32_t minorVersion{};
 
 		// display settings
-		qUint32 windowWidth{};
-		qUint32 windowHeight{};
+		uint32_t windowWidth{};
+		uint32_t windowHeight{};
 		std::string_view windowTitle{};
 	};
 
@@ -57,7 +62,7 @@ namespace Quirk::Engine::Core::Utils
 			m_settings.windowTitle = "Quirk Engine";
 		}
 
-		static void setOpenglVersion(qUint32 major, qUint32 minor)
+		static void setOpenglVersion(uint32_t major, uint32_t minor)
 		{
 			m_settings.majorVersion = major;
 			m_settings.minorVersion = minor;

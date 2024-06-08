@@ -48,7 +48,9 @@ namespace Quirk::Engine::Core::EventSystem
     {
     public:
         EventHandlerStatic(void (*staticFunction)(const EventType&))
-            : staticFunction(staticFunction) {}
+            : staticFunction(staticFunction) 
+        {
+        }
 
         void call(const Event& event) override
         {

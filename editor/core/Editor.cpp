@@ -27,7 +27,8 @@ namespace Quirk::Editor
 
 	void Editor::setup()
 	{
-		Timer::start();
+		Timer timer;
+		timer.start();
 		{
 			// load initial settings
 			ApplicationSettings::loadDefaults();
@@ -45,7 +46,7 @@ namespace Quirk::Editor
 			m_components.emplace_back(new MenuBar::MenuBar);
 			m_components.emplace_back(new Metrics::Metrics);
 		}
-		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
+		spdlog::info("Quirk Setup took: {}ms", timer.stop());
 	}
 
 	void Editor::renderEditor()

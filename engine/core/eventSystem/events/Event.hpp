@@ -4,7 +4,7 @@ namespace Quirk::Engine::Core::EventSystem::Events
 {
 	enum class EventType
 	{
-		None, 
+		Unknown, 
 		WindowResize,
 		KeyPress,
 	};
@@ -12,6 +12,7 @@ namespace Quirk::Engine::Core::EventSystem::Events
 	class Event
 	{
 	public:
+		Event() = default;
 		virtual ~Event() = default;
 
 		bool handled() const { return m_handled; }
@@ -20,6 +21,6 @@ namespace Quirk::Engine::Core::EventSystem::Events
 
 	protected:
 		mutable bool m_handled{ false };
-		EventType m_type{ EventType::None };
+		EventType m_type{ EventType::Unknown };
 	};
 }

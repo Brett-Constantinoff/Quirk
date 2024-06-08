@@ -22,7 +22,6 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		glm::vec2 getDim() const { return m_dim; }
 
 	private:
-		glm::vec2 m_dim{};
-
+		glm::vec2 m_dim;
 	};
 }

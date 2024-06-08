@@ -1,5 +1,4 @@
 #include "../../core/eventSystem/EventBus.hpp"
-#include "../../core/utils/Utils.hpp"
 #include "../../core/utils/Defines.hpp"
 #include "../../core/utils/ApplicationSettings.hpp"
 
@@ -8,7 +7,6 @@
 #include "Renderer.hpp"
 
 using namespace Quirk::Engine::Core::EventSystem;
-using namespace Quirk::Engine::Renderer::Utils;
 
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
 using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
@@ -26,8 +24,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		Utils::Context::clearDepthBuffer = settings.clearDepthBuffer;
 		Utils::Context::clearStencilBuffer = settings.clearStencilBuffer;
 
-		// for now just load opengl
-		m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
 		m_rhi->init();
 
 		// subscribe for any events
@@ -38,13 +34,13 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		// TODO - This is just here to make sure we can render something
 		{
-			m_data =
+			const std::vector<float> data =
 			{
 				-0.5f, -0.5f, 0.0f,
 				 0.5f, -0.5f, 0.0f,
 				 0.0f,  0.5f, 0.0f
 			};
-			m_rhi->submitDrawData(m_data, 3, 3);
+			m_rhi->submitDrawData(data, 3, 3);
 		}
 	}
 
@@ -66,7 +62,7 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::updateViewport(const WindowResizeEvent& event)
 	{
 		const glm::vec2 dimensions{ event.getDim() };
-		m_rhi->setViewport(static_cast<qUint32>(dimensions.x), static_cast<qUint32>(dimensions.y));
+		m_rhi->setViewport(static_cast<uint32_t>(dimensions.x), static_cast<uint32_t>(dimensions.y));
 		event.setHandled();
 	}
 }

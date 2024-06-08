@@ -3,8 +3,6 @@
 #include <glm/glm.hpp>
 
 #include "../../core/utils/ApplicationSettings.hpp"
-#include "../../core/utils/Defines.hpp"
-#include "../../core/utils/Settings.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
 
