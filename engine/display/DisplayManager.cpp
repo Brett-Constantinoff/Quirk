@@ -66,7 +66,7 @@ namespace Quirk::Engine::Display
 		setCurrentContext(DisplayTypes::Default);
 
 		glfwSetFramebufferSizeCallback(m_windows[DisplayTypes::Default]->handle,
-			[](GLFWwindow* window, int width, int height)
+			[](GLFWwindow* window, int32_t width, int32_t height)
 		{
 				// create a window resize event, any subscribers will be notified
 				EventBus::publish(WindowResizeEvent(glm::vec2 { width, height }));
