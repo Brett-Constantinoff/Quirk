@@ -15,9 +15,9 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		Event() = default;
 		virtual ~Event() = default;
 
-		bool handled() const { return m_handled; }
-		void setHandled() const { m_handled = true; }
-		EventType getType() const { return m_type; }
+		bool handled() const;
+		void setHandled() const;
+		EventType getType() const;
 
 	protected:
 		mutable bool m_handled{ false };

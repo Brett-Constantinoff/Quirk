@@ -95,7 +95,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 
 		vbo.bind();
-		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(float));
 
 		vao.setData(vertexDataSize, stride);
 
@@ -112,10 +112,10 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 
 		vbo.bind();
-		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(float));
 
 		ebo.bind();
-		ebo.setData(indexData.data(), vertexData.size() * sizeof(uint32_t));
+		ebo.setData(indexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(uint32_t));
 
 		vao.setData(vertexDataSize, stride);
 

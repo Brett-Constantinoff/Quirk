@@ -38,6 +38,8 @@ namespace Quirk::Engine::Renderer::Rhi
 					return "APPLICATION";
 				case GL_DEBUG_SOURCE_OTHER: 
 					return "OTHER";
+				default:
+					return "UNKOWN";
 			}
 		}();
 
@@ -59,6 +61,8 @@ namespace Quirk::Engine::Renderer::Rhi
 					return "MARKER";
 				case GL_DEBUG_TYPE_OTHER:
 					return "OTHER";
+				default:
+					return "UNKOWN";
 			}
 		}();
 
@@ -72,6 +76,8 @@ namespace Quirk::Engine::Renderer::Rhi
 					return "MEDIUM";
 				case GL_DEBUG_SEVERITY_HIGH: 
 					return "HIGH";
+				default:
+					return "UNKOWN";
 			}
 		}();
 
