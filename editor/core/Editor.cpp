@@ -1,12 +1,12 @@
 #include <core/utils/Utils.hpp>
 #include <core/utils/Timer.hpp>
-#include <renderer/gui/Imgui_Impl.hpp>
+#include <renderer/gui/ImguiImpl.hpp>
 
 #include "Editor.hpp"
 
 namespace Quirk::Editor
 {
-	void Editor::tick()
+	void Editor::run()
 	{
 		setup();
 
@@ -25,16 +25,10 @@ namespace Quirk::Editor
 		}
 	}
 
-	void Editor::shutDown()
-	{
-		Gui::Imgui_Impl::shutdown();
-		DisplayManager::shutDown();
-		Renderer::shutDown();
-	}
-
 	void Editor::setup()
 	{
-		Timer::start();
+		Timer timer;
+		timer.start();
 		{
 			// load initial settings
 			ApplicationSettings::loadDefaults();
@@ -47,21 +41,21 @@ namespace Quirk::Editor
 			DisplayManager::initWindows();
 
 			// setup our gui
-			Gui::Imgui_Impl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
-
-			m_components.emplace_back(new MenuBar::MenuBar);
-			m_components.emplace_back(new Metrics::Metrics);
+			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
 		}
-		spdlog::info("Quirk Setup took: {}ms", Timer::stop());
+		spdlog::info("Quirk Setup took: {}ms", timer.stop());
 	}
 
 	void Editor::renderEditor()
 	{
-		Gui::Imgui_Impl::updateFrame();
+		Gui::ImguiImpl::updateFrame();
+		renderComponents();
+		Gui::ImguiImpl::renderFrame();
+	}
 
-		for (auto& component : m_components)
-			component->render();
-
-		Gui::Imgui_Impl::renderFrame();
+	void Editor::renderComponents()
+	{
+		m_menuBar.render();
+		m_metrics.render();
 	}
 }

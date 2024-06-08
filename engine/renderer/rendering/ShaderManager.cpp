@@ -1,9 +1,10 @@
 #pragma once
 
-#include "ShaderManger.hpp"
 #include "../utils/Context.hpp"
 
 #include "../rhi/opengl/OpenglShader.hpp"
+
+#include "ShaderManger.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
 

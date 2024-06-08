@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 
 #include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -20,12 +19,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	qUint32& VertexBuffer::getId()
+	uint32_t& VertexBuffer::getId()
 	{
 		return m_id;
 	}
 
-	void VertexBuffer::setData(const void* data, qUint32 size) const
+	void VertexBuffer::setData(const void* data, uint32_t size) const
 	{
 		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	}

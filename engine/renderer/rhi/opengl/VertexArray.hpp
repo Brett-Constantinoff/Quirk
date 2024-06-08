@@ -1,10 +1,7 @@
 #pragma once
 
+#include <cstdint>
 #include <glad/glad.h>
-
-#include "../../../core/utils/Defines.hpp"
-
-using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -16,12 +13,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 		void bind() const;
 		void unbind() const;
-		qUint32& getId();
+		uint32_t& getId();
 
-		void setData(qUint32 size, qUint32 stride,
+		void setData(uint32_t size, uint32_t stride,
 			GLenum type = GL_FLOAT, GLboolean normalized = false);
 
 	private:
-		qUint32 m_id{};
+		uint32_t m_id{};
 	};
 }

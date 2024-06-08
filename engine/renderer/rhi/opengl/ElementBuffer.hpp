@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../../../core/utils/Defines.hpp"
-
-using namespace Quirk::Engine::Core::Utils;
+#include <cstdint>
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
@@ -14,11 +12,11 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 		void bind() const;
 		void unbind() const;
-		qUint32& getId();
+		uint32_t& getId();
 
-		void setData(const void* data, qUint32 size) const;
+		void setData(const void* data, uint32_t size) const;
 
 	private:
-		qUint32 m_id{};
+		uint32_t m_id{};
 	};
 }

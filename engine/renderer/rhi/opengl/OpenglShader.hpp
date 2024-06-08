@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -30,13 +31,13 @@ namespace Quirk::Engine::Renderer::Rhi
 
         virtual void use() override;
         virtual void disuse() override;
-        qInt32 getId(void) const;
+        int32_t getId(void) const;
 
     private:
         void parseShader(const std::string& filepath, ShaderSource& source);
-        qInt32 compileShader(const std::string& filepath, const std::string& source, qInt32 type);
+        int32_t compileShader(const std::string& filepath, const std::string& source, int32_t type);
 
     private:
-        qInt32 m_id{};
+        int32_t m_id{};
     };
 }

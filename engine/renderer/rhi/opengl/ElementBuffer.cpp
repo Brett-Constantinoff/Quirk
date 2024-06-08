@@ -19,12 +19,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	qUint32& ElementBuffer::getId()
+	uint32_t& ElementBuffer::getId()
 	{
 		return m_id;
 	}
 
-	void ElementBuffer::setData(const void* data, qUint32 size) const
+	void ElementBuffer::setData(const void* data, uint32_t size) const
 	{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	}

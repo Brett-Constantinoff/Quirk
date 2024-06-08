@@ -1,10 +1,12 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include <glad/glad.h>
-#include "Opengl.hpp"
 
 #include "../../../core/utils/Utils.hpp"
 #include "../../../core/utils/ApplicationSettings.hpp"
+
+#include "Opengl.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
 using namespace Quirk::Engine::Core::Utils;
@@ -13,6 +15,20 @@ using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
+	Opengl::~Opengl()
+	{
+		for (std::size_t i{ 0 }; i < m_resources.vertexArrays.size(); ++i)
+			glDeleteVertexArrays(1, &(m_resources.vertexArrays[i].getId()));
+		for (std::size_t i{ 0 }; i < m_resources.vertexBuffers.size(); ++i)
+			glDeleteBuffers(1, &(m_resources.vertexBuffers[i].getId()));
+		for (std::size_t i{ 0 }; i < m_resources.indexBuffers.size(); ++i)
+			glDeleteBuffers(1, &(m_resources.indexBuffers[i].getId()));
+
+		m_resources.vertexBuffers.clear();
+		m_resources.vertexArrays.clear();
+		m_resources.indexBuffers.clear();
+	}
+
 	void Opengl::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
@@ -30,8 +46,8 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		const GLubyte* version{ glGetString(GL_VERSION) };
 		const GLubyte* glslVersion{ glGetString(GL_SHADING_LANGUAGE_VERSION) };
 
-		qInt32 majorVersion{ 0 };
-		qInt32 minorVersion{ 0 };
+		int32_t majorVersion{ 0 };
+		int32_t minorVersion{ 0 };
 
 		glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
 
@@ -44,20 +60,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		spdlog::info("OpenGL Version: {}.{}", majorVersion, minorVersion);
 
 		AppSettings::setOpenglVersion(majorVersion, minorVersion);
-	}
-
-	void Opengl::shutDown()
-	{
-		for (auto& vao : m_resources.vertexArrays)
-			glDeleteVertexArrays(1, &(vao.getId()));
-		for (auto& vbo : m_resources.vertexBuffers)
-			glDeleteBuffers(1, &(vbo.getId()));
-		for (auto& ebo : m_resources.indexBuffers)
-			glDeleteBuffers(1, &(ebo.getId()));
-
-		m_resources.vertexBuffers.clear();
-		m_resources.vertexArrays.clear();
-		m_resources.indexBuffers.clear();
 	}
 
 	void Opengl::clearColor(float r, float g, float b, float a)
@@ -80,7 +82,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 			glClear(mask);
 	}
 
-	void Opengl::submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride)
+	void Opengl::setViewport(uint32_t width, uint32_t height)
+	{
+		glViewport(0, 0, width, height);
+	}
+
+	void Opengl::submitDrawData(const std::vector<float>& vertexData, uint32_t vertexDataSize, uint32_t stride)
 	{
 		auto vao{ createVertexArray() };
 		const auto vbo{ createVertexBuffer() };
@@ -88,7 +95,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 
 		vbo.bind();
-		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(float));
 
 		vao.setData(vertexDataSize, stride);
 
@@ -96,7 +103,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.unbind();
 	}
 
-	void Opengl::submitDrawData(const std::vector<float>& vertexData, const std::vector<qUint32>& indexData, qUint32 vertexDataSize, qUint32 stride)
+	void Opengl::submitDrawData(const std::vector<float>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride)
 	{
 		auto vao{ createVertexArray() };
 		const auto vbo{ createVertexBuffer() };
@@ -105,10 +112,10 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 
 		vbo.bind();
-		vbo.setData(vertexData.data(), vertexData.size() * sizeof(float));
+		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(float));
 
 		ebo.bind();
-		ebo.setData(indexData.data(), vertexData.size() * sizeof(qUint32));
+		ebo.setData(indexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(uint32_t));
 
 		vao.setData(vertexDataSize, stride);
 
@@ -116,7 +123,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.unbind();
 	}
 
-	void Opengl::drawElements(QuirkPrimitives primitiveType, qUint32 indexCount)
+	void Opengl::drawElements(QuirkPrimitives primitiveType, uint32_t indexCount)
 	{
 		// TODO - since theres only one vao this is fine for now
 		m_resources.vertexArrays.back().bind();
@@ -126,7 +133,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		m_resources.vertexArrays.back().unbind();
 	}
 
-	void Opengl::drawArrays(QuirkPrimitives primitiveType, qUint32 vertexCount)
+	void Opengl::drawArrays(QuirkPrimitives primitiveType, uint32_t vertexCount)
 	{
 		m_resources.vertexArrays.back().bind();
 
