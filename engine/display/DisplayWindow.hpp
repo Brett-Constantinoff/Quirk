@@ -13,8 +13,11 @@
 
 #include "../core/utils/Defines.hpp"
 #include "../core/utils/Utils.hpp"
+#include "../core/eventSystem/events/WindowResizeEvent.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
+using namespace Quirk::Engine::Core::EventSystem;
+using namespace Quirk::Engine::Core::EventSystem::Events;
 
 namespace Quirk::Engine::Display
 {
@@ -22,7 +25,7 @@ namespace Quirk::Engine::Display
     {
     public:
         DisplayWindow(qUint32 width, qUint32 height, const std::string_view& title);
-        void calculateProjectionMatrix(float width, float height);
+        void calculateProjectionMatrix(const WindowResizeEvent& event);
 
     public:
         GLFWwindow* handle{ nullptr };

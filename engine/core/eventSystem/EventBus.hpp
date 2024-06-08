@@ -43,6 +43,8 @@ namespace Quirk::Engine::Core::EventSystem
                 spdlog::error("There was an unhandled event of type: {}", mapEventType(event.getType()));
         }
 
+        // the order the events are published is the order they are subscribed
+        // so if A subscribes before B, A will be called before B
         template<class T, class EventType>
         static void subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
         {
@@ -51,7 +53,7 @@ namespace Quirk::Engine::Core::EventSystem
             if (!handlers)
                 handlers = std::make_unique<std::list<EventHandlerBase*>>();
 
-            handlers->push_back(new EventHandler<T, EventType>{ instance, MemberFunction });
+            handlers->push_back(new EventHandler<T, EventType>{ *instance, MemberFunction });
         }
 
         template<typename EventType>

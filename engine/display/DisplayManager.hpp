@@ -40,6 +40,8 @@ namespace Quirk::Engine::Display
         static bool windowsShouldClose();
         static void handleWindowInput(const KeyPressEvent& event);
 
+
+
     private:
         static void initGlfw(const SettingsObject& settings);
         static void createDefaultWindow(const SettingsObject& settings);
