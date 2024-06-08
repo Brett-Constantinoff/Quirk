@@ -3,6 +3,8 @@
 #include <memory>
 #include <glm/glm.hpp>
 
+#include "../../core/eventSystem/EventBus.hpp"
+#include "../../core/eventSystem/events/WindowResizeEvent.hpp"
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
@@ -13,6 +15,7 @@
 using namespace Quirk::Engine::Display;
 using namespace Quirk::Engine::Renderer::Rhi;
 using namespace Quirk::Engine::Renderer::Rhi::Opengl;
+using namespace Quirk::Engine::Core::EventSystem::Events;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -22,6 +25,9 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void init();
 		static void tick(double tickSpeed, const DisplayWindow& display);
 		static void shutDown();
+
+	private:
+		static void updateViewport(const WindowResizeEvent& event);
 
 	private:
 		 inline static std::unique_ptr<Rhi::Rhi> m_rhi{nullptr};

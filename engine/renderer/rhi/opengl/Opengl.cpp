@@ -80,6 +80,11 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 			glClear(mask);
 	}
 
+	void Opengl::setViewport(qUint32 width, qUint32 height)
+	{
+		glViewport(0, 0, width, height);
+	}
+
 	void Opengl::submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride)
 	{
 		auto vao{ createVertexArray() };

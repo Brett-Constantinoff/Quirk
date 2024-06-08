@@ -17,6 +17,7 @@ namespace Quirk::Engine::Renderer::Rhi
 
 		virtual void init() = 0;
 		virtual void shutDown() = 0;
+		virtual void setViewport(qUint32 width, qUint32 height) = 0;
 		virtual void clearColor(float r, float g, float b, float a) = 0;
 		virtual void clearBuffers(bool color, bool detph, bool stencil) = 0;
 

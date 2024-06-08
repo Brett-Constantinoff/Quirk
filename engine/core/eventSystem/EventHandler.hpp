@@ -6,32 +6,56 @@ using namespace Quirk::Engine::Core::EventSystem::Events;
 
 namespace Quirk::Engine::Core::EventSystem
 {
-	class EventHandlerBase
-	{
-	public:
-		void execute(Event* event)
-		{
-			call(event);
-		}
+    class EventHandlerBase
+    {
+    public:
+        virtual ~EventHandlerBase() = default;
 
-	private:
-		virtual void call(Event* event) = 0;
-	};
+        void execute(const Event& event)
+        {
+            call(event);
+        }
 
-	template<class T, class EventType>
-	class EventHandler : public EventHandlerBase
-	{
-	public:
-		typedef void (T::* MemberFunction)(EventType*);
+    private:
+        // let each event handler implement this
+        virtual void call(const Event& event) = 0;
+    };
 
-		EventHandler(T* instance, MemberFunction memberFunction) : instance{ instance }, memberFunction{ memberFunction } {};
+    template<class T, class EventType>
+    class EventHandler : public EventHandlerBase
+    {
+    public:
+        // take in an instance of the class and a member function to wrap
+        EventHandler(T& instance, void (T::* memberFunction)(const EventType&)) :
+            instance{ instance },
+            memberFunction{ memberFunction }
+        {
+        }
 
-		void call(Event* evnt) {
-			(instance->*memberFunction)(static_cast<EventType*>(evnt));
-		}
-	private:
-		T* instance;
+        // call the member function on the instance
+        void call(const Event& event) override
+        {
+            (instance.*memberFunction)(static_cast<const EventType&>(event));
+        }
 
-		MemberFunction memberFunction;
-	};
+    private:
+        T& instance;
+        void (T::* memberFunction)(const EventType&);
+    };
+
+    template<typename EventType>
+    class EventHandlerStatic : public EventHandlerBase
+    {
+    public:
+        EventHandlerStatic(void (*staticFunction)(const EventType&))
+            : staticFunction(staticFunction) {}
+
+        void call(const Event& event) override
+        {
+            staticFunction(static_cast<const EventType&>(event));
+        }
+
+    private:
+        void (*staticFunction)(const EventType&);
+    };
 }

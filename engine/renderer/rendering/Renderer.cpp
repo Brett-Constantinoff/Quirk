@@ -1,11 +1,12 @@
-#include "Renderer.hpp"
-
+#include "../../core/eventSystem/EventBus.hpp"
 #include "../../core/utils/Utils.hpp"
 #include "../../core/utils/Defines.hpp"
 #include "../../core/utils/ApplicationSettings.hpp"
-
 #include "../utils/Context.hpp"
 
+#include "Renderer.hpp"
+
+using namespace Quirk::Engine::Core::EventSystem;
 using namespace Quirk::Engine::Renderer::Utils;
 
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
@@ -27,6 +28,9 @@ namespace Quirk::Engine::Renderer::Rendering
 		// for now just load opengl
 		m_rhi = std::make_unique<Rhi::Opengl::Opengl>();
 		m_rhi->init();
+
+		// subscribe for any events
+		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
 		// create our materials
 		ShaderManager::createMaterials();
@@ -61,5 +65,12 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::shutDown()
 	{
 		m_rhi->shutDown();
+	}
+
+	void Renderer::updateViewport(const WindowResizeEvent& event)
+	{
+		const glm::vec2 dimensions{ event.getDim() };
+		m_rhi->setViewport(static_cast<qUint32>(dimensions.x), static_cast<qUint32>(dimensions.y));
+		event.setHandled();
 	}
 }

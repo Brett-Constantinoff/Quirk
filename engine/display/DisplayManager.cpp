@@ -1,4 +1,11 @@
+#include <glm/glm.hpp>
+
+#include "../core/eventSystem/EventBus.hpp"
+#include "../core/eventSystem/events/WindowResizeEvent.hpp"
 #include "DisplayManager.hpp"
+
+using namespace Quirk::Engine::Core::EventSystem::Events;
+using namespace Quirk::Engine::Core::EventSystem;
 
 namespace Quirk::Engine::Display
 {
@@ -50,6 +57,13 @@ namespace Quirk::Engine::Display
 		m_windows.insert({ DisplayTypes::Default, std::make_unique<DisplayWindow>(settings.windowWidth, settings.windowHeight,
 			settings.windowTitle) });
 		setCurrentContext(DisplayTypes::Default);
+
+		glfwSetFramebufferSizeCallback(m_windows[DisplayTypes::Default]->handle,
+			[](GLFWwindow* window, int width, int height)
+		{
+				// create a window resize event, any subscribers will be notified
+				EventBus::publish(WindowResizeEvent(glm::vec2 { width, height }));
+		});
 	}
 }
 

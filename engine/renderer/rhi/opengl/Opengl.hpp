@@ -28,6 +28,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	public:
 		void init() override;
 		void shutDown() override;
+		void setViewport(qUint32 width, qUint32 height) override;
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;
 		void submitDrawData(const std::vector<float>& vertexData, qUint32 vertexDataSize, qUint32 stride) override;
