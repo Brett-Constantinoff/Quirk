@@ -31,6 +31,10 @@ namespace Quirk::Engine::Core::Utils
 		{
 			case EventType::WindowResize:
 				return "Window Resize";
+			case EventType::KeyPress:
+				return "Key Press";
+			default:
+				return "Unknown";
 		}
 	}
 };
