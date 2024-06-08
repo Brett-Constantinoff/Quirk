@@ -52,7 +52,7 @@ namespace Quirk::Engine::Display
 		if (event.getKey() == KeyType::Esc && event.getAction() == KeyAction::KeyPress)
 		{
 			glfwSetWindowShouldClose(m_windows[DisplayTypes::Default]->handle, GLFW_TRUE);
-			event.handled();
+			event.setHandled();
 		}
 	}
 
