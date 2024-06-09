@@ -9,9 +9,12 @@
 
 #include "../../core/utils/Utils.hpp"
 
-#include "EventHandler.hpp"
+#include "eventHandlers/EventHandlerBase.hpp"
+#include "eventHandlers/EventHandler.hpp"
+#include "eventHandlers/EventHandlerStatic.hpp"
 
 using namespace Quirk::Engine::Core::Utils;
+using namespace Quirk::Engine::Core::EventSystem::EventHandlers;
 
 namespace Quirk::Engine::Core::EventSystem
 {
@@ -19,55 +22,19 @@ namespace Quirk::Engine::Core::EventSystem
     {
     public:
         template<typename EventType>
-        static void publish(const EventType& event)
-        {
-            auto it{ eventSubscribers.find(typeid(EventType)) };
-
-            if (it == eventSubscribers.end() || !it->second)
-                return;
-
-            std::list<EventHandlerBase*>& handlers{ *(it->second) };
-
-            for (const auto& handler : handlers)
-            {
-                if (handler == nullptr)
-                    continue;
-
-                handler->execute(event);
-
-                if (event.handled())
-                    break;
-            }
-
-            if (!event.handled())
-                spdlog::error("There was an unhandled event of type: {}", mapEventType(event.getType()));
-        }
+        static void publish(const EventType& event);
 
         // the order the events are published is the reverse order they are subscribed
         // so if A subscribes before B, B will be called before A
         template<class T, class EventType>
-        static void subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
-        {
-            auto& handlers{ eventSubscribers[typeid(EventType)] };
-
-            if (!handlers)
-                handlers = std::make_unique<std::list<EventHandlerBase*>>();
-
-            handlers->push_back(new EventHandler<T, EventType>{ *instance, MemberFunction });
-        }
-
+        static void subscribe(T* instance, void (T::* MemberFunction)(const EventType&));
+       
         template<typename EventType>
-        static void subscribe(void (*StaticFunction)(const EventType&))
-        {
-            auto& handlers{ eventSubscribers[typeid(EventType)] };
-
-            if (!handlers)
-                handlers = std::make_unique<std::list<EventHandlerBase*>>();
-
-            handlers->push_back(new EventHandlerStatic<EventType>{ StaticFunction });
-        }
-
+        static void subscribe(void (*StaticFunction)(const EventType&));
+      
     private:
         inline static std::map<std::type_index, std::unique_ptr<std::list<EventHandlerBase*>>> eventSubscribers{};
     };
 }
+
+#include "EventBus.inl"

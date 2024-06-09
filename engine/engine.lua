@@ -20,6 +20,7 @@ project "Engine"
     { 
         "**.cpp",
         "**.hpp",
+        '**.inl',
     }
 
     links 
