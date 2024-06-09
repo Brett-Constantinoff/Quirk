@@ -1,0 +1,20 @@
+#pragma once
+
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+
+namespace Quirk::Engine::Renderer::Gui
+{
+    // This is just a wrapper around our own Imgui implementation
+    // so any custom designs will go here
+    class ImguiImpl
+    {
+    public:
+        ~ImguiImpl();
+
+        static void init(GLFWwindow* currentContext);
+        static void updateFrame();
+        static void renderFrame();
+    };
+}
