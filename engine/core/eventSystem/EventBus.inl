@@ -7,7 +7,7 @@ using namespace Quirk::Engine::Core::Utils;
 namespace Quirk::Engine::Core::EventSystem
 {
     template<typename EventType>
-    static void EventBus::publish(const EventType& event)
+    inline static void EventBus::publish(const EventType& event)
     {
         auto it{ eventSubscribers.find(typeid(EventType)) };
 
@@ -32,7 +32,7 @@ namespace Quirk::Engine::Core::EventSystem
     }
 
     template<class T, class EventType>
-    static void EventBus::subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
+    inline static void EventBus::subscribe(T* instance, void (T::* MemberFunction)(const EventType&))
     {
         auto& handlers{ eventSubscribers[typeid(EventType)] };
 
@@ -43,7 +43,7 @@ namespace Quirk::Engine::Core::EventSystem
     }
 
     template<typename EventType>
-    static void EventBus::subscribe(void (*StaticFunction)(const EventType&))
+    inline static void EventBus::subscribe(void (*StaticFunction)(const EventType&))
     {
         auto& handlers{ eventSubscribers[typeid(EventType)] };
 
