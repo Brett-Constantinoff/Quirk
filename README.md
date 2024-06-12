@@ -1,7 +1,10 @@
-# Quirk
-Made by clowns
+# Quirk Engine
+Made by clowns :clown_face:
 
-![QuirkLogo](https://github.com/Brett-Constantinoff/Quirk/assets/8497211/75eeff1c-37c4-4c83-8881-2c71a72aa95e)
+
+<div align="center" style="margin: 0; padding: 0;">
+    <img src="https://github.com/Brett-Constantinoff/Quirk/assets/8497211/422206f3-a907-4fdb-a070-bcd8a4bc4bdb" >
+</div>
 
 ## Running Quirk
 Run the Setup.bat file by double clicking it, this will generate a visual studio solution file.
