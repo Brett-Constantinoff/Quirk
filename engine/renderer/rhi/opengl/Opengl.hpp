@@ -27,14 +27,13 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	class Opengl : public Rhi
 	{
 	public:
-		~Opengl();
-
 		void init() override;
+		void shutdown() override;
 		void setViewport(uint32_t width, uint32_t height) override;
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;
-		void submitDrawData(const std::vector<float>& vertexData, uint32_t vertexDataSize, uint32_t stride) override;
-		void submitDrawData(const std::vector<float>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride) override;
+		void submitDrawData(const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride) override;
+		void submitDrawData(const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride) override;
 		void drawArrays(QuirkPrimitives primitiveType, uint32_t vertexCount) override;
 		void drawElements(QuirkPrimitives primitiveType, uint32_t indexCount) override;
 

@@ -22,7 +22,8 @@ namespace Quirk::Engine::Renderer::Rendering
 		ShaderManager() = default;
 		~ShaderManager() = default;
 
-		static void createMaterials();
+		static void init();
+		static void shutdown();
 		static std::unique_ptr<Shader>& getShader(MaterialType type) { return m_shaders[type]; }
 
 	private:

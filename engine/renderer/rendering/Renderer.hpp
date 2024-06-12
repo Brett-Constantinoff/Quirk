@@ -23,6 +23,7 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 	public:
 		static void init();
+		static void shutdown();
 		static void tick(double tickSpeed, const DisplayWindow& display);
 
 	private:

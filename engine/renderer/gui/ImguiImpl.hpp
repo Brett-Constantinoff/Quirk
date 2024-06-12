@@ -11,9 +11,11 @@ namespace Quirk::Engine::Renderer::Gui
     class ImguiImpl
     {
     public:
-        ~ImguiImpl();
+        ImguiImpl() = default;
+        ~ImguiImpl() = default;
 
         static void init(GLFWwindow* currentContext);
+        static void shutdown();
         static void updateFrame();
         static void renderFrame();
     };

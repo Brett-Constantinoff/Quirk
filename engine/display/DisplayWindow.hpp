@@ -22,6 +22,7 @@ namespace Quirk::Engine::Display
     {
     public:
         DisplayWindow() = default;
+        ~DisplayWindow() = default;
 
         // have an init so we dont doubly initialize the window in WindowManager.cpp
         void init(uint32_t width, uint32_t height, const std::string_view& title);

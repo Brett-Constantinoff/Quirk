@@ -27,9 +27,11 @@ namespace Quirk::Engine::Display
     class DisplayManager
     {
     public:
-        ~DisplayManager();
+        DisplayManager() = default;
+        ~DisplayManager() = default;
 
         static void init();
+        static void shutdown();
         static void initWindows();
         static DisplayWindow getWindow(DisplayTypes type);
         static void tick(DisplayTypes type, double tickSpeed);

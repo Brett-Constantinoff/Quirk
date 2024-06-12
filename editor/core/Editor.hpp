@@ -25,7 +25,11 @@ namespace Quirk::Editor
 	class Editor
 	{
 	public:
+		Editor() = default;
+		~Editor() = default;
+
 		static void run();
+		static void shutdown();
 
 	private:
 		static void setup();
