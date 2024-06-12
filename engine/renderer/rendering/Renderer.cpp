@@ -3,6 +3,7 @@
 #include "../../core/utils/ApplicationSettings.hpp"
 
 #include "../utils/Context.hpp"
+#include "MeshFactory.hpp"
 
 #include "Renderer.hpp"
 
@@ -22,18 +23,23 @@ namespace Quirk::Engine::Renderer::Rendering
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
 		// create our materials
-		ShaderManager::createMaterials();
+		ShaderManager::init();
+
+		// init the mesh factory
+		MeshFactory::init();
 
 		// TODO - This is just here to make sure we can render something
 		{
-			const std::vector<float> data =
-			{
-				-0.5f, -0.5f, 0.0f,
-				 0.5f, -0.5f, 0.0f,
-				 0.0f,  0.5f, 0.0f
-			};
-			m_rhi->submitDrawData(data, 3, 3);
+			const auto& mesh{ MeshFactory::getMesh(MeshTypes::Quad) };
+			m_rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
 		}
+	}
+
+	void Renderer::shutdown()
+	{
+		m_rhi->shutdown();
+		MeshFactory::shutdown();
+		ShaderManager::shutdown();
 	}
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
@@ -46,7 +52,7 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		basicShader->use();
 
-		m_rhi->drawArrays(QuirkPrimitives::Triangles, 3);
+		m_rhi->drawElements(QuirkPrimitives::Triangles, 6);
 
 		basicShader->disuse();
 	}

@@ -12,9 +12,14 @@ using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
-	void ShaderManager::createMaterials()
+	void ShaderManager::init()
 	{
 		createMaterial("../engine/resources/shaders/basicShader.hlsl", MaterialType::Basic2D);
+	}
+
+	void ShaderManager::shutdown()
+	{
+		m_shaders.clear();
 	}
 
 	void ShaderManager::createMaterial(const std::string& filePath, MaterialType type)

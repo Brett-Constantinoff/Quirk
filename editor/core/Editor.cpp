@@ -25,6 +25,13 @@ namespace Quirk::Editor
 		}
 	}
 
+	void Editor::shutdown()
+	{
+		Gui::ImguiImpl::shutdown();
+		Renderer::shutdown();
+		DisplayManager::shutdown();
+	}
+
 	void Editor::setup()
 	{
 		Timer timer;

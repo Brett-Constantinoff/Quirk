@@ -4,13 +4,6 @@
 
 namespace Quirk::Engine::Display
 {
-	DisplayManager::~DisplayManager()
-	{
-		glfwTerminate();
-		for (const auto& window : m_windows)
-			glfwDestroyWindow(window.second->handle);
-	};
-
 	void DisplayManager::init()
 	{
 		const auto& settings{ AppSettings::getSettings() };
@@ -19,6 +12,13 @@ namespace Quirk::Engine::Display
 
 		// subscribe to any events
 		EventBus::subscribe<KeyPressEvent>(&DisplayManager::handleWindowInput);
+	}
+
+	void DisplayManager::shutdown()
+	{
+		glfwTerminate();
+		for (const auto& window : m_windows)
+			glfwDestroyWindow(window.second->handle);
 	}
 
 	void DisplayManager::initWindows()
