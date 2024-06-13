@@ -14,11 +14,15 @@ project "Engine"
         "../thirdParty/glad/include/",
         "../thirdParty/gui/",
         "../thirdParty/glm/",
+        "../thirdParty/assimp/include/",
+        "../thirdParty/entt/src/",
     }
 
     files 
     { 
         "**.cpp",
+        "**.h",
+        "**.c",
         "**.hpp",
         '**.inl',
     }
@@ -30,6 +34,8 @@ project "Engine"
         "Glad",
         "Imgui",
         "OpengL32",
+        "../thirdParty/assimp/lib/assimp-vc142-mt", 
+        "../thirdParty/assimp/lib/zlibstatic",
     }
     			
     filter "system:windows"
