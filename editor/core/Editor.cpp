@@ -56,6 +56,7 @@ namespace Quirk::Editor
 	void Editor::renderEditor()
 	{
 		Gui::ImguiImpl::updateFrame();
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 		renderComponents();
 		Gui::ImguiImpl::renderFrame();
 	}
@@ -63,6 +64,7 @@ namespace Quirk::Editor
 	void Editor::renderComponents()
 	{
 		m_menuBar.render();
+		m_sceneHierarchyPanel.render();
 		m_metrics.render();
 	}
 }
