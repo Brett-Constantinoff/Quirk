@@ -28,11 +28,8 @@ namespace Quirk::Engine::Renderer::Rendering
 		// init the mesh factory
 		MeshFactory::init();
 
-		// TODO - This is just here to make sure we can render something
-		{
-			const auto& mesh{ MeshFactory::getMesh(MeshTypes::Quad) };
-			m_rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
-		}
+		// create a basic quad mesh
+		MeshFactory::createMesh(MeshTypes::Quad, m_rhi);
 	}
 
 	void Renderer::shutdown()
@@ -52,7 +49,12 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		basicShader->use();
 
-		m_rhi->drawElements(QuirkPrimitives::Triangles, 6);
+		// render our scene meshes
+		m_scene->view<Mesh>().each([&](auto actor, auto& mesh)
+		{
+			m_rhi->drawElements(QuirkPrimitives::Triangles, 
+			static_cast<uint32_t>(mesh.indices.size()));
+		});
 
 		basicShader->disuse();
 	}

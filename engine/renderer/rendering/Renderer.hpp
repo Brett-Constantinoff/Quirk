@@ -8,11 +8,13 @@
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
+#include "../../scene/Scene.hpp"
 
 #include "ShaderManger.hpp"
 #include "Camera.hpp"
 
 using namespace Quirk::Engine::Display;
+using namespace Quirk::Engine::Scene;
 using namespace Quirk::Engine::Renderer::Rhi;
 using namespace Quirk::Engine::Renderer::Rhi::Opengl;
 using namespace Quirk::Engine::Core::EventSystem::Events;
@@ -32,8 +34,8 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void updateViewport(const WindowResizeEvent& event);
 
 	private:
+		 inline static std::shared_ptr<Scene::Scene> m_scene{ new Scene::Scene()};
 		 inline static Rhi::Rhi* m_rhi{ nullptr };
-
 		 inline static Rhi::Opengl::Opengl m_opengl{};
 	};
 }

@@ -2,8 +2,10 @@
 
 #include <memory>
 #include <unordered_map>
-
+#include "../rhi/Rhi.hpp"
 #include "Mesh.hpp"
+
+using namespace Quirk::Engine::Renderer::Rhi;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -11,7 +13,6 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		None,
 		Quad,
-
 		Count
 	};
 
@@ -23,10 +24,12 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		static void init();
 		static void shutdown();
-		static std::shared_ptr<Mesh> getMesh(MeshTypes type);
+		static void createMesh(MeshTypes type, Rhi::Rhi* rhi);
 
 	private:
-		static std::shared_ptr<Mesh> createMesh(MeshTypes type);
+		static std::shared_ptr<Mesh> getMesh(MeshTypes type);
+
+		static void createQuadMesh(MeshTypes type, Rhi::Rhi* rhi);
 
 	private:
 		inline static std::unordered_map<MeshTypes, std::shared_ptr<Mesh>> m_meshCache{};
