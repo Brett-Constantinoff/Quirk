@@ -31,13 +31,13 @@ namespace Quirk::Engine::Renderer::Rendering
 
     std::shared_ptr<Mesh> MeshFactory::getMesh(MeshTypes type)
     {
-        auto iterator = m_meshCache.find(type);
+        auto iterator{ m_meshCache.find(type) };
         return (iterator != m_meshCache.end()) ? iterator->second : nullptr;
     }
 
     void MeshFactory::createQuadMesh(MeshTypes type, Rhi::Rhi* rhi)
     {
-        if (auto mesh = getMesh(type))
+        if (auto mesh{ getMesh(type) })
         {
             rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
             EventBus::publish(MeshCreationEvent(mesh));
