@@ -1,6 +1,8 @@
 #include "../../core/eventSystem/EventBus.hpp"
 #include "../../core/utils/Defines.hpp"
 #include "../../core/utils/ApplicationSettings.hpp"
+#include "../../scene/components/MaterialComponent.hpp"
+#include "../../scene/components/TransformComponent.hpp"
 
 #include "../utils/Context.hpp"
 #include "MeshFactory.hpp"
@@ -19,18 +21,11 @@ namespace Quirk::Engine::Renderer::Rendering
 		loadContext();
 		chooseAndInitRhi();
 
-		// subscribe for any events
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
-		// create our materials
 		ShaderManager::init();
 
-		// init the mesh factory
 		MeshFactory::init();
-
-		// TODO - The scene should be separeted from rendering, this is just a test
-		// the scene should be updated by the user so it should be handled by the editor
-		setupBasicScene();
 	}
 
 	void Renderer::shutdown()
@@ -40,10 +35,11 @@ namespace Quirk::Engine::Renderer::Rendering
 		ShaderManager::shutdown();
 	}
 
-	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
+	void Renderer::tick(double tickSpeed, const DisplayWindow& display, 
+		const std::weak_ptr<Scene::Scene> scene)
 	{
 		onBeforeRenderPass(tickSpeed, display);
-		onRenderPass();
+		onRenderPass(scene);
 	}
 
 	void Renderer::loadContext()
@@ -79,17 +75,22 @@ namespace Quirk::Engine::Renderer::Rendering
 		event.setHandled();
 	}
 
-	void Renderer::setupBasicScene()
+	void Renderer::initSceneData(const std::weak_ptr<Scene::Scene> scene)
 	{
-		auto& entity{ m_scene->createEntity("Clown Quad")};
+		auto scenePtr{ scene.lock() };
+		if (scenePtr)
+		{
+			const auto& registry{ scenePtr->getEntities() };
 
-		auto meshComponent{ MeshFactory::createMesh(MeshTypes::Quad, m_rhi) };
-		entity->addComponent<MeshComponent>(*meshComponent);
-		entity->setDrawable(true);
-
-		MaterialComponent materialComponent{};
-		materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic2D);
-		entity->addComponent<MaterialComponent>(materialComponent);
+			for (const auto& entity : registry)
+			{
+				if (entity->isDrawable())
+				{
+					auto& meshComponent{ entity->getComponent<MeshComponent>() };
+					m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
+				}
+			}
+		}
 	}
 
 	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
@@ -99,21 +100,27 @@ namespace Quirk::Engine::Renderer::Rendering
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 	}
 
-	void Renderer::onRenderPass()
+	void Renderer::onRenderPass(const std::weak_ptr<Scene::Scene> scene)
 	{
-		const auto& registry{ m_scene->getEntities() };
-		for (const auto& entity : registry)
+		if (auto scenePtr{ scene.lock() })
 		{
-			if (entity->isDrawable())
+			const auto& registry{ scenePtr->getEntities() };
+			for (const auto& entity : registry)
 			{
-				auto& meshComponent{ entity->getComponent<MeshComponent>() };
-				auto& MaterialComponent{ entity->getComponent<Components::MaterialComponent>() };
+				if (entity->isDrawable())
+				{
+					auto& meshComponent{ entity->getComponent<MeshComponent>() };
+					auto& materialComponent{ entity->getComponent<Components::MaterialComponent>() };
+					auto& transformComponent{entity->getComponent<Components::TransformComponent>() };
 
-				auto& material{ ShaderManager::getMaterial(MaterialComponent.materialId) };
+					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 
-				material->use();
-				m_rhi->drawElements(QuirkPrimitives::Triangles, meshComponent.indexCount);
-				material->disuse();
+					material->use();
+					material->setMat4("uTransform", transformComponent.transform);
+					material->setVec3("uDiffuse", materialComponent.diffuse);
+					m_rhi->drawElements(entity->getId(), QuirkPrimitives::Triangles, meshComponent.indexCount);
+					material->disuse();
+				}
 			}
 		}
 	}

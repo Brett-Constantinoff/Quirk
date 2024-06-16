@@ -13,7 +13,7 @@ namespace Quirk::Engine::Core::Utils
 
 		// rendering settings
 		m_settings.renderApi = RenderApi::OpenGL;
-		m_settings.clearColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
+		m_settings.clearColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 		m_settings.clearColorBuffer = true;
 		m_settings.clearDepthBuffer = true;
 		m_settings.clearStencilBuffer = false;

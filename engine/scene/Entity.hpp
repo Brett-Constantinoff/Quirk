@@ -45,9 +45,15 @@ namespace Quirk::Engine::Scene
 			return m_drawable;
 		}
 
-        inline void setDrawable(bool drawable)
+        inline constexpr void setDrawable(bool drawable)
         {
             m_drawable = drawable;
+        }
+
+        [[nodiscard]] inline constexpr uint32_t getId()
+        {
+            const auto& nameComponent{ getComponent<Components::NameComponent>() };
+            return nameComponent.id;
         }
 
     private:

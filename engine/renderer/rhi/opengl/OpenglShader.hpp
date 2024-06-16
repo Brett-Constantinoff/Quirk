@@ -32,6 +32,8 @@ namespace Quirk::Engine::Renderer::Rhi
         virtual uint32_t getId() override;
         virtual void use() override;
         virtual void disuse() override;
+        virtual void setVec3(const char* name, const glm::vec3& value) override;
+        virtual void setMat4(const char* name, const glm::mat4& matrix) override;
 
     private:
         void parseShader(const std::string& filepath, ShaderSource& source);

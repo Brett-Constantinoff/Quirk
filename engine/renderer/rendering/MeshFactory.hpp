@@ -25,12 +25,12 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		static void init();
 		static void shutdown();
-		static std::shared_ptr<MeshComponent> createMesh(MeshTypes type, Rhi::Rhi* rhi);
+		static std::shared_ptr<MeshComponent> createMesh(MeshTypes type);
 
 	private:
 		static std::shared_ptr<MeshComponent> getMesh(MeshTypes type);
 
-		static std::shared_ptr<MeshComponent> createQuadMesh(MeshTypes type, Rhi::Rhi* rhi);
+		static std::shared_ptr<MeshComponent> createQuadMesh(MeshTypes type);
 
 	private:
 		inline static std::unordered_map<MeshTypes, std::shared_ptr<MeshComponent>> m_meshCache{};

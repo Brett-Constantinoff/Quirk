@@ -9,7 +9,6 @@
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
 #include "../../scene/Scene.hpp"
-#include "../../scene/components/MaterialComponent.hpp"
 
 #include "ShaderManger.hpp"
 #include "Camera.hpp"
@@ -27,20 +26,20 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 	public:
 		static void init();
+		static void initSceneData(const std::weak_ptr<Scene::Scene> scene);
 		static void shutdown();
-		static void tick(double tickSpeed, const DisplayWindow& display);
+		static void tick(double tickSpeed, const DisplayWindow& display, 
+			const std::weak_ptr<Scene::Scene> scene);
 
 	private:
 		static void loadContext();
 		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
-		static void setupBasicScene(); // TODO - remove this
 
 		static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
-		static void onRenderPass();
+		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
 
 	private:
-		 inline static std::shared_ptr<Scene::Scene> m_scene{ new Scene::Scene()};
 		 inline static Rhi::Rhi* m_rhi{ nullptr };
 		 inline static Rhi::Opengl::Opengl m_opengl{};
 	};

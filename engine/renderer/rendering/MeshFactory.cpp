@@ -12,12 +12,12 @@ namespace Quirk::Engine::Renderer::Rendering
         m_meshCache.clear();
     }
 
-    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type, Rhi::Rhi* rhi)
+    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type)
     {
         switch (type)
         {
             case MeshTypes::Quad:
-                return createQuadMesh(type, rhi);
+                return createQuadMesh(type);
         }
     }
 
@@ -27,13 +27,10 @@ namespace Quirk::Engine::Renderer::Rendering
         return (iterator != m_meshCache.end()) ? iterator->second : nullptr;
     }
 
-    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh(MeshTypes type, Rhi::Rhi* rhi)
+    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh(MeshTypes type)
     {
         if (auto mesh{ getMesh(type) })
-        {
-            rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
             return mesh;
-        }
         else
         {
             mesh = std::make_shared<MeshComponent>();
@@ -53,7 +50,6 @@ namespace Quirk::Engine::Renderer::Rendering
             mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
 
             m_meshCache.emplace(type, mesh);
-            rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
 
             return mesh;
         }
