@@ -78,8 +78,7 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::initSceneData(const std::weak_ptr<Scene::Scene> scene)
 	{
-		auto scenePtr{ scene.lock() };
-		if (scenePtr)
+		if (auto scenePtr{ scene.lock() })
 		{
 			const auto& registry{ scenePtr->getEntities() };
 

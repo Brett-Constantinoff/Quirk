@@ -4,14 +4,7 @@
 
 using namespace Quirk::Engine::Scene::Components;
 
-namespace Quirk::Engine::Scene::Systems
+namespace Quirk::Engine::Scene::Systems::TransformSystem
 {
-	class TransformSystem
-	{
-	public:
-		TransformSystem() = default;
-		~TransformSystem() = default;
-
-		static void update(TransformComponent& transformComponent);
-	};
+	void update(TransformComponent& transformComponent);
 }

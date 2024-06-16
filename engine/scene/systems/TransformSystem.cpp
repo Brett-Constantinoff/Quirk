@@ -2,9 +2,9 @@
 
 #include "TransformSystem.hpp"
 
-namespace Quirk::Engine::Scene::Systems
+namespace Quirk::Engine::Scene::Systems::TransformSystem
 {
-	void TransformSystem::update(TransformComponent& transformComponent)
+	void update(TransformComponent& transformComponent)
 	{
 		glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), transformComponent.position);
 		glm::mat4 rotationMatrix = transformComponent.rotation;

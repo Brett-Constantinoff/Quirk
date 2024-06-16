@@ -7,9 +7,6 @@ namespace Quirk::Engine::Scene
 	class SceneManager
 	{
 	public:
-		SceneManager() = default;
-		~SceneManager() = default;
-
 		static void shutdown();
 		static void loadDefaultScene();
 		[[nodiscard]] static std::shared_ptr<Scene>& getCurrentScene();
