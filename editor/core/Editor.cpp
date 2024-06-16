@@ -56,7 +56,6 @@ namespace Quirk::Editor
 	void Editor::renderEditor()
 	{
 		Gui::ImguiImpl::updateFrame();
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 		renderComponents();
 		Gui::ImguiImpl::renderFrame();
 	}

@@ -9,23 +9,18 @@ namespace Quirk::Engine::Renderer::Gui
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
-		//ImGui::StyleColorsDark();
-		ImGui::StyleColorsClassic();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		ImGuiStyle& style = ImGui::GetStyle();
+
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			style.WindowRounding = 0.0f;
-			//style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-			//make the docking window completely transparent
-			style.Colors[ImGuiCol_DockingEmptyBg].w = 0.0f;
-			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
-			
 			style.Alpha = 1.0f;
 		}
+
+		ImGui::StyleColorsDark();
 		ImGui_ImplGlfw_InitForOpenGL(currentContext, true);
 		ImGui_ImplOpenGL3_Init("#version 150");
 	}
@@ -42,21 +37,34 @@ namespace Quirk::Engine::Renderer::Gui
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGuiViewport* viewport{ ImGui::GetMainViewport() };
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		ImGuiWindowFlags window_flags{ ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus |
+			ImGuiWindowFlags_NoBackground };
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor();
+
+		ImGuiID dockspaceId{ ImGui::GetID("MyDockspace") };
+		ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+		ImGui::End();
 	}
 
 	void ImguiImpl::renderFrame()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		// Update and Render additional Platform Windows
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
 	}
 }
