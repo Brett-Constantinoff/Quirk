@@ -5,6 +5,7 @@
 #include "../../scene/components/TransformComponent.hpp"
 
 #include "../utils/Context.hpp"
+#include "../utils/Utils.hpp"
 #include "MeshFactory.hpp"
 
 #include "Renderer.hpp"
@@ -116,8 +117,8 @@ namespace Quirk::Engine::Renderer::Rendering
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 
 					material->use();
-					material->setMat4("uTransform", transformComponent.transform);
-					material->setVec3("uDiffuse", materialComponent.diffuse);
+					material->setMat4(transformUniformName, transformComponent.transform);
+					material->setVec3(diffuseUniformName, materialComponent.diffuse);
 					m_rhi->drawElements(entity->getId(), QuirkPrimitives::Triangles, meshComponent.indexCount);
 					material->disuse();
 				}

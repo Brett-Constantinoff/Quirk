@@ -3,7 +3,7 @@
 namespace Quirk::Engine::Renderer::Utils
 {
 	// TODO: Add more primitives
-	enum class QuirkPrimitives
+	static enum class QuirkPrimitives
 	{
 		Triangles,
 	};
