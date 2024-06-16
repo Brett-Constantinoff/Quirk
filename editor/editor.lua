@@ -14,6 +14,8 @@ project "Editor"
         "../thirdParty/glad/include/",
         "../thirdParty/gui/",
         "../thirdParty/glm/",
+        "../thirdParty/assimp/include/",
+        "../thirdParty/entt/src/",
         "../engine/"
     }
 
@@ -21,6 +23,8 @@ project "Editor"
     { 
         "**.cpp",
         "**.hpp",
+        "**.h",
+        "**.c",
     }
 
     links 
@@ -29,6 +33,8 @@ project "Editor"
         "Glfw",
         "Glad",
         "Imgui",
+        "../thirdParty/assimp/lib/assimp-vc142-mt", 
+        "../thirdParty/assimp/lib/zlibstatic",
         "OpengL32",
         "Engine",
     }
