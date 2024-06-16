@@ -20,6 +20,10 @@ namespace Quirk::Engine::Renderer::Gui
 		{
 			style.WindowRounding = 0.0f;
 			//style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+			//make the docking window completely transparent
+			style.Colors[ImGuiCol_DockingEmptyBg].w = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 0.0f;
+			
 			style.Alpha = 1.0f;
 		}
 		ImGui_ImplGlfw_InitForOpenGL(currentContext, true);
