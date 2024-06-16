@@ -8,6 +8,7 @@ namespace Quirk::Engine::Renderer::Rhi
 		Shader() = default;
 		virtual ~Shader() = default;
 
+		virtual uint32_t getId() = 0;
 		virtual void use() = 0;
 		virtual void disuse() = 0;
 	};

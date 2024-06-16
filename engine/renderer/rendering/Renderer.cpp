@@ -28,8 +28,9 @@ namespace Quirk::Engine::Renderer::Rendering
 		// init the mesh factory
 		MeshFactory::init();
 
-		// create a basic quad mesh
-		MeshFactory::createMesh(MeshTypes::Quad, m_rhi);
+		// TODO - The scene should be separeted from rendering, this is just a test
+		// the scene should be updated by the user so it should be handled by the editor
+		setupBasicScene();
 	}
 
 	void Renderer::shutdown()
@@ -41,22 +42,34 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
 	{
-		const auto& basicShader{ShaderManager::getShader(MaterialType::Basic2D)};
-
 		const auto& clearColor{ Utils::Context::clearColor };
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 
-		basicShader->use();
+		auto& registry{ m_scene->getRegistry() };
 
-		// render our scene meshes
-		m_scene->view<Mesh>().each([&](auto actor, auto& mesh)
+		for (auto handle : registry.view<entt::entity>()) 
 		{
-			m_rhi->drawElements(QuirkPrimitives::Triangles, 
-			static_cast<uint32_t>(mesh.indices.size()));
-		});
+			auto entity{m_scene->getEntity(handle)};
 
-		basicShader->disuse();
+			/*
+				TO-DO: Currently we only have one component which is a mesh component,
+				before we check if the component is drawable, we should perform any 
+				additional checks on any other components that may be added in the future.
+			*/
+
+			if (entity->isDrawable())
+			{
+				auto& meshComponent{ entity->getComponent<MeshComponent>() };
+				auto& MaterialComponent{ entity->getComponent<Components::MaterialComponent>() };
+
+				auto& material{ ShaderManager::getMaterial(MaterialComponent.materialId) };
+
+				material->use();
+				m_rhi->drawElements(QuirkPrimitives::Triangles, meshComponent.indexCount);
+				material->disuse();
+			}
+		}
 	}
 
 	void Renderer::loadContext()
@@ -90,5 +103,18 @@ namespace Quirk::Engine::Renderer::Rendering
 		const glm::vec2 dimensions{ event.getDim() };
 		m_rhi->setViewport(static_cast<uint32_t>(dimensions.x), static_cast<uint32_t>(dimensions.y));
 		event.setHandled();
+	}
+
+	void Renderer::setupBasicScene()
+	{
+		auto& entity{ m_scene->createEntity("Clown Quad")};
+
+		auto meshComponent{ MeshFactory::createMesh(MeshTypes::Quad, m_rhi) };
+		entity->addComponent<MeshComponent>(*meshComponent);
+		entity->setDrawable(true);
+
+		MaterialComponent materialComponent{};
+		materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic2D);
+		entity->addComponent<MaterialComponent>(materialComponent);
 	}
 }

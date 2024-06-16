@@ -1,9 +1,4 @@
-#include "../../core/eventSystem/EventBus.hpp"
-#include "../../core/eventSystem/events/MeshCreationEvent.hpp"
-
 #include "MeshFactory.hpp"
-
-using namespace Quirk::Engine::Core::EventSystem;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -17,34 +12,31 @@ namespace Quirk::Engine::Renderer::Rendering
         m_meshCache.clear();
     }
 
-    void MeshFactory::createMesh(MeshTypes type, Rhi::Rhi* rhi)
+    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type, Rhi::Rhi* rhi)
     {
         switch (type)
         {
             case MeshTypes::Quad:
-            {
-                createQuadMesh(type, rhi);
-                break;
-            }
+                return createQuadMesh(type, rhi);
         }
     }
 
-    std::shared_ptr<Mesh> MeshFactory::getMesh(MeshTypes type)
+    std::shared_ptr<MeshComponent> MeshFactory::getMesh(MeshTypes type)
     {
         auto iterator{ m_meshCache.find(type) };
         return (iterator != m_meshCache.end()) ? iterator->second : nullptr;
     }
 
-    void MeshFactory::createQuadMesh(MeshTypes type, Rhi::Rhi* rhi)
+    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh(MeshTypes type, Rhi::Rhi* rhi)
     {
         if (auto mesh{ getMesh(type) })
         {
             rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
-            EventBus::publish(MeshCreationEvent(mesh));
+            return mesh;
         }
         else
         {
-            mesh = std::make_shared<Mesh>();
+            mesh = std::make_shared<MeshComponent>();
 
             mesh->vertices = {
                 { -0.5f, -0.5f, 0.0f },
@@ -52,15 +44,19 @@ namespace Quirk::Engine::Renderer::Rendering
                 {  0.5f,  0.5f, 0.0f },
                 { -0.5f,  0.5f, 0.0f }
             };
+            mesh->vertexCount = static_cast<uint32_t>(mesh->vertices.size());
 
             mesh->indices = {
                 0, 1, 2,
                 2, 3, 0
             };
+            mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
 
             m_meshCache.emplace(type, mesh);
             rhi->submitDrawData(mesh->vertices, mesh->indices, 3, 3);
-            EventBus::publish(MeshCreationEvent(mesh));
+
+            return mesh;
         }
+        
     }
 }

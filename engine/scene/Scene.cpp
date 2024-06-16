@@ -1,26 +1,43 @@
-#include "../core/eventSystem/EventBus.hpp"
+#include "../../core/eventSystem/EventBus.hpp"
 
 #include "Scene.hpp"
 
+using namespace Quirk::Engine::Scene::Components;
+
 namespace Quirk::Engine::Scene
 {
-	Scene::Scene()
+	std::shared_ptr<Entity>& Scene::createEntity(const std::string& name)
 	{
-		EventBus::subscribe<Scene, MeshCreationEvent>(this, &Scene::onMeshCreationEvent);
+		std::shared_ptr<Entity> entity{ std::make_shared<Entity>(m_registry) };
+
+		NameComponent nameComponent{};
+		nameComponent.name = name;
+
+		// TODO - make a uuid
+		nameComponent.id = static_cast<uint32_t>(m_entities.size());
+
+		entity->addComponent<NameComponent>(nameComponent);
+		m_entities.emplace_back(std::move(entity));
+
+		return m_entities.back();
 	}
 
-	void Scene::destroyActor(const Actor& actor)
+	std::shared_ptr<Entity>& Scene::getEntity(entt::entity handle)
 	{
-		m_registry.destroy(actor.getHandle());
+		for (std::size_t i{0}; i < m_entities.size(); ++i)
+		{
+			if (m_entities[i]->getHandle() == handle)
+				return m_entities[i];
+		}
 	}
 
-	void Scene::onMeshCreationEvent(const MeshCreationEvent& event)
+	void Scene::destroyEntity(const Entity& entity)
 	{
-		auto mesh{ *event.getMesh() };
-		std::shared_ptr<Actor> actor{ std::make_shared<Actor>(m_registry) };
+		m_registry.destroy(entity.getHandle());
+	}
 
-		actor->addComponent<Mesh>(mesh);
-
-		event.setHandled();
+	entt::registry& Scene::getRegistry()
+	{
+		return m_registry;
 	}
 }

@@ -2,10 +2,10 @@
 
 namespace Quirk::Engine::Scene
 {
-    class Actor
+    class Entity
     {
     public:
-        inline Actor(entt::registry& registry)
+        inline Entity(entt::registry& registry)
             : m_registry{ registry },
             m_entity{ m_registry.create() }
         {
@@ -40,8 +40,19 @@ namespace Quirk::Engine::Scene
             return m_entity;
         }
 
+        [[nodiscard]] inline constexpr bool isDrawable() const
+		{
+			return m_drawable;
+		}
+
+        inline void setDrawable(bool drawable)
+        {
+            m_drawable = drawable;
+        }
+
     private:
         entt::registry& m_registry;
 		entt::entity m_entity;
+        bool m_drawable{ false };
     };
 }

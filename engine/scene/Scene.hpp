@@ -2,38 +2,26 @@
 #include <entt/entt.hpp>
 #include <vector>
 
-#include "../core/eventSystem/events/MeshCreationEvent.hpp"
+#include "components/MeshComponent.hpp"
+#include "components/NameComponent.hpp"
 
-#include "Actor.hpp"
-
-using namespace Quirk::Engine::Core::EventSystem;
+#include "Entity.hpp"
 
 namespace Quirk::Engine::Scene
 {
 	class Scene
 	{
 	public:
-		Scene();
+		Scene() = default;
 		~Scene() = default;
 
-		void destroyActor(const Actor& actor);
-
-		template<typename... Components>
-		[[nodiscard]] inline constexpr auto view() 
-		{
-			return m_registry.view<Components...>();
-		}
-
-		template<typename... Components>
-		[[nodiscard]] inline constexpr auto each() 
-		{
-			return m_registry.view<Components...>().each();
-		}
-		
-	private:
-		void onMeshCreationEvent(const MeshCreationEvent& event);
+		[[nodiscard]] std::shared_ptr<Entity>& createEntity(const std::string& name = "Entity");
+		[[nodiscard]] std::shared_ptr<Entity>& getEntity(entt::entity handle);
+		void destroyEntity(const Entity& actor);
+		[[nodiscard]] entt::registry& getRegistry();
 
 	private:
 		entt::registry m_registry{};
+		std::vector<std::shared_ptr<Entity>> m_entities{};
 	};
 }

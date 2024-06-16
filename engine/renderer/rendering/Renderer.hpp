@@ -9,6 +9,7 @@
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
 #include "../../scene/Scene.hpp"
+#include "../../scene/components/MaterialComponent.hpp"
 
 #include "ShaderManger.hpp"
 #include "Camera.hpp"
@@ -18,6 +19,7 @@ using namespace Quirk::Engine::Scene;
 using namespace Quirk::Engine::Renderer::Rhi;
 using namespace Quirk::Engine::Renderer::Rhi::Opengl;
 using namespace Quirk::Engine::Core::EventSystem::Events;
+using namespace Quirk::Engine::Scene::Components;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -32,6 +34,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void loadContext();
 		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
+		static void setupBasicScene();
 
 	private:
 		 inline static std::shared_ptr<Scene::Scene> m_scene{ new Scene::Scene()};

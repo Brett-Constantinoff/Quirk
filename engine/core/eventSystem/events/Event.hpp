@@ -7,7 +7,6 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		Unknown, 
 		WindowResize,
 		KeyPress,
-		MeshCreation,
 	};
 
 	class Event
