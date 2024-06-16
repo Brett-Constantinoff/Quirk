@@ -19,8 +19,12 @@ namespace Quirk::Editor
 			const double tickSpeed{ currFrame - lastFrame };
 			lastFrame = currFrame;
 
+			SceneManager::getCurrentScene()->tick(tickSpeed);
+
 			Renderer::tick(tickSpeed, display, SceneManager::getCurrentScene());
+
 			renderEditor();
+
 			DisplayManager::tick(DisplayTypes::Default, tickSpeed);
 		}
 	}

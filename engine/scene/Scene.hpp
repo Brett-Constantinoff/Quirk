@@ -17,8 +17,10 @@ namespace Quirk::Engine::Scene
 
 		[[nodiscard]] std::shared_ptr<Entity>& createEntity(const std::string& name = "Entity");
 		[[nodiscard]] std::shared_ptr<Entity>& getEntity(entt::entity handle);
+		[[nodiscard]] std::shared_ptr<Entity>& getEntity(const char* name);
 		[[nodiscard]] std::vector<std::shared_ptr<Entity>>& getEntities();
 		void destroyEntity(const Entity& actor);
+		void tick(double tickSpeed);
 
 	private:
 		entt::registry m_registry{};
