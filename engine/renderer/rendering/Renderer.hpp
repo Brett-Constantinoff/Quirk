@@ -34,7 +34,10 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void loadContext();
 		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
-		static void setupBasicScene();
+		static void setupBasicScene(); // TODO - remove this
+
+		static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
+		static void onRenderPass();
 
 	private:
 		 inline static std::shared_ptr<Scene::Scene> m_scene{ new Scene::Scene()};

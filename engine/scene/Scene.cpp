@@ -31,13 +31,14 @@ namespace Quirk::Engine::Scene
 		}
 	}
 
+	std::vector<std::shared_ptr<Entity>>& Scene::getEntities()
+	{
+		return m_entities;
+	}
+
 	void Scene::destroyEntity(const Entity& entity)
 	{
 		m_registry.destroy(entity.getHandle());
 	}
 
-	entt::registry& Scene::getRegistry()
-	{
-		return m_registry;
-	}
 }

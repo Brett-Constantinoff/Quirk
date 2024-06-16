@@ -42,34 +42,8 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display)
 	{
-		const auto& clearColor{ Utils::Context::clearColor };
-		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
-
-		auto& registry{ m_scene->getRegistry() };
-
-		for (auto handle : registry.view<entt::entity>()) 
-		{
-			auto entity{m_scene->getEntity(handle)};
-
-			/*
-				TO-DO: Currently we only have one component which is a mesh component,
-				before we check if the component is drawable, we should perform any 
-				additional checks on any other components that may be added in the future.
-			*/
-
-			if (entity->isDrawable())
-			{
-				auto& meshComponent{ entity->getComponent<MeshComponent>() };
-				auto& MaterialComponent{ entity->getComponent<Components::MaterialComponent>() };
-
-				auto& material{ ShaderManager::getMaterial(MaterialComponent.materialId) };
-
-				material->use();
-				m_rhi->drawElements(QuirkPrimitives::Triangles, meshComponent.indexCount);
-				material->disuse();
-			}
-		}
+		onBeforeRenderPass(tickSpeed, display);
+		onRenderPass();
 	}
 
 	void Renderer::loadContext()
@@ -116,5 +90,31 @@ namespace Quirk::Engine::Renderer::Rendering
 		MaterialComponent materialComponent{};
 		materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic2D);
 		entity->addComponent<MaterialComponent>(materialComponent);
+	}
+
+	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
+	{
+		const auto& clearColor{ Utils::Context::clearColor };
+		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
+	}
+
+	void Renderer::onRenderPass()
+	{
+		const auto& registry{ m_scene->getEntities() };
+		for (const auto& entity : registry)
+		{
+			if (entity->isDrawable())
+			{
+				auto& meshComponent{ entity->getComponent<MeshComponent>() };
+				auto& MaterialComponent{ entity->getComponent<Components::MaterialComponent>() };
+
+				auto& material{ ShaderManager::getMaterial(MaterialComponent.materialId) };
+
+				material->use();
+				m_rhi->drawElements(QuirkPrimitives::Triangles, meshComponent.indexCount);
+				material->disuse();
+			}
+		}
 	}
 }
