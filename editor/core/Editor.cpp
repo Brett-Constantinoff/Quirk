@@ -19,8 +19,12 @@ namespace Quirk::Editor
 			const double tickSpeed{ currFrame - lastFrame };
 			lastFrame = currFrame;
 
-			Renderer::tick(tickSpeed, display);
+			SceneManager::getCurrentScene()->tick(tickSpeed);
+
+			Renderer::tick(tickSpeed, display, SceneManager::getCurrentScene());
+
 			renderEditor();
+
 			DisplayManager::tick(DisplayTypes::Default, tickSpeed);
 		}
 	}
@@ -28,6 +32,7 @@ namespace Quirk::Editor
 	void Editor::shutdown()
 	{
 		Gui::ImguiImpl::shutdown();
+		SceneManager::shutdown();
 		Renderer::shutdown();
 		DisplayManager::shutdown();
 	}
@@ -37,17 +42,18 @@ namespace Quirk::Editor
 		Timer timer;
 		timer.start();
 		{
-			// load initial settings
 			ApplicationSettings::loadDefaults();
 
 			DisplayManager::init();
 			Renderer::init();
 
+			SceneManager::loadDefaultScene();
+			Renderer::initSceneData(SceneManager::getCurrentScene());
+
 			// this comes after we init the renderer so we can get the appropriate 
 			// opengl version for setting up windows
 			DisplayManager::initWindows();
 
-			// setup our gui
 			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
 		}
 		spdlog::info("Quirk Setup took: {}ms", timer.stop());

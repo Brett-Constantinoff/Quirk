@@ -24,11 +24,12 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		static void init();
 		static void shutdown();
-		static std::unique_ptr<Shader>& getShader(MaterialType type) { return m_shaders[type]; }
+		[[nodiscard]] static uint32_t getMaterialId(MaterialType type);
+		[[nodiscard]] static std::unique_ptr<Shader>& getMaterial(uint32_t id);
 
 	private:
 		static void createMaterial(const std::string& filePath, MaterialType type);
-		static void createOpenglShader(const std::string& filePath);
+		static void createOpenglMaterial(const std::string& filePath);
 
 	private:
 		// leaving these as heap allocated since they need to be determined based on our 

@@ -7,6 +7,7 @@
 #include <core/utils/ApplicationSettings.hpp>
 #include <core/utils/Utils.hpp>
 #include <renderer/rendering/Renderer.hpp>
+#include <scene/SceneManager.hpp>
 
 #include "../components/Component.hpp"
 #include "../components/menuBar/MenuBar.hpp"
