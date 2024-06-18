@@ -41,16 +41,26 @@ namespace Quirk::Engine::Renderer::Rhi
 		glUseProgram(0);
 	}
 
-    int32_t OpenglShader::getId(void) const
+    void OpenglShader::setVec3(const char* name, const glm::vec3& value)
+    {
+        glUniform3fv(glGetUniformLocation(m_id, name), 1, &value[0]);
+    }
+
+    void OpenglShader::setMat4(const char* name, const glm::mat4& matrix)
+    {
+		glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, &matrix[0][0]);
+    }
+
+    uint32_t OpenglShader::getId()
     {
         return m_id;
     }
 
-    int32_t OpenglShader::compileShader(const std::string& filepath, const std::string& source, int32_t type)
+    uint32_t OpenglShader::compileShader(const std::string& filepath, const std::string& source, uint32_t type)
     {
         const char* src{ source.c_str() };
 
-        int32_t shadermID{ static_cast<int32_t>(glCreateShader(type)) };
+        uint32_t shadermID{ static_cast<uint32_t>(glCreateShader(type)) };
 
         glShaderSource(shadermID, 1, &src, nullptr);
 

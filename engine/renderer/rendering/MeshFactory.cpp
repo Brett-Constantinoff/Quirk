@@ -2,54 +2,57 @@
 
 namespace Quirk::Engine::Renderer::Rendering
 {
-	void MeshFactory::init()
-	{
-		m_meshCache.reserve(static_cast<size_t>(MeshTypes::Count));
-	}
+    void MeshFactory::init()
+    {
+        m_meshCache.reserve(static_cast<size_t>(MeshTypes::Count));
+    }
 
-	void MeshFactory::shutdown()
-	{
-		m_meshCache.clear();
-	}
+    void MeshFactory::shutdown()
+    {
+        m_meshCache.clear();
+    }
 
-	std::shared_ptr<Mesh> MeshFactory::getMesh(MeshTypes type)
-	{
-		auto iterator{ m_meshCache.find(type) };
+    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type)
+    {
+        switch (type)
+        {
+            case MeshTypes::Quad:
+                return createQuadMesh(type);
+        }
+    }
 
-		if (iterator != m_meshCache.end())
-			return iterator->second;
+    std::shared_ptr<MeshComponent> MeshFactory::getMesh(MeshTypes type)
+    {
+        auto iterator{ m_meshCache.find(type) };
+        return (iterator != m_meshCache.end()) ? iterator->second : nullptr;
+    }
 
-		auto mesh{ createMesh(type) };
+    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh(MeshTypes type)
+    {
+        if (auto mesh{ getMesh(type) })
+            return mesh;
+        else
+        {
+            mesh = std::make_shared<MeshComponent>();
 
-		m_meshCache[type] = mesh;
+            mesh->vertices = {
+                { -0.5f, -0.5f, 0.0f },
+                {  0.5f, -0.5f, 0.0f },
+                {  0.5f,  0.5f, 0.0f },
+                { -0.5f,  0.5f, 0.0f }
+            };
+            mesh->vertexCount = static_cast<uint32_t>(mesh->vertices.size());
 
-		return mesh;
-	}
+            mesh->indices = {
+                0, 1, 2,
+                2, 3, 0
+            };
+            mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
 
-	std::shared_ptr<Mesh> MeshFactory::createMesh(MeshTypes type)
-	{
-		switch (type)
-		{
-			case MeshTypes::Quad:
-			{
-				auto mesh = std::make_shared<Mesh>();
+            m_meshCache.emplace(type, mesh);
 
-				mesh->vertices = {
-					{ -0.5f, -0.5f, 0.0f },
-					{  0.5f, -0.5f, 0.0f },
-					{  0.5f,  0.5f, 0.0f },
-					{ -0.5f,  0.5f, 0.0f }
-				};
-		
-				mesh->indices = {
-					0, 1, 2,
-					2, 3, 0
-				};
-
-				return mesh;
-			}
-			default:
-				return nullptr;
-		}
-	}
+            return mesh;
+        }
+        
+    }
 }
