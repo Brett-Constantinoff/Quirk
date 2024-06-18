@@ -10,6 +10,7 @@
 [submodule "thirdParty/glm"]
 	path = thirdParty/glm
 	url = git@github.com:g-truc/glm.git
-[submodule "thirdParty/entt"]
-	path = thirdParty/entt
+
+[submodule "thirdParty/enttEcs"]
+	path = thirdParty/enttEcs
 	url = git@github.com:skypjack/entt.git

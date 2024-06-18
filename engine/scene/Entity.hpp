@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entt/entt.hpp>
+
 namespace Quirk::Engine::Scene
 {
     class Entity

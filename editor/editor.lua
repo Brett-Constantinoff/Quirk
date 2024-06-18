@@ -15,7 +15,7 @@ project "Editor"
         "../thirdParty/gui/",
         "../thirdParty/glm/",
         "../thirdParty/assimp/include/",
-        "../thirdParty/entt/src/",
+        "../thirdParty/enttEcs/single_include/",
         "../engine/"
     }
 
