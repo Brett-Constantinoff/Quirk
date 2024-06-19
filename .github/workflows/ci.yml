@@ -2,30 +2,28 @@ name: Build and Test
 
 on:
   pull_request:
-    types: [closed]
     branches:
       - dev
 
 jobs:
   build-and-test:
-    if: github.event.pull_request.merged == true
     runs-on: windows-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Run setup.bat
         run: |
           ./setup.bat
         shell: cmd
 
-      - name: Build sln
-        run: |
-          msbuild ..\..\Quirk.sln /p:Configuration=Release
-        shell: cmd
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1
 
-      - name: Run tests
+      - name: Build solution
         run: |
-          ..\..\bin\Release\Editor.exe
+          msbuild Quirk.sln /p:Configuration=Release
         shell: cmd
