@@ -1,0 +1,31 @@
+name: Build and Test
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - dev
+
+jobs:
+  build-and-test:
+    if: github.event.pull_request.merged == true
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run setup.bat
+        run: |
+          ./setup.bat
+        shell: cmd
+
+      - name: Build sln
+        run: |
+          msbuild ..\..\Quirk.sln /p:Configuration=Release
+        shell: cmd
+
+      - name: Run tests
+        run: |
+          ..\..\bin\Release\Editor.exe
+        shell: cmd
