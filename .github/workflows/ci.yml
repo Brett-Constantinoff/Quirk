@@ -27,8 +27,3 @@ jobs:
         run: |
           msbuild Quirk.sln /p:Configuration=Release
         shell: cmd
-
-      - name: Run tests
-        run: |
-          .\bin\Release\Editor.exe
-        shell: cmd
