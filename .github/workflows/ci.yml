@@ -23,7 +23,7 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild ..\..\Quirk.sln /p:Configuration=Release
+          msbuild Quirk.sln /p:Configuration=Release
         shell: cmd
 
       - name: Run tests
