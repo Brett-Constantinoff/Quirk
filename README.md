@@ -9,3 +9,11 @@ Made by clowns :clown_face:
 ## Running Quirk
 Run the Setup.bat file by double clicking it, this will generate a visual studio solution file.
 
+## Dependencies
+* Glfw
+* Glm
+* Glad
+* Imgui
+* Entt
+* Assimp
+* Spdlog
