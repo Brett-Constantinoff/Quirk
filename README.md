@@ -44,9 +44,8 @@ Made by clowns :clown_face:
 Clone using:
 
 ```sh
-git clone https://github.com/Brett-Constantinoff/Quirk.git --recursive
+git clone --recursive https://github.com/Brett-Constantinoff/Quirk.git
 ```
-
 Run the Setup.bat file by double clicking it, this will generate a visual studio solution file.
 
 ## Dependencies
