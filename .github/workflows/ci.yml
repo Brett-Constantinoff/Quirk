@@ -24,9 +24,9 @@ jobs:
           @echo off
           for /f "delims=" %%i in ('git ls-files engine\*.cpp engine\*.h editor\*.cpp editor\*.h') do (
               clang-format -style="{BasedOnStyle: Google, IndentWidth: 2, ColumnLimit: 80, AllowShortIfStatementsOnASingleLine: false}" -output-replacements-xml %%i | findstr "<replacement " > clang-format.xml
-              if %ERRORLEVEL% neq 0 (
-                  echo "[1;31mError: Unformatted code found in file %%i[0m"
-                  echo "[1;33mFix formatting issues in this file and commit your changes.[0m"
+              if ERRORLEVEL 1 (
+                  echo "Error: Unformatted code found in file %%i"
+                  echo "Fix formatting issues in this file and commit your changes."
                   exit 1
               )
           )
