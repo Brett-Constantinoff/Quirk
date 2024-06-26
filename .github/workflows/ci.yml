@@ -15,6 +15,22 @@ jobs:
         with:
           submodules: true
 
+      - name: Install clang-format
+        run: |
+          choco install llvm -y
+        shell: cmd
+
+      - name: Apply clang-format
+        run: |
+          clang-format -i -style=file $(git ls-files 'engine/*.cpp' 'engine/*.hpp',
+          'engine/*.inl', 'editor/*.cpp', 'editor/*.hpp', 'editor/*.inl)
+        shell: bash
+
+      - name: Check for unformatted code
+        run: |
+          git diff --exit-code
+        shell: bash
+
       - name: Run setup.bat
         run: |
           ./setup.bat
