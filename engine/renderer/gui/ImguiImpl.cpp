@@ -41,10 +41,14 @@ namespace Quirk::Engine::Renderer::Gui
         ImGui::NewFrame();
         ImGui::ShowDemoWindow();
         ImGui::DockSpaceOverViewport();
+
+        //--CONSOLE--
         static Editor::Uitls::ExampleAppConsole console;
         console.Draw("Console",nullptr);
+        //--END CONSOLE--
 
-        static Editor::Uitls::ExampleAppLog log;
+        //--LOG--
+        static Editor::Uitls::ExampleAppLog log; 
 
         // For the demo: add a debug button _BEFORE_ the normal log window contents
         // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
@@ -65,10 +69,11 @@ namespace Quirk::Engine::Renderer::Gui
                 counter++;
             }
         }
+        
         ImGui::End();
-
         // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
         log.Draw("Example: Log", nullptr);
+        //--END LOG--
         
     }
 
