@@ -22,12 +22,19 @@ jobs:
       - name: Apply clang-format
         run: |
           @echo off
-          for /f "delims=" %%i in ('git ls-files engine\*.cpp engine\*.hpp editor\*.cpp editor\*.hpp engine\*.inl editor\*.inl') do clang-format -i -style=file %%i
+          for /f "delims=" %%i in ('git ls-files engine\*.cpp engine\*.h editor\*.cpp editor\*.h') do (
+              clang-format -style="{BasedOnStyle: Google, IndentWidth: 2, ColumnLimit: 80, AllowShortIfStatementsOnASingleLine: false}" -output-replacements-xml %%i | findstr "<replacement " > clang-format.xml
+              if %ERRORLEVEL% neq 0 (
+                  echo "[1;31mError: Unformatted code found in file %%i[0m"
+                  echo "[1;33mFix formatting issues in this file and commit your changes.[0m"
+                  exit 1
+              )
+          )
         shell: cmd
 
-      - name: Check for unformatted code
-        run: git diff --exit-code
-        shell: cmd
+      - name: Show unformatted changes
+        run: type clang-format.xml
+        if: ${{ failure() }}
 
       - name: Run setup.bat
         run: ./setup.bat
