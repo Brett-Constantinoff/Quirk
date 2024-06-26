@@ -2,7 +2,6 @@ BasedOnStyle: Google
 IndentWidth: 2
 ColumnLimit: 80
 BreakBeforeBraces: Allman
-AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakBeforeMultilineStrings: true
 SpaceBeforeParens: ControlStatements
