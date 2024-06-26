@@ -2,7 +2,6 @@ BasedOnStyle: Google
 IndentWidth: 2
 ColumnLimit: 80
 BreakBeforeBraces: Allman
-AllowShortLoopsOnASingleLine: false
 AlwaysBreakBeforeMultilineStrings: true
 SpaceBeforeParens: ControlStatements
 Standard: Cpp20
