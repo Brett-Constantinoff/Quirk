@@ -1,12 +1,14 @@
 #pragma once
-#include "BasePanel.hpp"
+#include "../Component.hpp"
+#include <string>
+
 
 namespace Quirk::Editor::Components
 {
-    class MetricsPanel : public BasePanel
+    class MetricsPanel : public Component
     {
     public:
-        MetricsPanel() : BasePanel("Metrics") {}
+        MetricsPanel(const std::string& title) { m_title = title; }
         ~MetricsPanel() override = default;
 
         void render() override;

@@ -1,15 +1,15 @@
 #pragma once
-#include "BasePanel.hpp"
+#include "../Component.hpp"
+#include <string>
 
 namespace Quirk::Editor::Components
 {
-    class ViewportPanel : public BasePanel
+    class ViewportPanel : public Component
     {
     public:
-        ViewportPanel() : BasePanel("Viewport") {}
+        ViewportPanel(const std::string& title) { m_title = "Viewport"; }
         ~ViewportPanel() override = default;
 
         void render() override;
     };
 }
-

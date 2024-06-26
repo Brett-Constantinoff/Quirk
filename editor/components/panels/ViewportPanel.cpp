@@ -8,8 +8,5 @@ void Quirk::Editor::Components::ViewportPanel::render()
 
     // For now, we will just render a simple ImGui window with the title "Viewport" and the image of our logo
     ImGui::Begin("Viewport");
-
-
     ImGui::End();
-    
 }
