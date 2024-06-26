@@ -2,6 +2,7 @@
 
 #include "../../../editor/utils/Utils.hpp"
 #include "GLFW/glfw3.h"
+#include "../utils/ImGuiSink.hpp"
 
 namespace Quirk::Engine::Renderer::Gui
 {
@@ -25,6 +26,9 @@ namespace Quirk::Engine::Renderer::Gui
         //ImGui::StyleColorsDark();
         ImGui_ImplGlfw_InitForOpenGL(currentContext, true);
         ImGui_ImplOpenGL3_Init("#version 150");
+
+        // Initialize spdlog with ImGuiSink
+        Quirk::Engine::Renderer::Utils::init_logging();
     }
 
     void ImguiImpl::shutdown()
@@ -39,7 +43,7 @@ namespace Quirk::Engine::Renderer::Gui
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
         ImGui::DockSpaceOverViewport();
 
         //--CONSOLE--
@@ -55,19 +59,36 @@ namespace Quirk::Engine::Renderer::Gui
         // Most of the contents of the window will be added by the log.Draw() call.
         ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
         ImGui::Begin("Example: Log");
-        if (ImGui::SmallButton("[Debug] Add 5 entries"))
+        
+        //DEMO CODE FOR SHOWING A BUTTON
+        // if (ImGui::SmallButton("[Debug] Add 5 entries"))
+        // {
+        //     static int counter = 0;
+        //     const char* categories[3] = { "info", "warn", "error" };
+        //     const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
+        //     for (int n = 0; n < 5; n++)
+        //     {
+        //         const char* category = categories[counter % IM_ARRAYSIZE(categories)];
+        //         const char* word = words[counter % IM_ARRAYSIZE(words)];
+        //         log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
+        //             ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
+        //         counter++;
+        //     }
+        // }
+
+        // Display logs from spdlog
+        if (auto imgui_sink = std::dynamic_pointer_cast<Quirk::Engine::Renderer::Utils::ImGuiSink_mt>(spdlog::get("logger")->sinks()[0]))
         {
-            static int counter = 0;
-            const char* categories[3] = { "info", "warn", "error" };
-            const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
-            for (int n = 0; n < 5; n++)
+            auto& log_messages = imgui_sink->GetLogMessages();
+            for (const auto& msg : log_messages)
             {
-                const char* category = categories[counter % IM_ARRAYSIZE(categories)];
-                const char* word = words[counter % IM_ARRAYSIZE(words)];
-                log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-                    ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
-                counter++;
+                ImGui::TextUnformatted(msg.c_str());
             }
+        }
+        else
+        {
+            spdlog::error("Failed to cast sink to ImGuiSink_mt");
+            spdlog::error("GUI Logging will not work!");
         }
         
         ImGui::End();
