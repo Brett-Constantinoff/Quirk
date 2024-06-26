@@ -1,15 +1,4 @@
 BasedOnStyle: Google
-IndentWidth: 2
-ColumnLimit: 80
-BreakBeforeBraces: Allman
-AlwaysBreakBeforeMultilineStrings: true
-SpaceBeforeParens: ControlStatements
-Standard: Cpp20
-SpacesInParentheses: false
-SpacesInAngles: false
-PointerAlignment: Left
-DerivePointerAlignment: false
-SortIncludes: true
 
 # Custom naming rules
 Language: Cpp
