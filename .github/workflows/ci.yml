@@ -28,11 +28,6 @@ jobs:
           msbuild Quirk.sln /p:Configuration=Release
         shell: cmd
 
-      - name: Install LLVM and clang-tidy
-        run: |
-          choco install llvm --version=12.0.0
-        shell: cmd
-
       - name: Run clang-tidy
         run: |
           clang-tidy editor/*.cpp editor/*.hpp engine/*.cpp engine/*.hpp editor/*.inl engine/*.inl -- -std=c++11
