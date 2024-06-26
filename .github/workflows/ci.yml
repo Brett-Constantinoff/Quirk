@@ -30,6 +30,6 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          clang-tidy Quirk/engine/*.cpp Quirk/engine/*.hpp Quirk/editor/*.cpp Quirk/editor/*.hpp Quirk/engine/*.inl Quirk/editor/*.inl -- -std=c++20
+          clang-tidy ../engine/*.cpp ../engine/*.hpp ../editor/*.cpp ../editor/*.hpp ../engine/*.inl ../editor/*.inl -- -std=c++20
         shell: cmd
 
