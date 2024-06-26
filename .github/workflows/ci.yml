@@ -16,30 +16,26 @@ jobs:
           submodules: true
 
       - name: Install clang-format
-        run: |
-          choco install llvm -y
+        run: choco install llvm -y
         shell: cmd
 
       - name: Apply clang-format
         run: |
-          clang-format -i -style=file $(git ls-files 'engine/*.cpp' 'engine/*.hpp',
-          'engine/*.inl', 'editor/*.cpp', 'editor/*.hpp', 'editor/*.inl)
-        shell: bash
+          @echo off
+          for /f "delims=" %%i in ('git ls-files engine\*.cpp engine\*.hpp editor\*.cpp editor\*.hpp engine\*.inl editor\*.inl') do clang-format -i -style=file %%i
+        shell: cmd
 
       - name: Check for unformatted code
-        run: |
-          git diff --exit-code
-        shell: bash
+        run: git diff --exit-code
+        shell: cmd
 
       - name: Run setup.bat
-        run: |
-          ./setup.bat
+        run: ./setup.bat
         shell: cmd
 
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v1
 
       - name: Build solution
-        run: |
-          msbuild Quirk.sln /p:Configuration=Release
+        run: msbuild Quirk.sln /p:Configuration=Release
         shell: cmd
