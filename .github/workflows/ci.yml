@@ -30,6 +30,6 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          "C:\path\to\clang-tidy.exe" -p ../ -checks=* ../editor/ ../engine/
+          clang-tidy -p ../ -checks=* ../editor/ ../engine/
         shell: cmd
 
