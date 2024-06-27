@@ -29,11 +29,15 @@ namespace Quirk::Engine::Scene
 
 	std::shared_ptr<Entity>& Scene::getEntity(entt::entity handle)
 	{
-		for (std::size_t i{0}; i < m_entities.size(); ++i)
+		static std::shared_ptr<Entity> entity{ nullptr };
+
+		for (std::size_t i{ 0 }; i < m_entities.size(); ++i)
 		{
 			if (m_entities[i]->getHandle() == handle)
 				return m_entities[i];
 		}
+
+		return entity;
 	}
 
 	std::vector<std::shared_ptr<Entity>>& Scene::getEntities()

@@ -16,7 +16,7 @@ project "Editor"
         "%{wks.location}/thirdParty/glm/",
         "%{wks.location}/thirdParty/assimp/include/",
         "%{wks.location}/thirdParty/enttEcs/single_include/",
-        "%{wks.location}/thirdParty/uuid/include",
+        "%{wks.location}/thirdParty/uuids/include",
         "%{wks.location}/engine/"
     }
 

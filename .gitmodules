@@ -13,6 +13,6 @@
 [submodule "thirdParty/enttEcs"]
 	path = thirdParty/enttEcs
 	url = git@github.com:skypjack/entt.git
-[submodule "thirdParty/uuid"]
-	path = thirdParty/uuid
+[submodule "thirdParty/uuids"]
+	path = thirdParty/uuids
 	url = git@github.com:mariusbancila/stduuid.git
