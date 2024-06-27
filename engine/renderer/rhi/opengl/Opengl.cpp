@@ -89,7 +89,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glViewport(0, 0, width, height);
 	}
 
-	void Opengl::submitDrawData(uint32_t drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride)
+	void Opengl::submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride)
 	{
 		auto vao{ createVertexArray() };
 		const auto vbo{ createVertexBuffer() };
@@ -107,7 +107,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		m_drawableIdToVao[drawableId] = vao;
 	}
 
-	void Opengl::submitDrawData(uint32_t drawableId, const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride)
+	void Opengl::submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride)
 	{
 		auto vao{ createVertexArray() };
 		const auto vbo{ createVertexBuffer() };
@@ -129,7 +129,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		m_drawableIdToVao[drawableId] = vao;
 	}
 
-	void Opengl::drawElements(uint32_t drawableId, QuirkPrimitives primitiveType, uint32_t indexCount)
+	void Opengl::drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount)
 	{
 		const auto& vao{ m_drawableIdToVao[drawableId] };
 
@@ -138,7 +138,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.unbind();
 	}
 
-	void Opengl::drawArrays(uint32_t drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount)
+	void Opengl::drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount)
 	{
 		const auto& vao{ m_drawableIdToVao[drawableId] };
 

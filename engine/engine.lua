@@ -9,13 +9,14 @@ project "Engine"
 
     includedirs 
     {
-        "../thirdParty/Glfw/include/",
-        "../thirdParty/logging/include/",
-        "../thirdParty/glad/include/",
-        "../thirdParty/gui/",
-        "../thirdParty/glm/",
-        "../thirdParty/assimp/include/",
-        "../thirdParty/enttEcs/single_include/",
+        "%{wks.location}/thirdParty/Glfw/include/",
+        "%{wks.location}/thirdParty/logging/include/",
+        "%{wks.location}/thirdParty/glad/include/",
+        "%{wks.location}/thirdParty/gui/",
+        "%{wks.location}/thirdParty/glm/",
+        "%{wks.location}/thirdParty/assimp/include/",
+        "%{wks.location}/thirdParty/enttEcs/single_include/",
+        "%{wks.location}/thirdParty/uuid/include",
     }
 
     files 
@@ -34,8 +35,8 @@ project "Engine"
         "Glad",
         "Imgui",
         "OpengL32",
-        "../thirdParty/assimp/lib/assimp-vc142-mt", 
-        "../thirdParty/assimp/lib/zlibstatic",
+        "%{wks.location}/thirdParty/assimp/lib/assimp-vc142-mt", 
+        "%{wks.location}/thirdParty/assimp/lib/zlibstatic",
     }
     			
     filter "system:windows"

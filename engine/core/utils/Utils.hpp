@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <spdlog/spdlog.h>
+#include <uuid.h>
 
 #include "../eventSystem/events/Event.hpp"
 
@@ -37,4 +38,22 @@ namespace Quirk::Engine::Core::Utils
 				return "Unknown";
 		}
 	}
+
+	static const std::wstring generateUuid()
+	{
+		static std::random_device rd{};
+
+		static auto seed = [] 
+		{
+			std::array<int, std::mt19937::state_size> seedData{};
+			std::generate(seedData.begin(), seedData.end(), std::ref(rd));
+			return std::seed_seq(seedData.begin(), seedData.end());
+		}();
+
+		static std::mt19937 generator(seed);
+		static uuids::uuid_random_generator gen {generator };
+
+		return uuids::to_string<wchar_t>(gen());
+	}
 };
+ 

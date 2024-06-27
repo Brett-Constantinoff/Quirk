@@ -1,10 +1,14 @@
+#include <uuid.h>
+
 #include "components/TransformComponent.hpp"
 #include "systems/TransformSystem.hpp"
+#include "../core/utils/Utils.hpp"
 
 #include "Scene.hpp"
 
 using namespace Quirk::Engine::Scene::Components;
 using namespace Quirk::Engine::Scene::Systems;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Scene
 {
@@ -15,8 +19,7 @@ namespace Quirk::Engine::Scene
 		NameComponent nameComponent{};
 		nameComponent.name = name;
 
-		// TODO - make a uuid
-		nameComponent.id = static_cast<uint32_t>(m_entities.size());
+		nameComponent.id = generateUuid();
 
 		entity->addComponent<NameComponent>(nameComponent);
 		m_entities.emplace_back(std::move(entity));

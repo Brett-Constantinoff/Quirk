@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <uuid.h>
 
 #include "Utils.hpp"
 #include "VertexBuffer.hpp"
@@ -32,10 +33,10 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void setViewport(uint32_t width, uint32_t height) override;
 		void clearColor(float r, float g, float b, float a) override;
 		void clearBuffers(bool color, bool detph, bool stencil) override;
-		void submitDrawData(uint32_t drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride) override;
-		void submitDrawData(uint32_t drawableId, const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride) override;
-		void drawArrays(uint32_t drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount) override;
-		void drawElements(uint32_t drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) override;
+		void submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride) override;
+		void submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride) override;
+		void drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount) override;
+		void drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) override;
 
 	private:
 		VertexArray createVertexArray();
@@ -44,6 +45,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	private:
 		Resources m_resources{};
-		std::unordered_map<uint32_t, VertexArray> m_drawableIdToVao{};
+		std::unordered_map<std::wstring, VertexArray> m_drawableIdToVao{};
 	};
 }
