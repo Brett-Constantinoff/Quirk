@@ -9,14 +9,15 @@ project "Editor"
 
     includedirs 
     {
-        "../thirdParty/logging/include/",
-        "../thirdParty/Glfw/include/",
-        "../thirdParty/glad/include/",
-        "../thirdParty/gui/",
-        "../thirdParty/glm/",
-        "../thirdParty/assimp/include/",
-        "../thirdParty/enttEcs/single_include/",
-        "../engine/"
+        "%{wks.location}/thirdParty/logging/include/",
+        "%{wks.location}/thirdParty/Glfw/include/",
+        "%{wks.location}/thirdParty/glad/include/",
+        "%{wks.location}/thirdParty/gui/",
+        "%{wks.location}/thirdParty/glm/",
+        "%{wks.location}/thirdParty/assimp/include/",
+        "%{wks.location}/thirdParty/enttEcs/single_include/",
+        "%{wks.location}/thirdParty/uuids/include",
+        "%{wks.location}/engine/"
     }
 
     files 
@@ -33,8 +34,8 @@ project "Editor"
         "Glfw",
         "Glad",
         "Imgui",
-        "../thirdParty/assimp/lib/assimp-vc142-mt", 
-        "../thirdParty/assimp/lib/zlibstatic",
+        "%{wks.location}/thirdParty/assimp/lib/assimp-vc142-mt", 
+        "%{wks.location}/thirdParty/assimp/lib/zlibstatic",
         "OpengL32",
         "Engine",
     }

@@ -18,6 +18,8 @@ namespace Quirk::Engine::Renderer::Rendering
         {
             case MeshTypes::Quad:
                 return createQuadMesh(type);
+            default:
+                return nullptr;
         }
     }
 

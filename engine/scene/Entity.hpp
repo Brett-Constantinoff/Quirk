@@ -1,5 +1,6 @@
 #pragma once
 
+#include <uuid.h>
 #include <entt/entt.hpp>
 
 namespace Quirk::Engine::Scene
@@ -52,7 +53,7 @@ namespace Quirk::Engine::Scene
             m_drawable = drawable;
         }
 
-        [[nodiscard]] inline constexpr uint32_t getId()
+        [[nodiscard]] inline constexpr std::wstring getId()
         {
             const auto& nameComponent{ getComponent<Components::NameComponent>() };
             return nameComponent.id;
