@@ -48,7 +48,6 @@ namespace Quirk::Editor
 			Renderer::init();
 
 			SceneManager::loadDefaultScene();
-			Renderer::initSceneData(SceneManager::getCurrentScene());
 
 			// this comes after we init the renderer so we can get the appropriate 
 			// opengl version for setting up windows
