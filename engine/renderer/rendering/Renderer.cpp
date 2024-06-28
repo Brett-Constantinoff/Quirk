@@ -76,23 +76,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		event.setHandled();
 	}
 
-	void Renderer::initSceneData(const std::weak_ptr<Scene::Scene> scene)
-	{
-		if (auto scenePtr{ scene.lock() })
-		{
-			const auto& registry{ scenePtr->getEntities() };
-
-			for (const auto& entity : registry)
-			{
-				if (entity->isDrawable())
-				{
-					auto& meshComponent{ entity->getComponent<MeshComponent>() };
-					m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
-				}
-			}
-		}
-	}
-
 	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
 	{
 		const auto& clearColor{ Utils::Context::clearColor };
@@ -112,6 +95,9 @@ namespace Quirk::Engine::Renderer::Rendering
 					auto& meshComponent{ entity->getComponent<MeshComponent>() };
 					auto& materialComponent{ entity->getComponent<Components::MaterialComponent>() };
 					auto& transformComponent{entity->getComponent<Components::TransformComponent>() };
+
+					if (!meshComponent.isSubmitted)
+						m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 
