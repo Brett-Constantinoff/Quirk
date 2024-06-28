@@ -97,7 +97,10 @@ namespace Quirk::Engine::Renderer::Rendering
 					auto& transformComponent{entity->getComponent<Components::TransformComponent>() };
 
 					if (!meshComponent.isSubmitted)
+					{
+						meshComponent.isSubmitted = true;
 						m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
+					}
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 
