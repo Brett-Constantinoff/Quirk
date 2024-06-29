@@ -20,12 +20,10 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::init()
 	{
 		loadContext();
-		chooseAndInitRhi();
-
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
+		chooseAndInitRhi();
 		ShaderManager::init();
-
 		MeshFactory::init();
 	}
 
@@ -65,7 +63,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		default:
 			quirkExit("Unsupported render API");
 		}
-
 		m_rhi->init();
 	}
 
