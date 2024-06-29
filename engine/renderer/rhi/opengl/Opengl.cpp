@@ -86,7 +86,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::setViewport(uint32_t width, uint32_t height)
 	{
-		float desiredAspectRatio = 16.0f / 9.0f; //HARDCODED FOR NOW
+		//HARDCODED FOR NOW
+		float desiredAspectRatio = 4.0f / 3.0f; //Max Schafer: "4:3 aspect ratio appears to look the best. Feel free to try other aspect ratios and see what looks best." 
+		
 		float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 
 		if(aspectRatio> desiredAspectRatio)
