@@ -77,19 +77,19 @@ namespace Quirk::Engine::Renderer::Gui
         // }
 
         // Display logs from spdlog
-        if (auto imgui_sink = std::dynamic_pointer_cast<Quirk::Engine::Renderer::Utils::ImGuiSink_mt>(spdlog::get("logger")->sinks()[0]))
-        {
-            auto& log_messages = imgui_sink->GetLogMessages();
-            for (const auto& msg : log_messages)
-            {
-                ImGui::TextUnformatted(msg.c_str());
-            }
-        }
-        else
-        {
-            spdlog::error("Failed to cast sink to ImGuiSink_mt");
-            spdlog::error("GUI Logging will not work!");
-        }
+        // if (auto imgui_sink = std::dynamic_pointer_cast<Quirk::Engine::Renderer::Utils::ImGuiSink_mt>(spdlog::get("logger")->sinks()[0]))
+        // {
+        //     auto& log_messages = imgui_sink->GetLogMessages();
+        //     for (const auto& msg : log_messages)
+        //     {
+        //         ImGui::TextUnformatted(msg.c_str());
+        //     }
+        // }
+        // else
+        // {
+        //     spdlog::error("Failed to cast sink to ImGuiSink_mt");
+        //     spdlog::error("GUI Logging will not work!");
+        // }
         
         ImGui::End();
         // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
