@@ -6,4 +6,6 @@ namespace Quirk::Engine::Renderer::Utils
 	// name declared in the shaders
 	static const char* transformUniformName{ "uTransform" };
 	static const char* diffuseUniformName{ "uDiffuse" };
+	static const char* projectionUniformName{ "uProjection" };
+	static const char* viewUniformName{ "uView" };
 }

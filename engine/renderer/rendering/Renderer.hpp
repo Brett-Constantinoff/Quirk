@@ -40,8 +40,10 @@ namespace Quirk::Engine::Renderer::Rendering
         static void loadContext();
         static void chooseAndInitRhi();
         static void updateViewport(const WindowResizeEvent& event);
-        static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
-        static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
+
+        static void onBeforeRenderPass();
+        static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);
+
         static void setProjectionMatrix(float width, float height);
 
     private:
@@ -49,4 +51,5 @@ namespace Quirk::Engine::Renderer::Rendering
         inline static Rhi::Opengl::Opengl m_opengl{};
         inline static glm::mat4 m_projectionMatrix;
     };
+
 }
