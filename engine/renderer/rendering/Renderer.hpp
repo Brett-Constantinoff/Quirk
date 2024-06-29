@@ -26,7 +26,6 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 	public:
 		static void init();
-		static void initSceneData(const std::weak_ptr<Scene::Scene> scene);
 		static void shutdown();
 		static void tick(double tickSpeed, const DisplayWindow& display, 
 			const std::weak_ptr<Scene::Scene> scene);

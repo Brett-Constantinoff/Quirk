@@ -14,6 +14,11 @@ using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Scene
 {
+	void SceneManager::init()
+	{
+		loadDefaultScene();
+	}
+
 	void SceneManager::shutdown()
 	{
 		m_scenes.clear();
@@ -25,7 +30,7 @@ namespace Quirk::Engine::Scene
 		{
 			auto& entity{ m_currentScene->createEntity("Clown 1") };
 
-			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Torus, torusPrimitivePath)};
+			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Cube, cubePrimitivePath)};
 			entity->addComponent<MeshComponent>(*meshComponent);
 			entity->setDrawable(true);
 
@@ -44,7 +49,7 @@ namespace Quirk::Engine::Scene
 		{
 			auto& entity{ m_currentScene->createEntity("Clown 2") };
 
-			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Torus, torusPrimitivePath) };
+			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Cone, conePrimitivePath) };
 			entity->addComponent<MeshComponent>(*meshComponent);
 			entity->setDrawable(true);
 

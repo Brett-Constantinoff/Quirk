@@ -1,10 +1,14 @@
+#include <uuid.h>
+
 #include "components/TransformComponent.hpp"
 #include "systems/TransformSystem.hpp"
+#include "../core/utils/Utils.hpp"
 
 #include "Scene.hpp"
 
 using namespace Quirk::Engine::Scene::Components;
 using namespace Quirk::Engine::Scene::Systems;
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Scene
 {
@@ -15,8 +19,7 @@ namespace Quirk::Engine::Scene
 		NameComponent nameComponent{};
 		nameComponent.name = name;
 
-		// TODO - make a uuid
-		nameComponent.id = static_cast<uint32_t>(m_entities.size());
+		nameComponent.id = generateUuid();
 
 		entity->addComponent<NameComponent>(nameComponent);
 		m_entities.emplace_back(std::move(entity));
@@ -26,11 +29,15 @@ namespace Quirk::Engine::Scene
 
 	std::shared_ptr<Entity>& Scene::getEntity(entt::entity handle)
 	{
-		for (std::size_t i{0}; i < m_entities.size(); ++i)
+		static std::shared_ptr<Entity> entity{ nullptr };
+
+		for (std::size_t i{ 0 }; i < m_entities.size(); ++i)
 		{
 			if (m_entities[i]->getHandle() == handle)
 				return m_entities[i];
 		}
+
+		return entity;
 	}
 
 	std::vector<std::shared_ptr<Entity>>& Scene::getEntities()
@@ -45,5 +52,13 @@ namespace Quirk::Engine::Scene
 
 	void Scene::tick(double tickSpeed)
 	{
+		for (auto& entity : m_entities)
+		{
+			if (entity->hasComponent<TransformComponent>())
+			{
+				auto& transformComponent{ entity->getComponent<TransformComponent>() };
+				TransformSystem::rotate(transformComponent, glm::vec3(0.0f, 1.0f, 0.0f), tickSpeed * 20.0f);
+			}
+		}
 	}
 }
