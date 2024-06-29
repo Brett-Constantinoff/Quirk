@@ -86,7 +86,19 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::setViewport(uint32_t width, uint32_t height)
 	{
-		glViewport(0, 0, width, height);
+		float desiredAspectRatio = 16.0f / 9.0f; //HARDCODED FOR NOW
+		float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+
+		if(aspectRatio> desiredAspectRatio)
+		{
+			int newWidth = static_cast<int>(height * desiredAspectRatio);
+			glViewport((width-newWidth)/2, 0, newWidth, height);
+		}
+		else
+		{
+			int newHeight = static_cast<int>(width / desiredAspectRatio);
+			glViewport(0, (height-newHeight)/2, width, newHeight);
+		}
 	}
 
 	void Opengl::submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride)

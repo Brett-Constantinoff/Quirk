@@ -151,33 +151,4 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		//TODO: implement gizmos
 	}
-
-	// void Renderer::createFramebuffer()
-	// {
-	// 	glGenFramebuffers(1, &m_fbo);
-	// 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	//
-	// 	glGenTextures(1, &m_textureColorbuffer);
-	// 	glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
-	// 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureColorbuffer, 0);
-	//
-	// 	glGenRenderbuffers(1, &m_rbo);
-	// 	glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-	// 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-	// 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
-	//
-	// 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	// 		spdlog::error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-	// 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// }
-	//
-	// void Renderer::deleteFramebuffer()
-	// {
-	// 	glDeleteFramebuffers(1, &m_fbo);
-	// 	glDeleteTextures(1, &m_textureColorbuffer);
-	// 	glDeleteRenderbuffers(1, &m_rbo);
-	// }
 }
