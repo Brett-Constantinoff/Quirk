@@ -12,6 +12,11 @@ using namespace Quirk::Engine::Scene::Systems;
 
 namespace Quirk::Engine::Scene
 {
+	void SceneManager::init()
+	{
+		loadDefaultScene();
+	}
+
 	void SceneManager::shutdown()
 	{
 		m_scenes.clear();
