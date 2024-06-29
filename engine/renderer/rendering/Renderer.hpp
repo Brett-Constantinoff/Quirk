@@ -22,25 +22,32 @@ using namespace Quirk::Engine::Scene::Components;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
-	class Renderer
-	{
-	public:
-		static void init();
-		static void initSceneData(const std::weak_ptr<Scene::Scene> scene);
-		static void shutdown();
-		static void tick(double tickSpeed, const DisplayWindow& display, 
-			const std::weak_ptr<Scene::Scene> scene);
+    class Renderer
+    {
+    public:
+        static void init();
+        static void initSceneData(const std::weak_ptr<Scene::Scene> scene);
+        static void shutdown();
+        static void tick(double tickSpeed, const DisplayWindow& display,
+                         const std::weak_ptr<Scene::Scene> scene);
+        static unsigned int getFramebufferTexture() { return m_textureColorbuffer; }
 
-	private:
-		static void loadContext();
-		static void chooseAndInitRhi();
-		static void updateViewport(const WindowResizeEvent& event);
+    private:
+        static void loadContext();
+        static void chooseAndInitRhi();
+        static void updateViewport(const WindowResizeEvent& event);
 
-		static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
-		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
+        static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
+        static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
 
-	private:
-		 inline static Rhi::Rhi* m_rhi{ nullptr };
-		 inline static Rhi::Opengl::Opengl m_opengl{};
-	};
+        static void createFramebuffer();
+        static void deleteFramebuffer();
+
+    private:
+        inline static Rhi::Rhi* m_rhi{nullptr};
+        inline static Rhi::Opengl::Opengl m_opengl{};
+        inline static unsigned int m_fbo = 0;
+        inline static unsigned int m_textureColorbuffer = 0;
+        inline static unsigned int m_rbo = 0;
+    };
 }

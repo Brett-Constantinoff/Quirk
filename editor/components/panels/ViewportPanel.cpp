@@ -1,4 +1,5 @@
 #include "ViewportPanel.hpp"
+#include "./renderer/rendering/Renderer.hpp"
 
 void Quirk::Editor::Components::ViewportPanel::render()
 {
@@ -8,5 +9,9 @@ void Quirk::Editor::Components::ViewportPanel::render()
 
     // For now, we will just render a simple ImGui window with the title "Viewport" and the image of our logo
     ImGui::Begin("Viewport");
+    {
+        ImVec2 wsize = ImGui::GetContentRegionAvail();
+        ImGui::Image((ImTextureID)Quirk::Engine::Renderer::Rendering::Renderer::getFramebufferTexture(), wsize, ImVec2(0, 1), ImVec2(1, 0));
+    }
     ImGui::End();
 }
