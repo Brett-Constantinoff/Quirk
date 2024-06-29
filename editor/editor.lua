@@ -29,13 +29,6 @@ project "Editor"
 
     links 
     { 
-        "Glm",
-        "Glfw",
-        "Glad",
-        "Imgui",
-        "../thirdParty/assimp/lib/assimp-vc142-mt", 
-        "../thirdParty/assimp/lib/zlibstatic",
-        "OpengL32",
         "Engine",
     }
 

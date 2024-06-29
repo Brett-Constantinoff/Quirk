@@ -14,6 +14,12 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		None,
 		Quad,
+		Sphere,
+		Cube,
+		Cylinder,
+		Cone,
+		Torus,
+		Custom,
 		Count
 	};
 
@@ -25,12 +31,14 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		static void init();
 		static void shutdown();
-		static std::shared_ptr<MeshComponent> createMesh(MeshTypes type);
+		static std::shared_ptr<MeshComponent> createMesh(MeshTypes type, const char* path = nullptr);
 
 	private:
+		static void loadMeshesFromFile(std::shared_ptr<MeshComponent>& mesh, const char* path, bool isPrimitive);
+		static bool isPrimitiveMesh(MeshTypes type);
 		static std::shared_ptr<MeshComponent> getMesh(MeshTypes type);
-
-		static std::shared_ptr<MeshComponent> createQuadMesh(MeshTypes type);
+		static std::shared_ptr<MeshComponent> createQuadMesh();
+		static std::shared_ptr<MeshComponent> createPrimitiveMesh(MeshTypes type, const char* path);
 
 	private:
 		inline static std::unordered_map<MeshTypes, std::shared_ptr<MeshComponent>> m_meshCache{};

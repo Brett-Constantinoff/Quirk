@@ -39,8 +39,8 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display, 
 		const std::weak_ptr<Scene::Scene> scene)
 	{
-		onBeforeRenderPass(tickSpeed, display);
-		onRenderPass(scene);
+		onBeforeRenderPass();
+		onRenderPass(scene, display);
 	}
 
 	void Renderer::loadContext()
@@ -93,14 +93,14 @@ namespace Quirk::Engine::Renderer::Rendering
 		}
 	}
 
-	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
+	void Renderer::onBeforeRenderPass()
 	{
 		const auto& clearColor{ Utils::Context::clearColor };
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
 	}
 
-	void Renderer::onRenderPass(const std::weak_ptr<Scene::Scene> scene)
+	void Renderer::onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display)
 	{
 		if (auto scenePtr{ scene.lock() })
 		{
@@ -115,8 +115,13 @@ namespace Quirk::Engine::Renderer::Rendering
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 
+					// TODO - move this to our camera
+					constexpr glm::mat4 view{ glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f))};
+
 					material->use();
 					material->setMat4(transformUniformName, transformComponent.transform);
+					material->setMat4(projectionUniformName, display.projectionMatrix);
+					material->setMat4(viewUniformName, view);
 					material->setVec3(diffuseUniformName, materialComponent.diffuse);
 					m_rhi->drawElements(entity->getId(), QuirkPrimitives::Triangles, meshComponent.indexCount);
 					material->disuse();

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../../core/utils/Utils.hpp"
 #include "../utils/Context.hpp"
-
 #include "../rhi/opengl/OpenglShader.hpp"
 
 #include "ShaderManger.hpp"
 
 using namespace Quirk::Engine::Renderer::Utils;
+using namespace Quirk::Engine::Core::Utils;
 
 using RenderApi = Quirk::Engine::Core::Utils::RenderApi;
 
@@ -14,7 +15,7 @@ namespace Quirk::Engine::Renderer::Rendering
 {
 	void ShaderManager::init()
 	{
-		createMaterial("../engine/resources/shaders/basicShader.hlsl", MaterialType::Basic2D);
+		createMaterial(basicShaderPath, MaterialType::Basic2D);
 	}
 
 	void ShaderManager::shutdown()

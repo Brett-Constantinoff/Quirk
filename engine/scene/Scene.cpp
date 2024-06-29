@@ -45,15 +45,5 @@ namespace Quirk::Engine::Scene
 
 	void Scene::tick(double tickSpeed)
 	{
-		glm::vec3 rotation{ 0.0f, 0.0f, 1.0f };
-		const double speed{ 25.0f };
-
-		for (const auto& entity : m_entities)
-		{
-			auto& transformComponent{ entity->getComponent<TransformComponent>() };
-			TransformSystem::rotate(transformComponent, rotation, tickSpeed * speed);
-
-			rotation *= -1.0f;
-		}
 	}
 }

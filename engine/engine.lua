@@ -34,12 +34,18 @@ project "Engine"
         "Glad",
         "Imgui",
         "OpengL32",
-        "../thirdParty/assimp/lib/assimp-vc142-mt", 
-        "../thirdParty/assimp/lib/zlibstatic",
+        "../thirdParty/assimp/bin/assimp-vc142-mt.dll", 
+        "../thirdParty/assimp/lib/assimp-vc142-mt.lib", 
+        "../thirdParty/assimp/lib/zlibstatic.lib",
     }
     			
     filter "system:windows"
         systemversion "latest"
+
+        postbuildcommands 
+        { 
+            "{COPY} ../thirdParty/assimp/bin/assimp-vc142-mt.dll %{cfg.targetdir}"
+        }
 
     filter "configurations:Debug"
 		runtime "Debug"
