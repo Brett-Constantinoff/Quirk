@@ -26,13 +26,13 @@ namespace Quirk::Engine::Renderer::Rendering
     {
     public:
         static void init();
-        static void initSceneData(const std::weak_ptr<Scene::Scene> scene);
         static void shutdown();
         static void tick(double tickSpeed, const DisplayWindow& display,
                          const std::weak_ptr<Scene::Scene> scene);
         static uint32_t getFramebufferTexture() { return m_textureColorbuffer; }
         static void resizeFramebuffer(int width, int height);
         static void adjustViewport(int width, int height);
+        
     private:
         static void loadContext();
         static void chooseAndInitRhi();

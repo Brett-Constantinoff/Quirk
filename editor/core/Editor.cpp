@@ -6,10 +6,23 @@
 
 namespace Quirk::Editor
 {
+	void Editor::init()
+	{
+		Timer timer;
+		timer.start();
+		{
+			ApplicationSettings::loadDefaults();
+			DisplayManager::init();
+			Renderer::init();
+			SceneManager::init();
+			DisplayManager::initWindows();
+			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
+		}
+		spdlog::info("Quirk Setup took: {}ms", timer.stop());
+	}
+
 	void Editor::run()
 	{
-		setup();
-
 		double lastFrame{ getTime() };
 
 		const auto& display{DisplayManager::getWindow(DisplayTypes::Default)};
@@ -35,28 +48,6 @@ namespace Quirk::Editor
 		SceneManager::shutdown();
 		Renderer::shutdown();
 		DisplayManager::shutdown();
-	}
-
-	void Editor::setup()
-	{
-		Timer timer;
-		timer.start();
-		{
-			ApplicationSettings::loadDefaults();
-
-			DisplayManager::init();
-			Renderer::init();
-
-			SceneManager::loadDefaultScene();
-			Renderer::initSceneData(SceneManager::getCurrentScene());
-
-			// this comes after we init the renderer so we can get the appropriate 
-			// opengl version for setting up windows
-			DisplayManager::initWindows();
-
-			Gui::ImguiImpl::init(DisplayManager::getWindow(DisplayTypes::Default).handle);
-		}
-		spdlog::info("Quirk Setup took: {}ms", timer.stop());
 	}
 
 	void Editor::renderEditor()

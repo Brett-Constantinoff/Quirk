@@ -14,5 +14,7 @@ namespace Quirk::Engine::Scene::Components
 
 		uint32_t vertexCount{};
 		uint32_t indexCount{};
+
+		bool isSubmitted{};
 	};
 }

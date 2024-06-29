@@ -25,8 +25,8 @@ namespace Quirk::Engine::Renderer::Rendering
 
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
+		chooseAndInitRhi();
 		ShaderManager::init();
-
 		MeshFactory::init();
 	}
 
@@ -83,7 +83,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		default:
 			quirkExit("Unsupported render API");
 		}
-
 		m_rhi->init();
 	}
 
@@ -92,23 +91,6 @@ namespace Quirk::Engine::Renderer::Rendering
 		const glm::vec2 dimensions{ event.getDim() };
 		m_rhi->setViewport(static_cast<uint32_t>(dimensions.x), static_cast<uint32_t>(dimensions.y));
 		event.setHandled();
-	}
-
-	void Renderer::initSceneData(const std::weak_ptr<Scene::Scene> scene)
-	{
-		if (auto scenePtr{ scene.lock() })
-		{
-			const auto& registry{ scenePtr->getEntities() };
-
-			for (const auto& entity : registry)
-			{
-				if (entity->isDrawable())
-				{
-					auto& meshComponent{ entity->getComponent<MeshComponent>() };
-					m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
-				}
-			}
-		}
 	}
 
 	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
@@ -131,6 +113,12 @@ namespace Quirk::Engine::Renderer::Rendering
 					auto& meshComponent{ entity->getComponent<MeshComponent>() };
 					auto& materialComponent{ entity->getComponent<Components::MaterialComponent>() };
 					auto& transformComponent{entity->getComponent<Components::TransformComponent>() };
+
+					if (!meshComponent.isSubmitted)
+					{
+						meshComponent.isSubmitted = true;
+						m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
+					}
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
 

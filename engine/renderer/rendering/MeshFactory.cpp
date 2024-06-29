@@ -51,6 +51,8 @@ namespace Quirk::Engine::Renderer::Rendering
             };
             mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
 
+            mesh->isSubmitted = false;
+            
             m_meshCache.emplace(type, mesh);
 
             return mesh;
