@@ -1,4 +1,12 @@
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include "../../core/utils/Utils.hpp"
+
 #include "MeshFactory.hpp"
+
+using namespace Quirk::Engine::Core::Utils;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
@@ -12,16 +20,62 @@ namespace Quirk::Engine::Renderer::Rendering
         m_meshCache.clear();
     }
 
-    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type)
+    std::shared_ptr<MeshComponent> MeshFactory::createMesh(MeshTypes type, const char* path)
     {
-        switch (type)
-        {
-            case MeshTypes::Quad:
-                return createQuadMesh(type);
-            default:
-                return nullptr;
-        }
+        // TODO : Handle custom mesh loading
+        return isPrimitiveMesh(type) ? createPrimitiveMesh(type, path) : nullptr;
     }
+
+   void MeshFactory::loadMeshesFromFile(std::shared_ptr<MeshComponent>& mesh, const char* path, bool isPrimitive)
+    {
+        Assimp::Importer importer{};
+        const aiScene* scene{ importer.ReadFile(path,
+            aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType) };
+
+        if (!scene || !scene->HasMeshes())
+            quirkExit("Failed to load model from - " + std::string{ path });
+
+        // TODO: Handle multiple meshes in a single file
+        if (isPrimitive)
+        {
+            const aiMesh* loadedMesh{ scene->mMeshes[0] };
+
+            mesh->vertices.reserve(loadedMesh->mNumVertices);
+            for (uint32_t i{ 0 }; i < loadedMesh->mNumVertices; ++i)
+            {
+                const aiVector3D& vertex{ loadedMesh->mVertices[i] };
+                mesh->vertices.emplace_back(vertex.x, vertex.y, vertex.z);
+            }
+
+            mesh->indices.reserve(loadedMesh->mNumFaces * 3);
+            for (uint32_t i{ 0 }; i < loadedMesh->mNumFaces; ++i)
+            {
+                const aiFace& face{ loadedMesh->mFaces[i] };
+                mesh->indices.push_back(face.mIndices[0]);
+                mesh->indices.push_back(face.mIndices[1]);
+                mesh->indices.push_back(face.mIndices[2]);
+            }
+
+            mesh->vertexCount = static_cast<uint32_t>(mesh->vertices.size());
+            mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
+		}
+    }
+
+   bool MeshFactory::isPrimitiveMesh(MeshTypes type)
+   {
+       switch (type)
+       {
+           case MeshTypes::Quad:
+           case MeshTypes::Sphere:
+           case MeshTypes::Cube:
+           case MeshTypes::Cylinder:
+           case MeshTypes::Cone:
+           case MeshTypes::Torus:
+               return true;
+           default:
+               return false;
+       }
+   }
 
     std::shared_ptr<MeshComponent> MeshFactory::getMesh(MeshTypes type)
     {
@@ -29,9 +83,25 @@ namespace Quirk::Engine::Renderer::Rendering
         return (iterator != m_meshCache.end()) ? iterator->second : nullptr;
     }
 
-    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh(MeshTypes type)
+    std::shared_ptr<MeshComponent> MeshFactory::createPrimitiveMesh(MeshTypes type, const char* path)
     {
+        if (type == MeshTypes::Quad)
+            return createQuadMesh();
+
         if (auto mesh{ getMesh(type) })
+            return mesh;
+        else
+        {
+            mesh = std::make_shared<MeshComponent>();
+            loadMeshesFromFile(mesh, path, true);
+            m_meshCache.emplace(type, mesh);
+            return mesh;
+        }
+    }
+
+    std::shared_ptr<MeshComponent> MeshFactory::createQuadMesh()
+    {
+        if (auto mesh{ getMesh(MeshTypes::Quad)})
             return mesh;
         else
         {
@@ -51,9 +121,7 @@ namespace Quirk::Engine::Renderer::Rendering
             };
             mesh->indexCount = static_cast<uint32_t>(mesh->indices.size());
 
-            mesh->isSubmitted = false;
-            
-            m_meshCache.emplace(type, mesh);
+            m_meshCache.emplace(MeshTypes::Quad, mesh);
 
             return mesh;
         }

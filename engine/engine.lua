@@ -42,6 +42,11 @@ project "Engine"
     filter "system:windows"
         systemversion "latest"
 
+        postbuildcommands 
+        { 
+            "{COPY} ../thirdParty/assimp/bin/assimp-vc142-mt.dll %{cfg.targetdir}"
+        }
+
     filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"

@@ -35,8 +35,8 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
 
-		static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
-		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
+		static void onBeforeRenderPass();
+		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);
 
 	private:
 		 inline static Rhi::Rhi* m_rhi{ nullptr };
