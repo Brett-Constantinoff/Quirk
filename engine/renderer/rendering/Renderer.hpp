@@ -46,8 +46,8 @@ namespace Quirk::Engine::Renderer::Rendering
     private:
         inline static Rhi::Rhi* m_rhi{nullptr};
         inline static Rhi::Opengl::Opengl m_opengl{};
-        inline static unsigned int m_fbo = 0;
-        inline static unsigned int m_textureColorbuffer = 0;
-        inline static unsigned int m_rbo = 0;
+        inline static uint32_t m_fbo = 0;
+        inline static uint32_t m_textureColorbuffer = 0;
+        inline static uint32_t m_rbo = 0;
     };
 }
