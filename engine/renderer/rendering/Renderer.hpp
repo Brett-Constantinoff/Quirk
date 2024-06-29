@@ -30,7 +30,7 @@ namespace Quirk::Engine::Renderer::Rendering
         static void shutdown();
         static void tick(double tickSpeed, const DisplayWindow& display,
                          const std::weak_ptr<Scene::Scene> scene);
-        static unsigned int getFramebufferTexture() { return m_textureColorbuffer; }
+        static uint32_t getFramebufferTexture() { return m_textureColorbuffer; }
 
     private:
         static void loadContext();
