@@ -29,26 +29,24 @@ namespace Quirk::Engine::Renderer::Rendering
         static void shutdown();
         static void tick(double tickSpeed, const DisplayWindow& display,
                          const std::weak_ptr<Scene::Scene> scene);
-        static uint32_t getFramebufferTexture() { return m_textureColorbuffer; }
-        static void resizeFramebuffer(int width, int height);
-        static void adjustViewport(int width, int height);
+        static uint32_t getFramebufferTexture() { return m_rhi->getFramebufferTexture();}
+        static void resizeFramebuffer(uint32_t width, uint32_t height);
+        static void adjustViewport(uint32_t width, uint32_t height);
+        static void setRenderModeWireframe() noexcept;
+        static void setRenderModeSolid() noexcept;
+        static void toggleGizmos() noexcept;
         
     private:
         static void loadContext();
         static void chooseAndInitRhi();
         static void updateViewport(const WindowResizeEvent& event);
-
         static void onBeforeRenderPass(double tickSpeed, const DisplayWindow& display);
         static void onRenderPass(const std::weak_ptr<Scene::Scene> scene);
-
-        static void createFramebuffer();
-        static void deleteFramebuffer();
+        static void setProjectionMatrix(float width, float height);
 
     private:
         inline static Rhi::Rhi* m_rhi{nullptr};
         inline static Rhi::Opengl::Opengl m_opengl{};
-        inline static uint32_t m_fbo = 0;
-        inline static uint32_t m_textureColorbuffer = 0;
-        inline static uint32_t m_rbo = 0;
+        inline static glm::mat4 m_projectionMatrix;
     };
 }

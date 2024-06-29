@@ -138,6 +138,66 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.unbind();
 	}
 
+	void Opengl::createFramebuffer()
+	{
+		glGenFramebuffers(1, &m_fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+		glGenTextures(1, &m_textureColorbuffer);
+		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureColorbuffer, 0);
+
+		glGenRenderbuffers(1, &m_rbo);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			spdlog::error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::deleteFramebuffer()
+	{
+		glDeleteFramebuffers(1, &m_fbo);
+		glDeleteTextures(1, &m_textureColorbuffer);
+		glDeleteRenderbuffers(1, &m_rbo);
+	}
+
+	void Opengl::resizeFramebuffer(int width, int height)
+	{
+		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::bindFramebuffer()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	}
+
+	void Opengl::unbindFramebuffer()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::setPolygonModeWireframe()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	void Opengl::setPolygonModeSolid()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
 	void Opengl::drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount)
 	{
 		const auto& vao{ m_drawableIdToVao[drawableId] };

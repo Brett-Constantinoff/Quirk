@@ -27,5 +27,15 @@ namespace Quirk::Engine::Renderer::Rhi
 			const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride) = 0;
 		virtual void drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount) = 0;
 		virtual void drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) = 0;
+		virtual void createFramebuffer() = 0;
+		virtual void deleteFramebuffer() = 0;
+		virtual void resizeFramebuffer(int width, int height) = 0;
+		virtual void bindFramebuffer() = 0;
+		virtual void unbindFramebuffer() = 0;
+
+		virtual void setPolygonModeWireframe() = 0;
+		virtual void setPolygonModeSolid() = 0;
+
+		virtual uint32_t getFramebufferTexture() const = 0;
 	};
 }

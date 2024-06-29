@@ -21,44 +21,27 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		loadContext();
 		chooseAndInitRhi();
-		createFramebuffer();
 
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
 
-		chooseAndInitRhi();
 		ShaderManager::init();
 		MeshFactory::init();
+		m_rhi->createFramebuffer();
 	}
 
 	void Renderer::shutdown()
 	{
-		deleteFramebuffer();
+		m_rhi->deleteFramebuffer();
 		m_rhi->shutdown();
 		MeshFactory::shutdown();
 		ShaderManager::shutdown();
 	}
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display, 
-		const std::weak_ptr<Scene::Scene> scene)
+	                    const std::weak_ptr<Scene::Scene> scene)
 	{
 		onBeforeRenderPass(tickSpeed, display);
 		onRenderPass(scene);
-	}
-
-	void Renderer::resizeFramebuffer(int width, int height)
-	{
-		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-	void Renderer::adjustViewport(int width, int height)
-	{
-		glViewport(0, 0, width, height);
 	}
 
 	void Renderer::loadContext()
@@ -90,12 +73,22 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		const glm::vec2 dimensions{ event.getDim() };
 		m_rhi->setViewport(static_cast<uint32_t>(dimensions.x), static_cast<uint32_t>(dimensions.y));
+		setProjectionMatrix(dimensions.x, dimensions.y);
 		event.setHandled();
+	}
+
+	void Renderer::setProjectionMatrix(float width, float height)
+	{
+		float aspectRatio = width / height;
+		m_projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
+
+		// Update the projection matrix in the shader
+		ShaderManager::updateProjectionMatrix(m_projectionMatrix);
 	}
 
 	void Renderer::onBeforeRenderPass(double tickSpeed, const DisplayWindow& display)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+		m_rhi->bindFramebuffer();
 		const auto& clearColor{ Utils::Context::clearColor };
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
@@ -133,32 +126,58 @@ namespace Quirk::Engine::Renderer::Rendering
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void Renderer::createFramebuffer()
+	void Renderer::resizeFramebuffer(uint32_t width, uint32_t height)
 	{
-		glGenFramebuffers(1, &m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-		glGenTextures(1, &m_textureColorbuffer);
-		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureColorbuffer, 0);
-
-		glGenRenderbuffers(1, &m_rbo);
-		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			spdlog::error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		m_rhi->resizeFramebuffer(width, height);
+		setProjectionMatrix(width, height);
 	}
 
-	void Renderer::deleteFramebuffer()
+	void Renderer::adjustViewport(uint32_t width, uint32_t height)
 	{
-		glDeleteFramebuffers(1, &m_fbo);
-		glDeleteTextures(1, &m_textureColorbuffer);
-		glDeleteRenderbuffers(1, &m_rbo);
+		m_rhi->setViewport(width, height);
 	}
+
+	void Renderer::setRenderModeWireframe() noexcept
+	{
+		m_rhi->setPolygonModeWireframe();
+	}
+
+	void Renderer::setRenderModeSolid() noexcept
+	{
+		m_rhi->setPolygonModeSolid();
+	}
+
+	void Renderer::toggleGizmos() noexcept
+	{
+		//TODO: implement gizmos
+	}
+
+	// void Renderer::createFramebuffer()
+	// {
+	// 	glGenFramebuffers(1, &m_fbo);
+	// 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	//
+	// 	glGenTextures(1, &m_textureColorbuffer);
+	// 	glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
+	// 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureColorbuffer, 0);
+	//
+	// 	glGenRenderbuffers(1, &m_rbo);
+	// 	glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+	// 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	// 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+	//
+	// 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	// 		spdlog::error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	// 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// }
+	//
+	// void Renderer::deleteFramebuffer()
+	// {
+	// 	glDeleteFramebuffers(1, &m_fbo);
+	// 	glDeleteTextures(1, &m_textureColorbuffer);
+	// 	glDeleteRenderbuffers(1, &m_rbo);
+	// }
 }
