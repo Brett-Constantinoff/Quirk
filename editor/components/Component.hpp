@@ -13,9 +13,9 @@ namespace Quirk::Editor::Components
 		
 
 	protected:
-		std::string m_title;
+		const char* m_title;
 		bool m_isOpen{ true };
 
-		const std::string& GetTitle() const { return m_title; }
+		const char* GetTitle() const { return m_title; }
 	};
 }

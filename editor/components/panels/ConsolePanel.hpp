@@ -2,14 +2,13 @@
 #include "../Component.hpp"
 #include <string>
 
-
 namespace Quirk::Editor::Components
 {
-    class MetricsPanel : public Component
+    class ConsolePanel : public Component
     {
     public:
-        MetricsPanel(const char* title) { m_title = title; }
-        ~MetricsPanel() override = default;
+        ConsolePanel(const char* title) { m_title = title; }
+        ~ConsolePanel() override = default;
 
         void render() override;
     };

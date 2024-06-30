@@ -46,11 +46,6 @@ namespace Quirk::Engine::Renderer::Gui
         //ImGui::ShowDemoWindow();
         ImGui::DockSpaceOverViewport();
 
-        //--CONSOLE--
-        static Editor::Uitls::ExampleAppConsole console;
-        console.Draw("Console",nullptr);
-        //--END CONSOLE--
-
         //--LOG--
         static Editor::Uitls::ExampleAppLog log; 
 

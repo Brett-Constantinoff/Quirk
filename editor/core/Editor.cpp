@@ -63,6 +63,6 @@ namespace Quirk::Editor
 		m_viewportPanel.render();
 		m_metricsPanel.render();
 		m_sceneHierarchyPanel.render();
-		//m_metrics.render(); //TODO: Delete this
+		m_consolePanel.render();
 	}
 }

@@ -3,8 +3,7 @@
 
 void Quirk::Editor::Components::ViewportPanel::render()
 {
-    //TODO: Add resize event to update viewport size and aspect ratio for rendering
-    ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin(m_title, nullptr, ImGuiWindowFlags_MenuBar);
     {
         // Options bar
         if (ImGui::BeginMenuBar()) {

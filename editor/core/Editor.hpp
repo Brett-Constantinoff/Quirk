@@ -11,6 +11,7 @@
 
 #include "../components/Component.hpp"
 #include "../components/menuBar/MenuBar.hpp"
+#include "../components/panels/ConsolePanel.hpp"
 #include "../components/panels/MetricsPanel.hpp"
 #include "../components/panels/SceneHierarchyPanel.hpp"
 #include "../components/panels/ViewportPanel.hpp"
@@ -45,5 +46,6 @@ namespace Quirk::Editor
 		inline static SceneHierarchyPanel m_sceneHierarchyPanel{"Scene Hierarchy"};
 		inline static MetricsPanel m_metricsPanel{"Metrics"};
 		inline static ViewportPanel m_viewportPanel{"Viewport"};
+		inline static ConsolePanel m_consolePanel{"Console"};
 	};
 }
