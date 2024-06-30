@@ -39,7 +39,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) override;
 		void createFramebuffer() override;
 		void deleteFramebuffer() override;
-		void resizeFramebuffer(int width, int height) override;
+		void resizeFramebuffer(uint32_t width, uint32_t height) override;
 		void bindFramebuffer() override;
 		void unbindFramebuffer() override;
 		void setPolygonModeWireframe() override;

@@ -93,12 +93,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 		if(aspectRatio> desiredAspectRatio)
 		{
-			int newWidth = static_cast<int>(height * desiredAspectRatio);
+			uint32_t newWidth = static_cast<uint32_t>(height * desiredAspectRatio);
 			glViewport((width-newWidth)/2, 0, newWidth, height);
 		}
 		else
 		{
-			int newHeight = static_cast<int>(width / desiredAspectRatio);
+			uint32_t newHeight = static_cast<uint32_t>(width / desiredAspectRatio);
 			glViewport(0, (height-newHeight)/2, width, newHeight);
 		}
 	}
@@ -181,7 +181,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glDeleteRenderbuffers(1, &m_rbo);
 	}
 
-	void Opengl::resizeFramebuffer(int width, int height)
+	void Opengl::resizeFramebuffer(uint32_t width, uint32_t height)
 	{
 		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);

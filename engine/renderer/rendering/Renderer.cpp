@@ -81,8 +81,6 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		float aspectRatio = width / height;
 		m_projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
-
-		// Update the projection matrix in the shader
 		ShaderManager::updateProjectionMatrix(m_projectionMatrix);
 	}
 
