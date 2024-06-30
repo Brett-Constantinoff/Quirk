@@ -11,7 +11,7 @@ struct GuiConsole
         bool AutoScroll;
         bool ScrollToBottom;
 
-        GuiConsole()
+        GuiConsole(bool addWelcomeMessage = true)
         {
             ClearLog();
             memset(InputBuf, 0, sizeof(InputBuf));
@@ -24,23 +24,26 @@ struct GuiConsole
             Commands.push_back("CLASSIFY");
             AutoScroll = true;
             ScrollToBottom = false;
-            AddLog("                           \t          ___\n"
-                   "                           \t         /\\  \\\n"
-                   "   ___        _      _    \t         /  \\/ \\\n"
-                   "  / _ \\ _   _(_)_ __| | __\t    ___  \\   O /  ___\n"
-                   " | | | | | | | | '__| |/ /\t   /    \\ \\   / /    \\\n"
-                   " | |_| | |_| | | |  |   < \t  /   __ -    -  __   \\\n"
-                   "  \\__\\_\\\\__,_|_|_|  |_|\\_\\\t /___/ | <>   <> | \\___\\\n"
-                   "                          \t O  ___|    ^    |___  O\n"
-                   "  ___           _          \t /     \\  -^-  /    \\\n"
-                   " | __|_ _  __ _(_)_ _  ___ \t/   /\\  \\_____/ /\\   \\\n"
-                   " | _|| ' \\/ _` | | ' \\/ -_)\t\\_ / /          \\ \\_ /\n"
-                   " |___|_||_\\__, |_|_||_\\___|\tO   /   /\\   /\\  \\  O\n"
-                   "          |___/            \t     \\ /  \\ /  \\ /\n"
-                   "                           \t      O    O    O\n");
+            if(addWelcomeMessage)
+            {
+                AddLog("                           \t          ___\n"
+                    "                           \t         /\\  \\\n"
+                    "   ___        _      _    \t         /  \\/ \\\n"
+                    "  / _ \\ _   _(_)_ __| | __\t    ___  \\   O /  ___\n"
+                    " | | | | | | | | '__| |/ /\t   /    \\ \\   / /    \\\n"
+                    " | |_| | |_| | | |  |   < \t  /   __ -    -  __   \\\n"
+                    "  \\__\\_\\\\__,_|_|_|  |_|\\_\\\t /___/ | <>   <> | \\___\\\n"
+                    "                          \t O  ___|    ^    |___  O\n"
+                    "  ___           _          \t /     \\  -^-  /    \\\n"
+                    " | __|_ _  __ _(_)_ _  ___ \t/   /\\  \\_____/ /\\   \\\n"
+                    " | _|| ' \\/ _` | | ' \\/ -_)\t\\_ / /          \\ \\_ /\n"
+                    " |___|_||_\\__, |_|_||_\\___|\tO   /   /\\   /\\  \\  O\n"
+                    "          |___/            \t     \\ /  \\ /  \\ /\n"
+                    "                           \t      O    O    O\n");
 
-            
-            AddLog("Welcome to Quirk Engine!  Type 'HELP' for help.\n");
+
+                AddLog("Welcome to Quirk Engine!  Type 'HELP' for help.\n");
+            }
         }
 
         ~GuiConsole()

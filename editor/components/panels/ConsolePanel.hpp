@@ -1,6 +1,5 @@
 #pragma once
 #include "../Component.hpp"
-#include <string>
 
 namespace Quirk::Editor::Components
 {
