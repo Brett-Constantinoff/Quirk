@@ -1,3 +1,5 @@
+#include "Utils.hpp"
+
 #include "VertexArray.hpp"
 
 namespace Quirk::Engine::Renderer::Rhi::Opengl
@@ -22,9 +24,13 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		return m_id;
 	}
 
-	void VertexArray::setData(uint32_t size, uint32_t stride, GLenum type, GLboolean normalized)
+	void VertexArray::setData(Layout& layout) const
 	{
-		glVertexAttribPointer(0, size, type, normalized, stride * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+		for (auto& attribute : layout.getAttributes())
+		{
+			glEnableVertexAttribArray(attribute.index);
+			glVertexAttribPointer(attribute.index, attribute.size, mapTypeToGl(attribute.type),
+				attribute.normalized, static_cast<GLsizei>(attribute.stride), attribute.pointer);
+		}
 	}
 }

@@ -10,6 +10,7 @@ namespace Quirk::Engine::Scene::Components
 	struct MeshComponent
 	{
 		std::vector<glm::vec3> vertices{};
+		std::vector<glm::vec3> normals{};
 		std::vector<uint32_t> indices{};
 
 		uint32_t vertexCount{};

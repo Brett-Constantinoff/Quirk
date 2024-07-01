@@ -4,7 +4,7 @@
 
 #include "OpenglShader.hpp"
 
-namespace Quirk::Engine::Renderer::Rhi
+namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
     OpenglShader::OpenglShader(const std::string& filepath)
     {

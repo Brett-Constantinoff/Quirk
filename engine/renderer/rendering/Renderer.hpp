@@ -8,6 +8,7 @@
 #include "../../display/DisplayWindow.hpp"
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
+#include "../rhi/VertexAttribute.hpp"
 #include "../../scene/Scene.hpp"
 
 #include "ShaderManger.hpp"
@@ -34,6 +35,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void loadContext();
 		static void chooseAndInitRhi();
 		static void updateViewport(const WindowResizeEvent& event);
+		static Layout* createLayout(const MeshComponent& meshComponent, const std::vector<VertexAttribute>& attribs);
 
 		static void onBeforeRenderPass();
 		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);

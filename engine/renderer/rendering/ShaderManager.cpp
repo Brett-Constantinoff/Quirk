@@ -6,6 +6,7 @@
 
 #include "ShaderManger.hpp"
 
+using namespace Quirk::Engine::Renderer::Rhi::Opengl;
 using namespace Quirk::Engine::Renderer::Utils;
 using namespace Quirk::Engine::Core::Utils;
 

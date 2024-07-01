@@ -49,7 +49,7 @@ namespace Quirk::Engine::Scene
 		{
 			auto& entity{ m_currentScene->createEntity("Clown 2") };
 
-			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Cone, conePrimitivePath) };
+			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Cube, cubePrimitivePath) };
 			entity->addComponent<MeshComponent>(*meshComponent);
 			entity->setDrawable(true);
 

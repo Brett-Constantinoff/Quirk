@@ -15,7 +15,7 @@
 
 using namespace Quirk::Engine::Core::Utils;
 
-namespace Quirk::Engine::Renderer::Rhi
+namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
     struct ShaderSource
     {
