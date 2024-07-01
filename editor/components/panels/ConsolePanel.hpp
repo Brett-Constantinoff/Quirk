@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "../Component.hpp"
-#include "../../core/Editor.hpp"
+
 
 namespace Quirk::Editor::Components
 {
@@ -31,7 +31,7 @@ namespace Quirk::Editor::Components
         std::vector<char*> m_Items; 
         std::vector<const char*> m_Commands; // Command history
         std::vector<char*> m_History; // History as a string
-        LONGLONG m_HistoryPos; // -1: new line, 0..History.Size-1 browsing history.
+        int32_t m_HistoryPos; // -1: new line, 0..History.Size-1 browsing history.
         ImGuiTextFilter m_Filter; // Filter to only display commands with a specific filter
         bool m_AutoScroll; 
         bool m_ScrollToBottom; 

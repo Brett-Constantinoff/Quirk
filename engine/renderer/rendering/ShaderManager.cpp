@@ -37,17 +37,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		}
 		return m_shaders[MaterialType::Basic2D];
 	}
-
-	void ShaderManager::updateProjectionMatrix(const glm::mat4& projectionMatrix)
-	{
-		for (auto& shader : m_shaders)
-		{
-			shader.second->use();
-			shader.second->setMat4("projection", projectionMatrix);
-			shader.second->disuse();
-		}
-	}
-
+	
 	void ShaderManager::createMaterial(const std::string& filePath, MaterialType type)
 	{
 		switch (Context::renderApi)

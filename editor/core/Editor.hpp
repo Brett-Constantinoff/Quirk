@@ -43,7 +43,7 @@ namespace Quirk::Editor
 
 	private:
 		//EDITOR COMPONENTS
-		inline static MenuBar::MenuBar m_menuBar{};
+		inline static MenuBar::MenuBar m_menuBar;
 		inline static SceneHierarchyPanel m_sceneHierarchyPanel{"Scene Hierarchy"};
 		inline static MetricsPanel m_metricsPanel{"Metrics"};
 		inline static ViewportPanel m_viewportPanel{"Viewport"};

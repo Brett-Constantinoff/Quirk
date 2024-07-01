@@ -9,6 +9,7 @@
 #include "../rhi/opengl/Opengl.hpp"
 #include "../rhi/Rhi.hpp"
 #include "../../scene/Scene.hpp"
+#include "../../core/eventSystem/events/ViewportResizeEvent.hpp"
 
 #include "ShaderManger.hpp"
 #include "Camera.hpp"
@@ -30,7 +31,7 @@ namespace Quirk::Engine::Renderer::Rendering
         static void tick(double tickSpeed, const DisplayWindow& display,
                          const std::weak_ptr<Scene::Scene> scene);
         static uint32_t getFramebufferTexture() { return m_rhi->getFramebufferTexture();}
-        static void resizeFramebuffer(uint32_t width, uint32_t height);
+        static void resizeFramebuffer(const ViewportResizeEvent& event);
         static void adjustViewport(uint32_t width, uint32_t height);
         static void setRenderModeWireframe() noexcept;
         static void setRenderModeSolid() noexcept;

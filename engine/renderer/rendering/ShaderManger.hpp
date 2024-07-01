@@ -26,9 +26,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		static void shutdown();
 		[[nodiscard]] static uint32_t getMaterialId(MaterialType type);
 		[[nodiscard]] static std::unique_ptr<Shader>& getMaterial(uint32_t id);
-
-		static void updateProjectionMatrix(const glm::mat4& projectionMatrix);
-
+	
 	private:
 		static void createMaterial(const std::string& filePath, MaterialType type);
 		static void createOpenglMaterial(const std::string& filePath);

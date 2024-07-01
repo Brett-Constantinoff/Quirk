@@ -7,7 +7,7 @@ namespace Quirk::Editor::Components
     class ViewportPanel : public Component
     {
     public:
-        ViewportPanel(const char* title) { m_title = title; }
+        ViewportPanel(const char* title): Component(title){}
         ~ViewportPanel() override = default;
 
         void render() override;

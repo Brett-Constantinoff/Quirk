@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../core/eventSystem/events/ViewportResizeEvent.hpp"
 #include "../core/eventSystem/events/WindowResizeEvent.hpp"
 
 using namespace Quirk::Engine::Core::EventSystem;
@@ -27,6 +28,7 @@ namespace Quirk::Engine::Display
         // have an init so we dont doubly initialize the window in WindowManager.cpp
         void init(uint32_t width, uint32_t height, const std::string_view& title);
         void calculateProjectionMatrix(const WindowResizeEvent& event);
+        void updateProjectionMatrix(const ViewportResizeEvent& event);
 
     public:
         GLFWwindow* handle{ nullptr };

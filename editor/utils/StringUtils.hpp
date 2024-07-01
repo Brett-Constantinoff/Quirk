@@ -1,19 +1,13 @@
-﻿#pragma once
+#pragma once
 #include <cstdint>
 
-namespace Quirk::Editor::Uitls
+namespace Quirk::Editor::Utils::StringUtils
 {
-   class StringUtils
-   {
-   public:
-      // Compare two strings ignoring case
-      static uint32_t Stricmp(const char* s1, const char* s2);
-      // Compare two strings ignoring case up to n characters
-      static uint32_t Strnicmp(const char* s1, const char* s2, uint32_t n);
-      // Duplicate a string
-      static char* Strdup(const char* s);
-      // Trim a string 
-      static void Strtrim(char* s);
-   }; 
+    // Compare two strings ignoring case  
+    uint32_t Stricmp(const char* s1, const char* s2);  
+    // Compare two strings ignoring case up to n characters  
+    uint32_t Strnicmp(const char* s1, const char* s2, uint32_t n);  
+    // Duplicate a string  
+    char* Strdup(const char* s);  
+    // Trim a string void Strtrim(char* s);
 }
-

@@ -19,10 +19,9 @@ namespace Quirk::Editor::Components
     void Draw(const char* title, bool* p_open = nullptr);
     void DrawOptions();
     void DrawMainWindow();
-    void DrawFilteredLog();
-    void DrawUnfilteredLog();
+    void DrawFilteredLog() const;
+    void DrawUnfilteredLog() const;
 
-    std::string m_title;
     ImGuiTextBuffer m_buf;
     ImGuiTextFilter m_filter;
     std::vector<int> m_lineOffsets; // Index to lines offset. We maintain this with AddLog() calls.

@@ -1,5 +1,8 @@
 #include "ViewportPanel.hpp"
 #include "./renderer/rendering/Renderer.hpp"
+#include <core/eventSystem/EventBus.hpp>
+#include <core/eventSystem/eventHandlers/EventHandler.hpp>
+#include <core/eventSystem/events/ViewportResizeEvent.hpp>
 
 void Quirk::Editor::Components::ViewportPanel::render()
 {
@@ -28,8 +31,9 @@ void Quirk::Editor::Components::ViewportPanel::render()
         static ImVec2 lastSize = ImVec2(0, 0);
         if (lastSize.x != panelSize.x || lastSize.y != panelSize.y) {
             lastSize = panelSize;
-            Quirk::Engine::Renderer::Rendering::Renderer::resizeFramebuffer(static_cast<int>(panelSize.x), static_cast<int>(panelSize.y));
-            Quirk::Engine::Renderer::Rendering::Renderer::adjustViewport(static_cast<int>(panelSize.x), static_cast<int>(panelSize.y));
+
+            ViewportResizeEvent event(glm::vec2(panelSize.x, panelSize.y));
+            EventBus::publish(event);
         }
         
         // Render the texture to the ImGui window

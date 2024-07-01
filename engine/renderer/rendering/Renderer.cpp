@@ -10,6 +10,8 @@
 
 #include "Renderer.hpp"
 
+#include "../../core/eventSystem/events/ViewportResizeEvent.hpp"
+
 using namespace Quirk::Engine::Core::EventSystem;
 
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
@@ -23,6 +25,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		chooseAndInitRhi();
 
 		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
+		EventBus::subscribe<ViewportResizeEvent>(&Renderer::resizeFramebuffer);
 
 		ShaderManager::init();
 		MeshFactory::init();
@@ -80,8 +83,9 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::setProjectionMatrix(float width, float height)
 	{
 		float aspectRatio = width / height;
-		m_projectionMatrix = glm::perspective(glm::radians(45.0f), aspectRatio, 0.1f, 100.0f);
-		ShaderManager::updateProjectionMatrix(m_projectionMatrix);
+		ViewportResizeEvent event{ glm::vec2{width, height}, aspectRatio };
+		EventBus::publish(event);
+		
 	}
 
 	void Renderer::onBeforeRenderPass()
@@ -129,10 +133,12 @@ namespace Quirk::Engine::Renderer::Rendering
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void Renderer::resizeFramebuffer(uint32_t width, uint32_t height)
+	void Renderer::resizeFramebuffer(const ViewportResizeEvent& event)
 	{
-		m_rhi->resizeFramebuffer(width, height);
-		setProjectionMatrix(width, height);
+		m_rhi->resizeFramebuffer(event.getDim().x, event.getDim().y);
+		setProjectionMatrix(event.getDim().x, event.getDim().y);
+		adjustViewport(event.getDim().x, event.getDim().y);
+		event.setHandled();
 	}
 
 	void Renderer::adjustViewport(uint32_t width, uint32_t height)

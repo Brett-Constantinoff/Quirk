@@ -7,6 +7,7 @@ namespace Quirk::Editor::Components
 	class Component
 	{
 	public:
+		Component(const char* title){m_title = title;}
 		Component() = default;
 		virtual ~Component() {}
 		virtual void render() = 0;
