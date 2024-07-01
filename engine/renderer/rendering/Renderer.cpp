@@ -118,10 +118,8 @@ namespace Quirk::Engine::Renderer::Rendering
 							{ 1, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)0 },
 						};
 
-						// SPOOKY RAW POINTERS!!!
-						Layout* layout{ createLayout(meshComponent, attributes) };
+						std::unique_ptr<Layout> layout{ createLayout(meshComponent, attributes) };
 						m_rhi->submitDrawData(entity->getId(), *layout);
-						delete layout;
 					}
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };
