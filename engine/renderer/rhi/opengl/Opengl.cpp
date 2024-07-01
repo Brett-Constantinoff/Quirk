@@ -99,7 +99,14 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vbo.bind();
 		vbo.setData(layout.getVertexData(), layout.getVertexDataSize());
 
-		if (layout.getIndexDataSize() > 0) 
+		if (layout.getNormalDataSize() > 0)
+		{
+			const auto normalVbo{ createVertexBuffer() };
+			normalVbo.bind();
+			normalVbo.setData(layout.getNormalData(), layout.getNormalDataSize());
+		}
+
+		if (layout.getIndexDataSize() > 0)
 		{
 			const auto ebo{ createElementBuffer() };
 			ebo.bind();
@@ -107,8 +114,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		}
 
 		vao.setData(layout);
-
-		vbo.unbind();
 		vao.unbind();
 
 		m_drawableIdToVao[drawableId] = vao;

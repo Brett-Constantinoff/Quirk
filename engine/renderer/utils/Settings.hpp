@@ -13,5 +13,6 @@ namespace Quirk::Engine::Renderer::Utils
 	{
 		None,
 		Float,
+		Uint,
 	};
 }

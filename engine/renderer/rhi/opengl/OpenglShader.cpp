@@ -43,12 +43,12 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
     void OpenglShader::setVec3(const char* name, const glm::vec3& value)
     {
-        glUniform3fv(glGetUniformLocation(m_id, name), 1, &value[0]);
+        glUniform3fv(getUniformLocation(name), 1, &value[0]);
     }
 
     void OpenglShader::setMat4(const char* name, const glm::mat4& matrix)
     {
-		glUniformMatrix4fv(glGetUniformLocation(m_id, name), 1, GL_FALSE, &matrix[0][0]);
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
     }
 
     uint32_t OpenglShader::getId()
@@ -76,6 +76,19 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
         }
         return shadermID;
     }
+
+    int32_t OpenglShader::getUniformLocation(const char* name)
+	{
+        auto it{ m_uniformLocations.find(name) };
+        if (it != m_uniformLocations.end())
+        {
+            return it->second;
+        }
+
+        int location{ glGetUniformLocation(m_id, name) };
+        m_uniformLocations[name] = location;
+        return location;
+	}
 
     void OpenglShader::parseShader(const std::string& filepath, ShaderSource& source)
     {

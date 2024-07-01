@@ -13,7 +13,10 @@ namespace Quirk::Engine::Renderer::Rendering
 	enum class MaterialType
 	{
 		None,
-		Basic2D
+		
+		// contains basic lighting implementation, some values are hardcoded
+		// dont use for serious rendering
+		Basic,
 	};
 
 	class ShaderManager

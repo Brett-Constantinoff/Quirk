@@ -38,8 +38,10 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
     private:
         void parseShader(const std::string& filepath, ShaderSource& source);
         uint32_t compileShader(const std::string& filepath, const std::string& source, uint32_t type);
+        int32_t getUniformLocation(const char* name);
 
     private:
         uint32_t m_id{};
+        std::unordered_map<std::string, int32_t> m_uniformLocations{};
     };
 }

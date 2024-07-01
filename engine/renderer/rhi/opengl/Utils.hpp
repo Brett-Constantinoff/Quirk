@@ -25,6 +25,8 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		{
 		case QuirkTypes::Float:
 			return GL_FLOAT;
+		case QuirkTypes::Uint:
+			return GL_UNSIGNED_INT;
 		default:
 			return static_cast<uint32_t>(-1);
 		}

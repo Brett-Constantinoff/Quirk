@@ -16,7 +16,8 @@ namespace Quirk::Engine::Renderer::Rendering
 {
 	void ShaderManager::init()
 	{
-		createMaterial(basicShaderPath, MaterialType::Basic2D);
+		// create all of our built in materials here
+		createMaterial(basicShaderPath, MaterialType::Basic);
 	}
 
 	void ShaderManager::shutdown()
@@ -36,7 +37,7 @@ namespace Quirk::Engine::Renderer::Rendering
 			if (shader.second->getId() == id)
 				return shader.second;
 		}
-		return m_shaders[MaterialType::Basic2D];
+		return m_shaders[MaterialType::Basic];
 	}
 
 	void ShaderManager::createMaterial(const std::string& filePath, MaterialType type)
@@ -51,6 +52,6 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void ShaderManager::createOpenglMaterial(const std::string& filePath)
 	{
-		m_shaders[MaterialType::Basic2D] = std::make_unique<OpenglShader>(filePath);
+		m_shaders[MaterialType::Basic] = std::make_unique<OpenglShader>(filePath);
 	}
 }

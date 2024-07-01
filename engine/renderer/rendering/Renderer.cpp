@@ -115,7 +115,7 @@ namespace Quirk::Engine::Renderer::Rendering
 							// vertex position
 							{ 0, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)0 },
 							// vertex normal
-							{ 1, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)3 },
+							{ 1, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)0 },
 						};
 
 						// SPOOKY RAW POINTERS!!!
