@@ -3,18 +3,24 @@
 #include <spdlog/spdlog.h>
 
 #include "imgui_internal.h"
+#include "../../utils/StringUtils.hpp"
 
 
-Quirk::Editor::Components::ConsolePanel::ConsolePanel(const char* title)
-    : m_title(title), m_HistoryPos(-1), m_AutoScroll(true), m_ScrollToBottom(false)
+ConsolePanel::ConsolePanel(const char* title)
 {
+    m_title = title;
+    m_ScrollToBottom = false;
+    m_AutoScroll = true;
+    m_HistoryPos = -1;
     memset(m_InputBuf, 0, sizeof(m_InputBuf));
     m_Commands = { "HELP", "HISTORY", "CLEAR", "CLASS", "EXIT" };
     ClearLog();
     PrintWelcomeMessage();
 }
 
-void Quirk::Editor::Components::ConsolePanel::ClearLog()
+ConsolePanel::~ConsolePanel() = default;
+
+void ConsolePanel::ClearLog()
 {
     for(auto item: m_Items)
     {
@@ -23,12 +29,12 @@ void Quirk::Editor::Components::ConsolePanel::ClearLog()
     m_Items.clear();
 }
 
-void Quirk::Editor::Components::ConsolePanel::AddLog(const char* fmt, ...)
+void ConsolePanel::AddLog(const char* fmt, ...)
 {
     char buf[1024];
     va_list args;
     va_start(args, fmt);
-    int32_t buf_size = vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
+    int32_t buf_size = vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
     if(buf_size < 0)
@@ -43,10 +49,10 @@ void Quirk::Editor::Components::ConsolePanel::AddLog(const char* fmt, ...)
         spdlog::error("ConsolePanel::AddLog: Truncated log message: %.*s...", IM_ARRAYSIZE(buf) - 1, buf);
     }
 
-    char* allocated_memory = (char*)ImGui::MemAlloc(strlen(buf) + 1);
+    char* allocated_memory = static_cast<char*>(ImGui::MemAlloc(strlen(buf) + 1));
     if (allocated_memory != nullptr)
     {
-        strcpy(allocated_memory, buf); //TODO: upgrade from strcpy to strncpy_s
+        strcpy_s(allocated_memory, strlen(buf)+1, buf); //TODO: upgrade from strcpy to strncpy_s
         m_Items.push_back(allocated_memory);
     }
     else
@@ -56,7 +62,7 @@ void Quirk::Editor::Components::ConsolePanel::AddLog(const char* fmt, ...)
     }
 }
 
-void Quirk::Editor::Components::ConsolePanel::Draw(const char* title, bool* p_open)
+void ConsolePanel::Draw(const char* title, bool* p_open)
 {
     ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin(title, p_open))
@@ -70,7 +76,7 @@ void Quirk::Editor::Components::ConsolePanel::Draw(const char* title, bool* p_op
     ImGui::End();
 }
 
-void Quirk::Editor::Components::ConsolePanel::DrawOptions()
+void ConsolePanel::DrawOptions()
 {
     if (ImGui::BeginPopup("Options"))
     {
@@ -91,7 +97,7 @@ void Quirk::Editor::Components::ConsolePanel::DrawOptions()
     if (copy_to_clipboard) ImGui::LogToClipboard();
 }
 
-void Quirk::Editor::Components::ConsolePanel::DrawMainWindow()
+void ConsolePanel::DrawMainWindow()
 {
     const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened,
@@ -135,13 +141,13 @@ void Quirk::Editor::Components::ConsolePanel::DrawMainWindow()
                                                ImGuiInputTextFlags_EscapeClearsAll |
                                                ImGuiInputTextFlags_CallbackCompletion |
                                                ImGuiInputTextFlags_CallbackHistory;
-        if (ImGui::InputText("Input", m_InputBuf, IM_ARRAYSIZE(m_InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
+        if (ImGui::InputText("Input", m_InputBuf, sizeof(m_InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
         {
             char* s = m_InputBuf;
             while (*s == ' ') ++s;
             if (*s)
                 ExecCommand(s);
-            strcpy(s, ""); //TODO: upgrade from strcpy to strncpy_s
+            strcpy_s(m_InputBuf, sizeof(m_InputBuf), "");
             reclaim_focus = true;
         }
 
@@ -150,14 +156,14 @@ void Quirk::Editor::Components::ConsolePanel::DrawMainWindow()
             ImGui::SetKeyboardFocusHere(-1);
 }
 
-void Quirk::Editor::Components::ConsolePanel::ExecCommand(const char* command_line)
+void ConsolePanel::ExecCommand(const char* command_line)
 {
     AddLog("# %s\n", command_line);
 
     m_HistoryPos = -1;
     for (auto it = m_History.begin(); it != m_History.end(); ++it)
     {
-        if (Stricmp(*it, command_line) == 0)
+        if (Uitls::StringUtils::Stricmp(*it, command_line) == 0)
         {
             ImGui::MemFree(*it);
             m_History.erase(it);
@@ -166,20 +172,20 @@ void Quirk::Editor::Components::ConsolePanel::ExecCommand(const char* command_li
     }
     m_History.push_back(ImStrdup(command_line));
 
-    if (Stricmp(command_line, "CLEAR") == 0)
+    if (Uitls::StringUtils::Stricmp(command_line, "CLEAR") == 0)
     {
         ClearLog();
     }
-    else if (Stricmp(command_line, "HELP") == 0)
+    else if (Uitls::StringUtils::Stricmp(command_line, "HELP") == 0)
     {
         AddLog("Commands:");
         for (const char* cmd : m_Commands)
             AddLog("- %s", cmd);
     }
-    else if (Stricmp(command_line, "HISTORY") == 0)
+    else if (Uitls::StringUtils::Stricmp(command_line, "HISTORY") == 0)
     {
-        int first = m_History.size() - 10;
-        for (int i = first > 0 ? first : 0; i < m_History.size(); ++i)
+        ULONGLONG first = m_History.size() - 10;
+        for (ULONGLONG i = first > 0 ? first : 0; i < m_History.size(); ++i)
             AddLog("%3d: %s\n", i, m_History[i]);
     }
     else
@@ -190,7 +196,7 @@ void Quirk::Editor::Components::ConsolePanel::ExecCommand(const char* command_li
     m_ScrollToBottom = true;
 }
 
-void Quirk::Editor::Components::ConsolePanel::PrintWelcomeMessage()
+void ConsolePanel::PrintWelcomeMessage()
 {
     AddLog("                           \t          ___\n"
                     "                           \t         /\\  \\\n"
@@ -211,7 +217,7 @@ void Quirk::Editor::Components::ConsolePanel::PrintWelcomeMessage()
     AddLog("Welcome to Quirk Engine!  Type 'HELP' for help.\n");
 }
 
-uint32_t Quirk::Editor::Components::ConsolePanel::TextEditCallback(ImGuiInputTextCallbackData* data)
+int32_t ConsolePanel::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
         {
@@ -221,33 +227,32 @@ uint32_t Quirk::Editor::Components::ConsolePanel::TextEditCallback(ImGuiInputTex
             const char* word_start = word_end;
             while (word_start > data->Buf)
             {
-                const char c = word_start[-1];
-                if (c == ' ' || c == '\t' || c == ',' || c == ';')
+                if (const char c = word_start[-1]; c == ' ' || c == '\t' || c == ',' || c == ';')
                     break;
                 word_start--;
             }
 
             std::vector<const char*> candidates;
             for (const char* cmd : m_Commands)
-                if (Strnicmp(cmd, word_start, (uint32_t)(word_end - word_start)) == 0)
+                if (Uitls::StringUtils::Strnicmp(cmd, word_start, static_cast<uint32_t>(word_end - word_start)) == 0)
                     candidates.push_back(cmd);
 
             if (candidates.empty())
             {
-                AddLog("No match for \"%.*s\"!\n", (uint32_t)(word_end - word_start), word_start);
+                AddLog("No match for \"%.*s\"!\n", static_cast<uint32_t>(word_end - word_start), word_start);
             }
             else if (candidates.size() == 1)
             {
-                data->DeleteChars((uint32_t)(word_start - data->Buf), (uint32_t)(word_end - word_start));
+                data->DeleteChars(static_cast<int32_t>(word_start - data->Buf), static_cast<int32_t>(word_end - word_start));
                 data->InsertChars(data->CursorPos, candidates[0]);
                 data->InsertChars(data->CursorPos, " ");
             }
             else
             {
-                uint32_t match_len = (uint32_t)(word_end - word_start);
+                uint32_t match_len = static_cast<uint32_t>(word_end - word_start);
                 for (;;)
                 {
-                    uint32_t c = 0;
+                    int32_t c = 0;
                     bool all_candidates_matches = true;
                     for (uint32_t i = 0; i < candidates.size() && all_candidates_matches; i++)
                         if (i == 0)
@@ -261,7 +266,7 @@ uint32_t Quirk::Editor::Components::ConsolePanel::TextEditCallback(ImGuiInputTex
 
                 if (match_len > 0)
                 {
-                    data->DeleteChars((uint32_t)(word_start - data->Buf), (uint32_t)(word_end - word_start));
+                    data->DeleteChars(static_cast<int32_t>(word_start - data->Buf), static_cast<int32_t>(word_end - word_start));
                     data->InsertChars(data->CursorPos, candidates[0], candidates[0] + match_len);
                 }
 
@@ -273,7 +278,7 @@ uint32_t Quirk::Editor::Components::ConsolePanel::TextEditCallback(ImGuiInputTex
         }
         case ImGuiInputTextFlags_CallbackHistory:
         {
-            const uint32_t prev_history_pos = m_HistoryPos;
+            const ULONGLONG prev_history_pos = m_HistoryPos;
             if (data->EventKey == ImGuiKey_UpArrow)
             {
                 if (m_HistoryPos == -1)
@@ -299,53 +304,13 @@ uint32_t Quirk::Editor::Components::ConsolePanel::TextEditCallback(ImGuiInputTex
         return 0;
 }
 
-int32_t Quirk::Editor::Components::ConsolePanel::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
+int32_t ConsolePanel::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
-    ConsolePanel* console = (ConsolePanel*)data->UserData;
+    ConsolePanel* console = static_cast<ConsolePanel*>(data->UserData);
     return console->TextEditCallback(data);
 }
 
-void Quirk::Editor::Components::ConsolePanel::render()
+void ConsolePanel::render()
 {
-    Draw(m_title.c_str(), nullptr);
-}
-
-// Helper functions
-uint32_t Quirk::Editor::Components::ConsolePanel::Stricmp(const char* s1, const char* s2)
-{
-    uint32_t d;
-    while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1)
-    {
-        s1++;
-        s2++;
-    }
-    return d;
-}
-
-uint32_t Quirk::Editor::Components::ConsolePanel::Strnicmp(const char* s1, const char* s2, uint32_t n)
-{
-    uint32_t d = 0;
-    while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1)
-    {
-        s1++;
-        s2++;
-        n--;
-    }
-    return d;
-}
-
-char* Quirk::Editor::Components::ConsolePanel::Strdup(const char* s)
-{
-    IM_ASSERT(s);
-    size_t len = strlen(s) + 1;
-    void* buf = ImGui::MemAlloc(len);
-    IM_ASSERT(buf);
-    return (char*)memcpy(buf, (const void*)s, len);
-}
-
-void Quirk::Editor::Components::ConsolePanel::Strtrim(char* s)
-{
-    char* str_end = s + strlen(s);
-    while (str_end > s && str_end[-1] == ' ') str_end--;
-    *str_end = 0;
+    Draw(m_title, nullptr);
 }

@@ -7,7 +7,7 @@ namespace Quirk::Editor::Components
 	class Component
 	{
 	public:
-		Component() {}
+		Component() = default;
 		virtual ~Component() {}
 		virtual void render() = 0;
 		
