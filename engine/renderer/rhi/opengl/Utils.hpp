@@ -6,7 +6,7 @@
 
 using namespace Quirk::Engine::Renderer::Utils;
 
-namespace Quirk::Engine::Renderer::Rhi
+namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
     static uint32_t mapPrimitiveToGl(QuirkPrimitives primitiveType)
     {
@@ -18,6 +18,19 @@ namespace Quirk::Engine::Renderer::Rhi
             return static_cast<uint32_t>(-1);
         }
     }
+
+	static uint32_t mapTypeToGl(QuirkTypes type)
+	{
+		switch (type)
+		{
+		case QuirkTypes::Float:
+			return GL_FLOAT;
+		case QuirkTypes::Uint:
+			return GL_UNSIGNED_INT;
+		default:
+			return static_cast<uint32_t>(-1);
+		}
+	};
 
 	static void debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
 		GLchar const* message, void const* user_param)

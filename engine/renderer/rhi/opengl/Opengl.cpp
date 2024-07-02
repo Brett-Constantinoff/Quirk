@@ -89,7 +89,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		glViewport(0, 0, width, height);
 	}
 
-	void Opengl::submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, uint32_t vertexDataSize, uint32_t stride)
+	void Opengl::submitDrawData(const std::wstring& drawableId, Layout& layout)
 	{
 		auto vao{ createVertexArray() };
 		const auto vbo{ createVertexBuffer() };
@@ -97,33 +97,23 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 
 		vbo.bind();
-		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(glm::vec3));
+		vbo.setData(layout.getVertexData(), layout.getVertexDataSize());
 
-		vao.setData(vertexDataSize, stride);
+		if (layout.getNormalDataSize() > 0)
+		{
+			const auto normalVbo{ createVertexBuffer() };
+			normalVbo.bind();
+			normalVbo.setData(layout.getNormalData(), layout.getNormalDataSize());
+		}
 
-		vbo.unbind();
-		vao.unbind();
+		if (layout.getIndexDataSize() > 0)
+		{
+			const auto ebo{ createElementBuffer() };
+			ebo.bind();
+			ebo.setData(layout.getIndexData(), layout.getIndexDataSize());
+		}
 
-		m_drawableIdToVao[drawableId] = vao;
-	}
-
-	void Opengl::submitDrawData(const std::wstring& drawableId, const std::vector<glm::vec3>& vertexData, const std::vector<uint32_t>& indexData, uint32_t vertexDataSize, uint32_t stride)
-	{
-		auto vao{ createVertexArray() };
-		const auto vbo{ createVertexBuffer() };
-		const auto ebo{ createElementBuffer() };
-
-		vao.bind();
-
-		vbo.bind();
-		vbo.setData(vertexData.data(), static_cast<uint32_t>(vertexData.size()) * sizeof(glm::vec3));
-
-		ebo.bind();
-		ebo.setData(indexData.data(), static_cast<uint32_t>(indexData.size()) * sizeof(uint32_t));
-
-		vao.setData(vertexDataSize, stride);
-
-		vbo.unbind();
+		vao.setData(layout);
 		vao.unbind();
 
 		m_drawableIdToVao[drawableId] = vao;
