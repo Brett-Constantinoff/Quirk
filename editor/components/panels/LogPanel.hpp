@@ -18,13 +18,13 @@ namespace Quirk::Editor::Components
     void AddLog(const char* fmt, ...);
     void Draw(const char* title, bool* p_open = nullptr);
     void DrawOptions();
-    void DrawMainWindow();
+    void DrawMainWindow() const;
     void DrawFilteredLog() const;
     void DrawUnfilteredLog() const;
 
     ImGuiTextBuffer m_buf;
     ImGuiTextFilter m_filter;
-    std::vector<int> m_lineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
+    std::vector<int32_t> m_lineOffsets; // Index to lines offset. We maintain this with AddLog() calls.
     bool m_autoScroll; // Keep scrolling if already at the bottom.
   };  
 }

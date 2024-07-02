@@ -55,7 +55,7 @@ namespace Quirk::Editor::Components
         char* allocated_memory = static_cast<char*>(ImGui::MemAlloc(strlen(buf) + 1));
         if (allocated_memory != nullptr)
         {
-            strcpy_s(allocated_memory, strlen(buf)+1, buf); //TODO: upgrade from strcpy to strncpy_s
+            strcpy_s(allocated_memory, strlen(buf)+1, buf);
             m_Items.push_back(allocated_memory);
         }
         else
@@ -116,7 +116,7 @@ namespace Quirk::Editor::Components
     
                 if (m_Filter.IsActive())
                 {
-                    for (const char* item : m_Items)
+                    for (auto item : m_Items)
                     {
                         if (!m_Filter.PassFilter(item))
                             continue;
@@ -125,7 +125,7 @@ namespace Quirk::Editor::Components
                 }
                 else
                 {
-                    for (const char* item : m_Items)
+                    for (auto item : m_Items)
                         ImGui::TextUnformatted(item);
                 }
     
@@ -146,7 +146,7 @@ namespace Quirk::Editor::Components
                                                    ImGuiInputTextFlags_CallbackHistory;
             if (ImGui::InputText("Input", m_InputBuf, sizeof(m_InputBuf), input_text_flags, &TextEditCallbackStub, (void*)this))
             {
-                char* s = m_InputBuf;
+                const char* s = m_InputBuf;
                 while (*s == ' ') ++s;
                 if (*s)
                     ExecCommand(s);
@@ -187,8 +187,8 @@ namespace Quirk::Editor::Components
         }
         else if (Utils::StringUtils::Stricmp(command_line, "HISTORY") == 0)
         {
-            ULONGLONG first = m_History.size() - 10;
-            for (ULONGLONG i = first > 0 ? first : 0; i < m_History.size(); ++i)
+            uint64_t first = m_History.size() - 10;
+            for (uint64_t i = first > 0 ? first : 0; i < m_History.size(); ++i)
                 AddLog("%3d: %s\n", i, m_History[i]);
         }
         else
@@ -236,7 +236,7 @@ namespace Quirk::Editor::Components
                 }
     
                 std::vector<const char*> candidates;
-                for (const char* cmd : m_Commands)
+                for (auto cmd : m_Commands)
                     if (Utils::StringUtils::Strnicmp(cmd, word_start, static_cast<uint32_t>(word_end - word_start)) == 0)
                         candidates.push_back(cmd);
     

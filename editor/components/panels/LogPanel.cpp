@@ -20,12 +20,12 @@ namespace Quirk::Editor::Components
     // The log entry is formatted according to the given format string and arguments
     void LogPanel::AddLog(const char* fmt, ...)
     {
-        uint32_t oldSize = m_buf.size();
+        int32_t oldSize = m_buf.size();
         va_list args;
         va_start(args, fmt);
         m_buf.appendfv(fmt, args);
         va_end(args);
-        for (uint32_t newSize = m_buf.size(); oldSize < newSize; oldSize++)
+        for (int32_t newSize = m_buf.size(); oldSize < newSize; oldSize++)
         {
             if (m_buf[oldSize] == '\n')
                 m_lineOffsets.push_back(oldSize + 1);
@@ -69,7 +69,7 @@ namespace Quirk::Editor::Components
         if (copy) ImGui::LogToClipboard();
     }
     
-    void LogPanel::DrawMainWindow()
+    void LogPanel::DrawMainWindow() const
     {
         if (ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
         {
@@ -95,7 +95,7 @@ namespace Quirk::Editor::Components
     {
         const char* buf = m_buf.begin();
         const char* buf_end = m_buf.end();
-        for (int line_no = 0; line_no < m_lineOffsets.size(); line_no++)
+        for (uint32_t line_no = 0; line_no < m_lineOffsets.size(); line_no++)
         {
             const char* line_start = buf + m_lineOffsets[line_no];
             const char* line_end = (line_no + 1 < m_lineOffsets.size()) ? (buf + m_lineOffsets[line_no + 1] - 1) : buf_end;
@@ -109,10 +109,10 @@ namespace Quirk::Editor::Components
         const char* buf = m_buf.begin();
         const char* buf_end = m_buf.end();
         ImGuiListClipper clipper;
-        clipper.Begin(m_lineOffsets.size());
+        clipper.Begin(static_cast<int32_t>( m_lineOffsets.size()));
         while (clipper.Step())
         {
-            for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
+            for (uint32_t line_no = clipper.DisplayStart; line_no < static_cast<uint32_t>(clipper.DisplayEnd); line_no++)
             {
                 const char* line_start = buf + m_lineOffsets[line_no];
                 const char* line_end = (line_no + 1 < m_lineOffsets.size()) ? (buf + m_lineOffsets[line_no + 1] - 1) : buf_end;
