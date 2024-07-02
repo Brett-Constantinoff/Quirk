@@ -35,8 +35,8 @@ namespace Quirk::Engine::Scene
 			entity->setDrawable(true);
 
 			MaterialComponent materialComponent{};
-			materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic2D);
-			materialComponent.diffuse = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic);
+			materialComponent.diffuse = glm::vec4(1.0f, 0.5f, 0.31f, 1.0f);
 			entity->addComponent<MaterialComponent>(materialComponent);
 
 			TransformComponent transformComponent{};
@@ -49,12 +49,12 @@ namespace Quirk::Engine::Scene
 		{
 			auto& entity{ m_currentScene->createEntity("Clown 2") };
 
-			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Cone, conePrimitivePath) };
+			auto meshComponent{ MeshFactory::createMesh(MeshTypes::Sphere, spherePrimitivePath) };
 			entity->addComponent<MeshComponent>(*meshComponent);
 			entity->setDrawable(true);
 
 			MaterialComponent materialComponent{};
-			materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic2D);
+			materialComponent.materialId = ShaderManager::getMaterialId(MaterialType::Basic);
 			materialComponent.diffuse = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 			entity->addComponent<MaterialComponent>(materialComponent);
 

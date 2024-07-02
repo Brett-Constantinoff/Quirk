@@ -4,6 +4,8 @@
 #include "../../scene/components/MaterialComponent.hpp"
 #include "../../scene/components/TransformComponent.hpp"
 
+#include "../rhi/opengl/OpenglLayout.hpp"
+
 #include "../utils/Context.hpp"
 #include "../utils/Utils.hpp"
 #include "MeshFactory.hpp"
@@ -79,6 +81,18 @@ namespace Quirk::Engine::Renderer::Rendering
 		event.setHandled();
 	}
 
+	Layout* Renderer::createLayout(const MeshComponent& meshComponent, const std::vector<VertexAttribute>& attribs)
+	{
+		switch (Utils::Context::renderApi)
+		{
+			case RenderApi::OpenGL:
+				return new OpenglLayout(meshComponent, attribs);
+				break;
+			default:
+				quirkExit("Unsupported render API");
+		}
+	}
+
 	void Renderer::onBeforeRenderPass()
 	{
 		m_rhi->bindFramebuffer();
@@ -103,7 +117,16 @@ namespace Quirk::Engine::Renderer::Rendering
 					if (!meshComponent.isSubmitted)
 					{
 						meshComponent.isSubmitted = true;
-						m_rhi->submitDrawData(entity->getId(), meshComponent.vertices, meshComponent.indices, 3, 3);
+
+						std::vector<VertexAttribute> attributes {
+							// vertex position
+							{ 0, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)0 },
+							// vertex normal
+							{ 1, 3, QuirkTypes::Float, false, sizeof(glm::vec3), (void*)0 },
+						};
+
+						std::unique_ptr<Layout> layout{ createLayout(meshComponent, attributes) };
+						m_rhi->submitDrawData(entity->getId(), *layout);
 					}
 
 					auto& material{ ShaderManager::getMaterial(materialComponent.materialId) };

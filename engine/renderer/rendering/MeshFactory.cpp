@@ -47,6 +47,16 @@ namespace Quirk::Engine::Renderer::Rendering
                 mesh->vertices.emplace_back(vertex.x, vertex.y, vertex.z);
             }
 
+            if (loadedMesh->HasNormals())
+            {
+                mesh->normals.reserve(loadedMesh->mNumVertices);
+                for (uint32_t i{ 0 }; i < loadedMesh->mNumVertices; ++i)
+                {
+                    const aiVector3D& normal{ loadedMesh->mNormals[i] };
+                    mesh->normals.emplace_back(normal.x, normal.y, normal.z);
+                }
+            }
+
             mesh->indices.reserve(loadedMesh->mNumFaces * 3);
             for (uint32_t i{ 0 }; i < loadedMesh->mNumFaces; ++i)
             {

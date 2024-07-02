@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 
 #define GLFW_INCLUDE_NONE
@@ -28,6 +29,7 @@ namespace Quirk::Engine::Core::Utils
 	static void quirkExit(const T& msg, int32_t status = EXIT_FAILURE)
 	{
 		spdlog::error(msg);
+		std::cin.get();
 		exit(status);
 	}
 

@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <glad/glad.h>
 
+#include "../Layout.hpp"
+
 namespace Quirk::Engine::Renderer::Rhi::Opengl
 {
 	class VertexArray
@@ -15,8 +17,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		void unbind() const;
 		uint32_t& getId();
 
-		void setData(uint32_t size, uint32_t stride,
-			GLenum type = GL_FLOAT, GLboolean normalized = false);
+		void setData(Layout& layout) const;
 
 	private:
 		uint32_t m_id{};
