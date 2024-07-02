@@ -12,6 +12,8 @@
 
 #include "Renderer.hpp"
 
+#include "../../core/eventSystem/events/ViewportResizeEvent.hpp"
+
 using namespace Quirk::Engine::Core::EventSystem;
 
 using AppSettings = Quirk::Engine::Core::Utils::ApplicationSettings;
@@ -22,22 +24,26 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::init()
 	{
 		loadContext();
-		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
-
 		chooseAndInitRhi();
+
+		EventBus::subscribe<WindowResizeEvent>(&Renderer::updateViewport);
+		EventBus::subscribe<ViewportResizeEvent>(&Renderer::resizeFramebuffer);
+
 		ShaderManager::init();
 		MeshFactory::init();
+		m_rhi->createFramebuffer();
 	}
 
 	void Renderer::shutdown()
 	{
+		m_rhi->deleteFramebuffer();
 		m_rhi->shutdown();
 		MeshFactory::shutdown();
 		ShaderManager::shutdown();
 	}
 
 	void Renderer::tick(double tickSpeed, const DisplayWindow& display, 
-		const std::weak_ptr<Scene::Scene> scene)
+	                    const std::weak_ptr<Scene::Scene> scene)
 	{
 		onBeforeRenderPass();
 		onRenderPass(scene, display);
@@ -89,6 +95,7 @@ namespace Quirk::Engine::Renderer::Rendering
 
 	void Renderer::onBeforeRenderPass()
 	{
+		m_rhi->bindFramebuffer();
 		const auto& clearColor{ Utils::Context::clearColor };
 		m_rhi->clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 		m_rhi->clearBuffers(Utils::Context::clearColorBuffer, Utils::Context::clearDepthBuffer, Utils::Context::clearStencilBuffer);
@@ -137,5 +144,28 @@ namespace Quirk::Engine::Renderer::Rendering
 				}
 			}
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Renderer::resizeFramebuffer(const ViewportResizeEvent& event)
+	{
+		m_rhi->resizeFramebuffer(event.getDim().x, event.getDim().y);
+		m_rhi->setViewport(event.getDim().x, event.getDim().y);
+		event.setHandled();
+	}
+
+	void Renderer::setRenderModeWireframe() noexcept
+	{
+		m_rhi->setPolygonModeWireframe();
+	}
+
+	void Renderer::setRenderModeSolid() noexcept
+	{
+		m_rhi->setPolygonModeSolid();
+	}
+
+	void Renderer::toggleGizmos() noexcept
+	{
+		//TODO: implement gizmos
 	}
 }

@@ -39,7 +39,7 @@ namespace Quirk::Engine::Renderer::Rendering
 		}
 		return m_shaders[MaterialType::Basic];
 	}
-
+	
 	void ShaderManager::createMaterial(const std::string& filePath, MaterialType type)
 	{
 		switch (Context::renderApi)

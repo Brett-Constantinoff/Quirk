@@ -60,6 +60,10 @@ namespace Quirk::Editor
 	void Editor::renderComponents()
 	{
 		m_menuBar.render();
-		m_metrics.render();
+		m_viewportPanel.render();
+		m_metricsPanel.render();
+		m_sceneHierarchyPanel.render();
+		m_consolePanel.render();
+		m_logPanel.render();
 	}
 }

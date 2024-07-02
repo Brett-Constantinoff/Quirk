@@ -7,6 +7,7 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		Unknown, 
 		WindowResize,
 		KeyPress,
+		ViewportResize,
 	};
 
 	class Event

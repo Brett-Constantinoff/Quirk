@@ -86,7 +86,21 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	void Opengl::setViewport(uint32_t width, uint32_t height)
 	{
-		glViewport(0, 0, width, height);
+		//HARDCODED FOR NOW
+		float desiredAspectRatio = 4.0f / 3.0f; //Max Schafer: "4:3 aspect ratio appears to look the best. Feel free to try other aspect ratios and see what looks best." 
+		
+		float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+
+		if(aspectRatio> desiredAspectRatio)
+		{
+			uint32_t newWidth = static_cast<uint32_t>(height * desiredAspectRatio);
+			glViewport((width-newWidth)/2, 0, newWidth, height);
+		}
+		else
+		{
+			uint32_t newHeight = static_cast<uint32_t>(width / desiredAspectRatio);
+			glViewport(0, (height-newHeight)/2, width, newHeight);
+		}
 	}
 
 	void Opengl::submitDrawData(const std::wstring& drawableId, Layout& layout)
@@ -126,6 +140,66 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		vao.bind();
 		glDrawElements(mapPrimitiveToGl(primitiveType), indexCount, GL_UNSIGNED_INT, 0);
 		vao.unbind();
+	}
+
+	void Opengl::createFramebuffer()
+	{
+		glGenFramebuffers(1, &m_fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+		glGenTextures(1, &m_textureColorbuffer);
+		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureColorbuffer, 0);
+
+		glGenRenderbuffers(1, &m_rbo);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			spdlog::error("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::deleteFramebuffer()
+	{
+		glDeleteFramebuffers(1, &m_fbo);
+		glDeleteTextures(1, &m_textureColorbuffer);
+		glDeleteRenderbuffers(1, &m_rbo);
+	}
+
+	void Opengl::resizeFramebuffer(uint32_t width, uint32_t height)
+	{
+		glBindTexture(GL_TEXTURE_2D, m_textureColorbuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::bindFramebuffer()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	}
+
+	void Opengl::unbindFramebuffer()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Opengl::setPolygonModeWireframe()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	void Opengl::setPolygonModeSolid()
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Opengl::drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount)

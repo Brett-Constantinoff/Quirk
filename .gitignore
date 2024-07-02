@@ -11,3 +11,5 @@ bin-int/
 thirdParty/bin/
 thirdParty/bin-int/
 thirdParty/spdlog
+editor/imgui_log.txt
+Quirk.sln.DotSettings.user

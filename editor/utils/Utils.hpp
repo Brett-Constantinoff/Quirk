@@ -29,4 +29,6 @@ namespace Quirk::Editor::Uitls
         std::wcerr.clear();
         std::wclog.clear();
     }
+
+    
 }

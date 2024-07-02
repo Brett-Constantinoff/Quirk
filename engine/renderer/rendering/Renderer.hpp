@@ -10,6 +10,7 @@
 #include "../rhi/Rhi.hpp"
 #include "../rhi/VertexAttribute.hpp"
 #include "../../scene/Scene.hpp"
+#include "../../core/eventSystem/events/ViewportResizeEvent.hpp"
 
 #include "ShaderManger.hpp"
 #include "Camera.hpp"
@@ -23,25 +24,33 @@ using namespace Quirk::Engine::Scene::Components;
 
 namespace Quirk::Engine::Renderer::Rendering
 {
-	class Renderer
-	{
-	public:
-		static void init();
-		static void shutdown();
-		static void tick(double tickSpeed, const DisplayWindow& display, 
-			const std::weak_ptr<Scene::Scene> scene);
+    class Renderer
+    {
+    public:
+        static void init();
+        static void shutdown();
+        static void tick(double tickSpeed, const DisplayWindow& display,
+                         const std::weak_ptr<Scene::Scene> scene);
+        static uint32_t getFramebufferTexture() { return m_rhi->getFramebufferTexture();}
+        static void resizeFramebuffer(const ViewportResizeEvent& event);
+        static void setRenderModeWireframe() noexcept;
+        static void setRenderModeSolid() noexcept;
+        static void toggleGizmos() noexcept;
+        
+    private:
+        static void loadContext();
+        static void chooseAndInitRhi();
+        static void updateViewport(const WindowResizeEvent& event);
+        static Layout* createLayout(const MeshComponent& meshComponent, const std::vector<VertexAttribute>& attribs);
 
-	private:
-		static void loadContext();
-		static void chooseAndInitRhi();
-		static void updateViewport(const WindowResizeEvent& event);
-		static Layout* createLayout(const MeshComponent& meshComponent, const std::vector<VertexAttribute>& attribs);
+        static void onBeforeRenderPass();
+        static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);
 
-		static void onBeforeRenderPass();
-		static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);
 
-	private:
-		 inline static Rhi::Rhi* m_rhi{ nullptr };
-		 inline static Rhi::Opengl::Opengl m_opengl{};
-	};
+    private:
+        inline static Rhi::Rhi* m_rhi{nullptr};
+        inline static Rhi::Opengl::Opengl m_opengl{};
+        inline static glm::mat4 m_projectionMatrix;
+    };
+
 }

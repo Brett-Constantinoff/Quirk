@@ -43,6 +43,15 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		// draw
 		void drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount) override;
 		void drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) override;
+		void createFramebuffer() override;
+		void deleteFramebuffer() override;
+		void resizeFramebuffer(uint32_t width, uint32_t height) override;
+		void bindFramebuffer() override;
+		void unbindFramebuffer() override;
+		void setPolygonModeWireframe() override;
+		void setPolygonModeSolid() override;
+
+		uint32_t getFramebufferTexture() const override { return m_textureColorbuffer; }
 
 	private:
 		VertexArray createVertexArray();
@@ -52,5 +61,9 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	private:
 		Resources m_resources{};
 		std::unordered_map<std::wstring, VertexArray> m_drawableIdToVao{};
+
+		uint32_t m_fbo = 0;
+		uint32_t m_textureColorbuffer = 0;
+		uint32_t m_rbo = 0;
 	};
 }
