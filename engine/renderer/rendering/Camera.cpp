@@ -53,4 +53,4 @@ namespace Quirk::Engine::Renderer::Rendering
         m_right = glm::normalize(glm::cross(m_front, m_worldUp));
         m_up = glm::normalize(glm::cross(m_right, m_front));
     }
-}
+} // namespace Quirk::Engine::Renderer::Rendering

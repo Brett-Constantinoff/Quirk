@@ -9,9 +9,15 @@ jobs:
   build-and-test:
     runs-on: windows-latest
 
+    strategy:
+      matrix:
+        config:
+          - { build_type: 'Debug' }
+          - { build_type: 'Release' }
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -25,5 +31,5 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild Quirk.sln /p:Configuration=Release
+          msbuild Quirk.sln /p:Configuration=${{ matrix.config.build_type }}
         shell: cmd

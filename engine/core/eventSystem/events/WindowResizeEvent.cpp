@@ -12,4 +12,4 @@ namespace Quirk::Engine::Core::EventSystem::Events
     { 
         return m_dim; 
     }
-}
+} // namespace Quirk::Engine::Core::EventSystem::Events

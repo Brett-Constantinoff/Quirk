@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <memory>
 #include <uuid.h>
+#include <vector>
 
-#include "Utils.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
 #include "ElementBuffer.hpp"
+#include "Utils.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
 
 #include "../Layout.hpp"
 #include "../Rhi.hpp"
@@ -53,4 +53,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		Resources m_resources{};
 		std::unordered_map<std::wstring, VertexArray> m_drawableIdToVao{};
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

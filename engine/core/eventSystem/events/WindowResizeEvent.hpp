@@ -20,4 +20,4 @@ namespace Quirk::Engine::Core::EventSystem::Events
     private:
         glm::vec2 m_dim;
     };
-}
+} // namespace Quirk::Engine::Core::EventSystem::Events

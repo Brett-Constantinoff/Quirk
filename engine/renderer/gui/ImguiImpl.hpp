@@ -19,4 +19,4 @@ namespace Quirk::Engine::Renderer::Gui
         static void updateFrame();
         static void renderFrame();
     };
-}
+} // namespace Quirk::Engine::Renderer::Gui

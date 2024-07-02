@@ -21,6 +21,6 @@ namespace Quirk::Engine::Core::EventSystem::EventHandlers
         T& instance;
         void (T::* memberFunction)(const EventType&);
     };
-}
+} // namespace Quirk::Engine::Core::EventSystem::EventHandlers
 
 #include "EventHandler.inl"

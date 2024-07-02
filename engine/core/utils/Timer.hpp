@@ -19,4 +19,4 @@ namespace Quirk::Engine::Core::Utils
         std::chrono::high_resolution_clock::time_point m_stop{};
         std::chrono::duration<double> m_time{};
     };
-}
+} // namespace Quirk::Engine::Core::Utils

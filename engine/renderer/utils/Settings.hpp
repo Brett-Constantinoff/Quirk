@@ -15,4 +15,4 @@ namespace Quirk::Engine::Renderer::Utils
 		Float,
 		Uint,
 	};
-}
+} // namespace Quirk::Engine::Renderer::Utils

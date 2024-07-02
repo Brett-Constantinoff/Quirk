@@ -19,4 +19,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	private:
 		uint32_t m_id{};
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

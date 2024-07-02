@@ -16,4 +16,4 @@ namespace Quirk::Editor::Components::MenuBar
 		void renderFileMenu();
 		void renderSettingsMenu();
 	};
-}
+} // namespace Quirk::Editor::Components::MenuBar

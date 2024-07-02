@@ -16,29 +16,29 @@ using namespace Quirk::Engine::Core::EventSystem::Events;
 namespace Quirk::Engine::Core::Utils
 {
 	// Primitive Paths
-	static const char* spherePrimitivePath{ "../engine/resources/models/sphere.obj" };
-	static const char* cubePrimitivePath{ "../engine/resources/models/cube.fbx" };
-	static const char* cylinderPrimitivePath{ "../engine/resources/models/cylinder.obj" };
-	static const char* conePrimitivePath{ "../engine/resources/models/cone.obj" };
-	static const char* torusPrimitivePath{ "../engine/resources/models/torus.obj" };
+	inline const char* spherePrimitivePath{ "../engine/resources/models/sphere.obj" };
+	inline const char* cubePrimitivePath{ "../engine/resources/models/cube.fbx" };
+	inline const char* cylinderPrimitivePath{ "../engine/resources/models/cylinder.obj" };
+	inline const char* conePrimitivePath{ "../engine/resources/models/cone.obj" };
+	inline const char* torusPrimitivePath{ "../engine/resources/models/torus.obj" };
 
 	// Shader Paths
-	static const char* basicShaderPath{ "../engine/resources/shaders/basicShader.hlsl" };
+	inline const char* basicShaderPath{ "../engine/resources/shaders/basicShader.hlsl" };
 
 	template <typename T>
-	static void quirkExit(const T& msg, int32_t status = EXIT_FAILURE)
+	inline void quirkExit(const T& msg, int32_t status = EXIT_FAILURE)
 	{
 		spdlog::error(msg);
 		std::cin.get();
 		exit(status);
 	}
 
-	static double getTime()
+	inline double getTime()
 	{
 		return glfwGetTime();
 	}
 
-	static const char* mapEventType(EventType type)
+	inline const char* mapEventType(EventType type)
 	{
 		switch (type)
 		{
@@ -51,7 +51,7 @@ namespace Quirk::Engine::Core::Utils
 		}
 	}
 
-	static const std::wstring generateUuid()
+	inline const std::wstring generateUuid()
 	{
 		static std::random_device rd{};
 
@@ -67,5 +67,5 @@ namespace Quirk::Engine::Core::Utils
 
 		return uuids::to_string<wchar_t>(gen());
 	}
-};
+}; // namespace Quirk::Engine::Core::Utils	
  

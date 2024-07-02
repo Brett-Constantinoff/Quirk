@@ -17,4 +17,4 @@ namespace Quirk::Engine::Renderer::Rhi
 		virtual void setVec3(const char* name, const glm::vec3& value) = 0;
 		virtual void setMat4(const char* name, const glm::mat4& matrix) = 0;
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi

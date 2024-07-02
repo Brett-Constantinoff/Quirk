@@ -1,6 +1,6 @@
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 #include "../../core/utils/Utils.hpp"
 
@@ -33,7 +33,10 @@ namespace Quirk::Engine::Renderer::Rendering
             aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType) };
 
         if (!scene || !scene->HasMeshes())
+        {
             quirkExit("Failed to load model from - " + std::string{ path });
+            return; // the compiler is not smart enough to know that quirkExit will terminate the program
+        }
 
         // TODO: Handle multiple meshes in a single file
         if (isPrimitive)
@@ -137,4 +140,4 @@ namespace Quirk::Engine::Renderer::Rendering
         }
         
     }
-}
+} // namespace Quirk::Engine::Renderer::Rendering

@@ -1,6 +1,6 @@
 #include "../../core/eventSystem/EventBus.hpp"
-#include "../../core/utils/Defines.hpp"
 #include "../../core/utils/ApplicationSettings.hpp"
+#include "../../core/utils/Defines.hpp"
 #include "../../scene/components/MaterialComponent.hpp"
 #include "../../scene/components/TransformComponent.hpp"
 
@@ -85,6 +85,7 @@ namespace Quirk::Engine::Renderer::Rendering
 			default:
 				quirkExit("Unsupported render API");
 		}
+		return nullptr; // compiler doesnt know we exit in the switch
 	}
 
 	void Renderer::onBeforeRenderPass()
@@ -138,4 +139,4 @@ namespace Quirk::Engine::Renderer::Rendering
 			}
 		}
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rendering

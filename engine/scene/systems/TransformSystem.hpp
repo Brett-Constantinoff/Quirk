@@ -8,4 +8,4 @@ namespace Quirk::Engine::Scene::Systems::TransformSystem
 {
 	void update(TransformComponent& transformComponent);
 	void rotate(TransformComponent& transformComponent, const glm::vec3& axis, double speed);
-}
+} // namespace Quirk::Engine::Scene::Systems::TransformSystem

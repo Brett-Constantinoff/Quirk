@@ -32,4 +32,4 @@ namespace Quirk::Engine::Display
         GLFWwindow* handle{ nullptr };
         glm::mat4 projectionMatrix{ 1.0f };
     };
-}
+} // namespace Quirk::Engine::Display

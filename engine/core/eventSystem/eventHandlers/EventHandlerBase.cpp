@@ -6,4 +6,4 @@ namespace Quirk::Engine::Core::EventSystem::EventHandlers
     {
         call(event);
     }
-}
+} // namespace Quirk::Engine::Core::EventSystem::EventHandlers

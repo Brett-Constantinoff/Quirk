@@ -17,4 +17,4 @@ namespace Quirk::Engine::Core::EventSystem::EventHandlers
         // let each event handler implement this
         virtual void call(const Event& event) = 0;
     };
-}
+} // namespace Quirk::Engine::Core::EventSystem::EventHandlers

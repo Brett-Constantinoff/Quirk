@@ -18,6 +18,6 @@ namespace Quirk::Engine::Core::EventSystem::EventHandlers
     private:
         void (*staticFunction)(const EventType&);
     };
-}
+} // namespace Quirk::Engine::Core::EventSystem::EventHandlers
 
 #include "EventHandlerStatic.inl"

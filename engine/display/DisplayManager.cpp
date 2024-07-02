@@ -83,5 +83,5 @@ namespace Quirk::Engine::Display
 				EventBus::publish(WindowResizeEvent(glm::vec2 { width, height }));
 		});
 	}
-}
+} // namespace Quirk::Engine::Display
 

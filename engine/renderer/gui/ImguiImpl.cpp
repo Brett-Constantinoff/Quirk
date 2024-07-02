@@ -35,4 +35,4 @@ namespace Quirk::Engine::Renderer::Gui
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
-}
+} // namespace Quirk::Engine::Renderer::Gui

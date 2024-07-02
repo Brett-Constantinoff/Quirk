@@ -1,12 +1,12 @@
+#include "SceneManager.hpp"
+
+#include "../core/utils/Utils.hpp"
 #include "../renderer/rendering/MeshFactory.hpp"
 #include "../renderer/rendering/ShaderManger.hpp"
-#include "../core/utils/Utils.hpp"
+
 #include "components/MaterialComponent.hpp"
 #include "components/TransformComponent.hpp"
-
 #include "systems/TransformSystem.hpp"
-
-#include "SceneManager.hpp"
 
 using namespace Quirk::Engine::Renderer::Rendering;
 using namespace Quirk::Engine::Scene::Systems;
@@ -76,4 +76,4 @@ namespace Quirk::Engine::Scene
 	{
 		return m_scenes;
 	}
-}
+} // namespace Quirk::Engine::Scene

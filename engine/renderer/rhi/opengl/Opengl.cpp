@@ -160,4 +160,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 		return ebo;
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

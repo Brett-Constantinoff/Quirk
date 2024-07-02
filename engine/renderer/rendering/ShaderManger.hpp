@@ -39,4 +39,4 @@ namespace Quirk::Engine::Renderer::Rendering
 		// rhi
 		inline static std::unordered_map<MaterialType, std::unique_ptr<Shader>> m_shaders{};
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rendering

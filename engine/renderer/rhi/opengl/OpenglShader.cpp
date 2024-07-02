@@ -121,5 +121,5 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
         source.vertexSource = ss[0].str();
         source.fragmentSource = ss[1].str();
     }
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl
 

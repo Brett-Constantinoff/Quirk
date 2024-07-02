@@ -10,4 +10,4 @@ namespace Quirk::Engine::Scene::Components
 		std::wstring id{};
 		std::string name{};
 	};
-}
+} // namespace Quirk::Engine::Scene::Components

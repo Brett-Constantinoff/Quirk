@@ -64,4 +64,4 @@ namespace Quirk::Engine::Scene
 		entt::entity m_entity;
         bool m_drawable{ false };
     };
-}
+} // namespace Quirk::Engine::Scene

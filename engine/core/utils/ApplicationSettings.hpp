@@ -49,4 +49,4 @@ namespace Quirk::Engine::Core::Utils
 	private:
 		inline static SettingsObject m_settings{};
 	};
-}
+} // namespace Quirk::Engine::Core::Utils

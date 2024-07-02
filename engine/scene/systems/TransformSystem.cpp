@@ -23,4 +23,4 @@ namespace Quirk::Engine::Scene::Systems::TransformSystem
 
 		transformComponent.transform = glm::mat4{ translationMatrix * transformComponent.rotation * scaleMatrix };
 	}
-}
+} // namespace Quirk::Engine::Scene::Systems::TransformSystem

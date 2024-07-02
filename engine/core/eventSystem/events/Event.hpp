@@ -23,4 +23,4 @@ namespace Quirk::Engine::Core::EventSystem::Events
 		mutable bool m_handled{ false };
 		EventType m_type{ EventType::Unknown };
 	};
-}
+} // namespace Quirk::Engine::Core::EventSystem::Events
