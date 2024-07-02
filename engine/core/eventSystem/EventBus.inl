@@ -52,4 +52,4 @@ namespace Quirk::Engine::Core::EventSystem
 
         handlers->push_back(new EventHandlerStatic<EventType>{ StaticFunction });
     }
-}
+} // namespace Quirk::Engine::Core::EventSystem

@@ -41,4 +41,4 @@ namespace Quirk::Editor
 		inline static MenuBar::MenuBar m_menuBar{};
 		inline static Metrics::Metrics m_metrics{};
 	};
-}
+} // namespace Quirk::Editor

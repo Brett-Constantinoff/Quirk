@@ -23,7 +23,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	uint32_t OpenglLayout::getVertexDataSize() const
 	{
-		return m_meshComponent.vertices.empty() ? 0 : m_meshComponent.vertices.size() * sizeof(glm::vec3);
+		return m_meshComponent.vertices.empty() ? 0 : static_cast<uint32_t>(m_meshComponent.vertices.size()) * sizeof(glm::vec3);
 	}
 
 	const void* OpenglLayout::getNormalData() const
@@ -33,7 +33,7 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	uint32_t OpenglLayout::getNormalDataSize() const
 	{
-		return m_meshComponent.normals.empty() ? 0 : m_meshComponent.normals.size() * sizeof(glm::vec3);
+		return m_meshComponent.normals.empty() ? 0 : static_cast<uint32_t>(m_meshComponent.normals.size()) * sizeof(glm::vec3);
 	}
 
 	const void* OpenglLayout::getIndexData() const
@@ -43,6 +43,6 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 
 	uint32_t OpenglLayout::getIndexDataSize() const
 	{
-		return m_meshComponent.indices.empty() ? 0 : m_meshComponent.indices.size() * sizeof(uint32_t);
+		return m_meshComponent.indices.empty() ? 0 : static_cast<uint32_t>(m_meshComponent.indices.size()) * sizeof(uint32_t);
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

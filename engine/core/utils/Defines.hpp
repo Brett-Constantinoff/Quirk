@@ -16,4 +16,4 @@ namespace Quirk::Engine::Core::Utils
 		None, // 0
 		KeyPress, // 1
 	};
-}
+} // namespace Quirk::Engine::Core::Utils

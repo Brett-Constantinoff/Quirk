@@ -11,4 +11,4 @@ namespace Quirk::Editor::Components::Metrics
 
 		virtual void render();
 	};
-}
+} // namespace Quirk::Editor::Components::Metrics

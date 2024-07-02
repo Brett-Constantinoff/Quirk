@@ -19,4 +19,4 @@ namespace Quirk::Engine::Scene
 		inline static std::shared_ptr<Scene> m_currentScene{ nullptr };
 		inline static std::vector<std::shared_ptr<Scene>> m_scenes{};
 	};
-}
+} // namespace Quirk::Engine::Scene

@@ -31,4 +31,4 @@ namespace Quirk::Engine::Renderer::Rhi
         MeshComponent m_meshComponent;
         std::vector<VertexAttribute> m_attributes;
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi

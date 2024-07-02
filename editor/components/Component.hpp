@@ -11,4 +11,4 @@ namespace Quirk::Editor::Components
 		virtual ~Component() {};
 		virtual void render() = 0;
 	};
-}
+} // namespace Quirk::Editor::Components

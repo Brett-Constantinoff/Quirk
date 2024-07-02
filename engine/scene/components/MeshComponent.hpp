@@ -18,4 +18,4 @@ namespace Quirk::Engine::Scene::Components
 
 		bool isSubmitted{};
 	};
-}
+} // namespace Quirk::Engine::Scene::Components

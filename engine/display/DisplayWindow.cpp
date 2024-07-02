@@ -33,4 +33,4 @@ namespace Quirk::Engine::Display
         // these are all default values for the time being, fov, near and far should be fine as is
         projectionMatrix = glm::perspective(glm::radians(45.0f), dimensions.x / dimensions.y, 0.1f, 100.0f);
     }
-}
+} // namespace Quirk::Engine::Display

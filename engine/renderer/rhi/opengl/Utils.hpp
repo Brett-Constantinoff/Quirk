@@ -125,4 +125,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		}
 #endif
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

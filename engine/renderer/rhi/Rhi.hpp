@@ -29,4 +29,4 @@ namespace Quirk::Engine::Renderer::Rhi
 		virtual void drawArrays(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t vertexCount) = 0;
 		virtual void drawElements(const std::wstring& drawableId, QuirkPrimitives primitiveType, uint32_t indexCount) = 0;
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi

@@ -10,4 +10,4 @@ namespace Quirk::Engine::Scene::Components
 		uint32_t materialId{};
 		glm::vec4 diffuse{};
 	};
-}
+} // namespace Quirk::Engine::Scene::Components

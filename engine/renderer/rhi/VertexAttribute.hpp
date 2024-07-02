@@ -16,4 +16,4 @@ namespace Quirk::Engine::Renderer::Rhi
         std::size_t stride{};
         const void* pointer{};
     };
-}
+} // namespace Quirk::Engine::Renderer::Rhi

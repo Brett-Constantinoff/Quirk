@@ -1,7 +1,6 @@
 #pragma once
 #include <entt/entt.hpp>
 #include <vector>
-
 #include "components/MeshComponent.hpp"
 #include "components/NameComponent.hpp"
 
@@ -25,4 +24,4 @@ namespace Quirk::Engine::Scene
 		entt::registry m_registry{};
 		std::vector<std::shared_ptr<Entity>> m_entities{};
 	};
-}
+} // namespace Quirk::Engine::Scene

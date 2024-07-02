@@ -1,10 +1,9 @@
 #include <uuid.h>
 
+#include "../core/utils/Utils.hpp"
+#include "Scene.hpp"
 #include "components/TransformComponent.hpp"
 #include "systems/TransformSystem.hpp"
-#include "../core/utils/Utils.hpp"
-
-#include "Scene.hpp"
 
 using namespace Quirk::Engine::Scene::Components;
 using namespace Quirk::Engine::Scene::Systems;
@@ -61,4 +60,4 @@ namespace Quirk::Engine::Scene
 			}
 		}
 	}
-}
+} // namespace Quirk::Engine::Scene

@@ -33,4 +33,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 				attribute.normalized, static_cast<GLsizei>(attribute.stride), attribute.pointer);
 		}
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

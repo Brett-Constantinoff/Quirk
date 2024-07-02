@@ -20,4 +20,4 @@ namespace Quirk::Engine::Core::EventSystem::Events
         KeyType m_key;
         KeyAction m_action;
     };
-}
+}  // namespace Quirk::Engine::Core::EventSystem::Events

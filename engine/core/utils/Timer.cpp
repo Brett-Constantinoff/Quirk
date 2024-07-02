@@ -14,4 +14,4 @@ namespace Quirk::Engine::Core::Utils
 
         return m_time.count();
     }
-}
+} // namespace Quirk::Engine::Core::Utils

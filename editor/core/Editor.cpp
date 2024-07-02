@@ -1,5 +1,5 @@
-#include <core/utils/Utils.hpp>
 #include <core/utils/Timer.hpp>
+#include <core/utils/Utils.hpp>
 #include <renderer/gui/ImguiImpl.hpp>
 
 #include "Editor.hpp"
@@ -62,4 +62,4 @@ namespace Quirk::Editor
 		m_menuBar.render();
 		m_metrics.render();
 	}
-}
+} // namespace Quirk::Editor

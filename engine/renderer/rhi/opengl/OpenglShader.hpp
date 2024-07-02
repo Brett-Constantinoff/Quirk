@@ -44,4 +44,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
         uint32_t m_id{};
         std::unordered_map<std::string, int32_t> m_uniformLocations{};
     };
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

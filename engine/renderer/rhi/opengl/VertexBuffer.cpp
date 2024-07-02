@@ -28,4 +28,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 	{
 		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

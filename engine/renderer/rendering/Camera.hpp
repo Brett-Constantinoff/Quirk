@@ -40,4 +40,4 @@ namespace Quirk::Engine::Renderer::Rendering
         float m_far{100.0f};
         glm::mat4 m_view{};
     };
-}
+} // namespace Quirk::Engine::Renderer::Rendering

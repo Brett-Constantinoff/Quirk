@@ -17,4 +17,4 @@ namespace Quirk::Engine::Renderer::Utils
 		inline static bool clearDepthBuffer{};
 		inline static bool clearStencilBuffer{};
 	};
-}
+} // namespace Quirk::Engine::Renderer::Utils

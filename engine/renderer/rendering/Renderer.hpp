@@ -44,4 +44,4 @@ namespace Quirk::Engine::Renderer::Rendering
 		 inline static Rhi::Rhi* m_rhi{ nullptr };
 		 inline static Rhi::Opengl::Opengl m_opengl{};
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rendering

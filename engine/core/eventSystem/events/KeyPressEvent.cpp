@@ -18,4 +18,4 @@ namespace Quirk::Engine::Core::EventSystem::Events
     { 
         return m_action; 
     }
-}
+} // namespace Quirk::Engine::Core::EventSystem::Events

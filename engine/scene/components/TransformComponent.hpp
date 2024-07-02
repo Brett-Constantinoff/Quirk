@@ -12,4 +12,4 @@ namespace Quirk::Engine::Scene::Components
 
 		glm::mat4 transform{ 1.0f };
 	};
-}
+} // namespace Quirk::Engine::Scene::Components

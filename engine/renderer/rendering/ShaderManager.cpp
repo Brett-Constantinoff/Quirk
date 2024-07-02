@@ -1,8 +1,6 @@
-#pragma once
-
 #include "../../core/utils/Utils.hpp"
-#include "../utils/Context.hpp"
 #include "../rhi/opengl/OpenglShader.hpp"
+#include "../utils/Context.hpp"
 
 #include "ShaderManger.hpp"
 
@@ -54,4 +52,4 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		m_shaders[MaterialType::Basic] = std::make_unique<OpenglShader>(filePath);
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rendering

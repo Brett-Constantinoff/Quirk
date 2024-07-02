@@ -7,5 +7,5 @@ namespace Quirk::Engine::Renderer::Rhi
 		m_attributes{attribs}
 	{
 	}
-}
+} // namespace Quirk::Engine::Renderer::Rhi
 

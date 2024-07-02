@@ -26,4 +26,4 @@ namespace Quirk::Engine::Renderer::Rhi::Opengl
 		const void* getIndexData() const override;
 		uint32_t getIndexDataSize() const override;
 	};
-}
+} // namespace Quirk::Engine::Renderer::Rhi::Opengl

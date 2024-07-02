@@ -35,6 +35,6 @@ namespace Quirk::Engine::Core::EventSystem
     private:
         inline static std::map<std::type_index, std::unique_ptr<std::list<EventHandlerBase*>>> eventSubscribers{};
     };
-}
+} // namespace Quirk::Engine::Core::EventSystem
 
 #include "EventBus.inl"

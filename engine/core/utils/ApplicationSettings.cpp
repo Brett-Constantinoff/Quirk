@@ -30,4 +30,4 @@ namespace Quirk::Engine::Core::Utils
 		m_settings.majorVersion = major;
 		m_settings.minorVersion = minor;
 	}
-}
+} // namespace Quirk::Engine::Core::Utils

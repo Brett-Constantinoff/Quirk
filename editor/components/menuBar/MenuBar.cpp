@@ -48,4 +48,4 @@ namespace Quirk::Editor::Components::MenuBar
 			ImGui::EndMenu();
 		}
 	}
-}
+} // namespace Quirk::Editor::Components::MenuBar

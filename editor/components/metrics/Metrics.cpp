@@ -16,4 +16,4 @@ namespace Quirk::Editor::Components::Metrics
         ImGui::Text("Frame Time: %.3f ms", 1000.0f / ImGui::GetIO().Framerate);
         ImGui::End();
     }
-}
+} // namespace Quirk::Editor::Components::Metrics

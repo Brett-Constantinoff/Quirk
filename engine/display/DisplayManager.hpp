@@ -49,4 +49,4 @@ namespace Quirk::Engine::Display
 
         inline static DisplayWindow m_defaultWindow{};
     };
-}
+} // namespace Quirk::Engine::Display
