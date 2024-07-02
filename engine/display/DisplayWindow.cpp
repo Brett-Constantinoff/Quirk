@@ -17,7 +17,6 @@ namespace Quirk::Engine::Display
 
         // subscribe to a resize event to recalculate the projection matrix
         EventBus::subscribe<DisplayWindow, WindowResizeEvent>(this, &DisplayWindow::calculateProjectionMatrix);
-        EventBus::subscribe<DisplayWindow, ViewportResizeEvent>(this, &DisplayWindow::updateProjectionMatrix);
             
         // we fire an event on the window, and have the display manager listen for the event
         glfwSetKeyCallback(handle,
@@ -33,11 +32,5 @@ namespace Quirk::Engine::Display
         const glm::vec2 dimensions{ event.getDim()};
         // these are all default values for the time being, fov, near and far should be fine as is
         projectionMatrix = glm::perspective(glm::radians(45.0f), dimensions.x / dimensions.y, 0.1f, 100.0f);
-    }
-
-    void DisplayWindow::updateProjectionMatrix(const ViewportResizeEvent& event)
-    {
-        projectionMatrix = glm::perspective(glm::radians(45.0f), event.getAspectRatio(), 0.1f, 100.0f);
-        //event.setHandled();
     }
 }

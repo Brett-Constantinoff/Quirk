@@ -12,13 +12,11 @@ namespace Quirk::Engine::Core::EventSystem::Events
     class ViewportResizeEvent : public Event
     {
     public:
-        ViewportResizeEvent(const glm::vec2& dim, float aspectRatio = NULL);
+        ViewportResizeEvent(const glm::vec2& dim);
 
         glm::vec2 getDim() const;
-        float getAspectRatio() const;
 
     private:
         glm::vec2 m_dim;
-        float m_aspectRatio;
     };
 }

@@ -32,7 +32,6 @@ namespace Quirk::Engine::Renderer::Rendering
                          const std::weak_ptr<Scene::Scene> scene);
         static uint32_t getFramebufferTexture() { return m_rhi->getFramebufferTexture();}
         static void resizeFramebuffer(const ViewportResizeEvent& event);
-        static void adjustViewport(uint32_t width, uint32_t height);
         static void setRenderModeWireframe() noexcept;
         static void setRenderModeSolid() noexcept;
         static void toggleGizmos() noexcept;
@@ -44,8 +43,6 @@ namespace Quirk::Engine::Renderer::Rendering
 
         static void onBeforeRenderPass();
         static void onRenderPass(const std::weak_ptr<Scene::Scene> scene, const DisplayWindow& display);
-
-        static void setProjectionMatrix(float width, float height);
 
     private:
         inline static Rhi::Rhi* m_rhi{nullptr};

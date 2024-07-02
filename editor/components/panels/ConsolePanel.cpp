@@ -103,7 +103,7 @@ namespace Quirk::Editor::Components
     void ConsolePanel::DrawMainWindow()
     {
         const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-            if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_NavFlattened,
+            if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), ImGuiChildFlags_None,
                                   ImGuiWindowFlags_HorizontalScrollbar))
             {
                 if (ImGui::BeginPopupContextWindow())
@@ -318,7 +318,7 @@ namespace Quirk::Editor::Components
     
     void ConsolePanel::render()
     {
-        Draw(m_title, nullptr);
+       Draw(m_title, nullptr);
     }
 }
 

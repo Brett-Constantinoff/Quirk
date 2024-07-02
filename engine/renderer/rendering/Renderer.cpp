@@ -76,16 +76,7 @@ namespace Quirk::Engine::Renderer::Rendering
 	{
 		const glm::vec2 dimensions{ event.getDim() };
 		m_rhi->setViewport(static_cast<uint32_t>(dimensions.x), static_cast<uint32_t>(dimensions.y));
-		setProjectionMatrix(dimensions.x, dimensions.y);
 		event.setHandled();
-	}
-
-	void Renderer::setProjectionMatrix(float width, float height)
-	{
-		float aspectRatio = width / height;
-		ViewportResizeEvent event{ glm::vec2{width, height}, aspectRatio };
-		EventBus::publish(event);
-		
 	}
 
 	void Renderer::onBeforeRenderPass()
@@ -136,14 +127,8 @@ namespace Quirk::Engine::Renderer::Rendering
 	void Renderer::resizeFramebuffer(const ViewportResizeEvent& event)
 	{
 		m_rhi->resizeFramebuffer(event.getDim().x, event.getDim().y);
-		setProjectionMatrix(event.getDim().x, event.getDim().y);
-		adjustViewport(event.getDim().x, event.getDim().y);
+		m_rhi->setViewport(event.getDim().x, event.getDim().y);
 		event.setHandled();
-	}
-
-	void Renderer::adjustViewport(uint32_t width, uint32_t height)
-	{
-		m_rhi->setViewport(width, height);
 	}
 
 	void Renderer::setRenderModeWireframe() noexcept
